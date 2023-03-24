@@ -1,0 +1,22 @@
+global:
+  scrape_interval: 10s
+
+scrape_configs:
+  - job_name: node
+    static_configs:
+      - targets: ['192.168.10.1:9100'] # the host of node-exporter
+
+  - job_name: 'emqx'
+    metrics_path: /api/v5/prometheus/stats
+    scrape_interval: 5s
+    honor_labels: true
+    static_configs:
+      # EMQX IP address and port
+      - targets: [emqx-enterprise:18083]
+        labels:
+          cluster: emqx
+    relabel_configs:
+      - source_labels: ["__address__"]
+        target_label: "instance"
+        regex: (.*):.*
+        replacement: $1
