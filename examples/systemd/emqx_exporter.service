@@ -1,0 +1,11 @@
+[Unit]
+Description=EMQX Exporter
+Requires=emqx_exporter.socket
+
+[Service]
+User=emqx_exporter
+EnvironmentFile=/etc/sysconfig/emqx_exporter
+ExecStart=/usr/sbin/emqx_exporter --web.systemd-socket $OPTIONS
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,225 @@
+package client
+
+import (
+	"emqx-exporter/collector"
+	"fmt"
+	"github.com/valyala/fasthttp"
+	"strconv"
+	"strings"
+	"time"
+)
+
+var _ client = &cluster4x{}
+
+type cluster4x struct {
+	edition edition
+	client  *fasthttp.Client
+}
+
+func (n *cluster4x) getEdition() edition {
+	return n.edition
+}
+
+func (n *cluster4x) GetLicense() (lic collector.LicenseInfo, err error) {
+	resp := struct {
+		Data struct {
+			MaxConnections int64  `json:"max_connections"`
+			ExpiryAt       string `json:"expiry_at"`
+		}
+		Code int
+	}{}
+	err = callHTTPGetWithResp(n.client, "/api/v4/license", &resp)
+	if err != nil {
+		return
+	}
+	if resp.Code != 0 {
+		err = fmt.Errorf("get err from license api: %d", resp.Code)
+		return
+	}
+
+	expiryAt, err := time.Parse("2006-01-02 15:04:05", resp.Data.ExpiryAt)
+	if err != nil {
+		err = fmt.Errorf("parse expiry time failed: %s", resp.Data.ExpiryAt)
+		return
+	}
+
+	lic.MaxClientLimit = resp.Data.MaxConnections
+	lic.Expiration = expiryAt.UnixMilli()
+	return
+}
+
+func (n *cluster4x) GetClusterStatus() (cluster collector.ClusterStatus, err error) {
+	resp := struct {
+		Data []struct {
+			Version     string
+			Uptime      string
+			NodeStatus  string `json:"node_status"`
+			Node        string
+			MaxFds      int `json:"max_fds"`
+			Connections int64
+			Edition     string
+		}
+		Code int
+	}{}
+	err = callHTTPGetWithResp(n.client, "/api/v4/nodes", &resp)
+	if err != nil {
+		return
+	}
+	if resp.Code != 0 {
+		err = fmt.Errorf("get err from nodes api: %d", resp.Code)
+		return
+	}
+
+	cluster.Status = healthy
+	cluster.NodeUptime = make(map[string]int64)
+	cluster.NodeMaxFDs = make(map[string]int)
+	cluster.NodeVer = make(map[string]int)
+
+	for _, data := range resp.Data {
+		if data.NodeStatus != "Running" {
+			cluster.Status = unhealthy
+		}
+		cluster.NodeUptime[data.Node] = parseUptimeFor4x(data.Uptime)
+		cluster.NodeMaxFDs[data.Node] = data.MaxFds
+		cluster.NodeVer[data.Node] = version4x
+		if data.Edition == "Opensource" {
+			n.edition = openSource
+		} else {
+			n.edition = enterprise
+		}
+	}
+	return
+}
+
+func (n *cluster4x) GetBrokerMetrics() (metrics collector.Broker, err error) {
+	resp := struct {
+		Data struct {
+			Sent     int64
+			Received int64
+		}
+		Code int
+	}{}
+	err = callHTTPGetWithResp(n.client, "/api/v4/monitor/current_metrics", &resp)
+	if err != nil {
+		return
+	}
+
+	if resp.Code != 0 {
+		err = fmt.Errorf("get err from monitor api: %d", resp.Code)
+		return
+	}
+
+	metrics.MsgInputPeriodSec = resp.Data.Received
+	metrics.MsgOutputPeriodSec = resp.Data.Sent
+	return
+}
+
+func (n *cluster4x) GetRuleEngineMetrics() (metrics []collector.RuleEngine, err error) {
+	resp := struct {
+		Data []struct {
+			Metrics []struct {
+				Node        string
+				SpeedMax    float64 `json:"speed_max"`
+				SpeedLast5m float64 `json:"speed_last5m"`
+				Speed       float64 `json:"speed"`
+				Matched     int64
+				Passed      int64
+				//NoResult    int64
+				//Exception   int64
+				Failed int64
+			}
+			Actions []struct {
+				Metrics []struct {
+					Node    string
+					Taken   int64
+					Success int64
+					Failed  int64
+				}
+				//Id   string
+				//ResType string
+			}
+			Id      string
+			Enabled bool
+		}
+		Code int
+	}{}
+	err = callHTTPGetWithResp(n.client, "/api/v4/rules?_limit=10000", &resp)
+	if err != nil {
+		return
+	}
+	if resp.Code != 0 {
+		err = fmt.Errorf("get err from rules api: %d", resp.Code)
+		return
+	}
+
+	for _, rule := range resp.Data {
+		if !rule.Enabled {
+			continue
+		}
+
+		fillActionMetrics := func(node string, m *collector.RuleEngine) {
+			for i := range rule.Actions {
+				for j := range rule.Actions[i].Metrics {
+					am := rule.Actions[i].Metrics[j]
+					if am.Node == node {
+						m.ActionSuccess = am.Success
+						m.ActionTotal = am.Taken
+						m.ActionFailed = am.Failed
+						break
+					}
+				}
+			}
+		}
+		for _, m := range rule.Metrics {
+			re := collector.RuleEngine{
+				NodeName: m.Node,
+				RuleId:   rule.Id,
+				//ResStatus:           unknown,
+				TopicHitCount:    m.Matched,
+				ExecPassCount:    m.Passed,
+				ExecFailureCount: m.Failed,
+				//NoResultCount:      m.NoResult,
+				ExecRate:           m.Speed,
+				ExecLast5mRate:     m.SpeedLast5m,
+				ExecMaxRate:        m.SpeedMax,
+				ActionExecTimeCost: nil,
+			}
+			fillActionMetrics(m.Node, &re)
+			metrics = append(metrics, re)
+		}
+	}
+	return
+}
+
+func (n *cluster4x) GetDataBridge() ([]collector.DataBridge, error) {
+	return nil, nil
+}
+
+func (n *cluster4x) GetAuthenticationMetrics() ([]collector.DataSource, []collector.Authentication, error) {
+	return nil, nil, nil
+}
+
+func (n *cluster4x) GetAuthorizationMetrics() ([]collector.DataSource, []collector.Authorization, error) {
+	return nil, nil, nil
+}
+
+// parse uptime to second, exp: "2 days, 19 hours, 41 minutes, 47 seconds"
+func parseUptimeFor4x(uptime string) int64 {
+	times := strings.Split(uptime, ", ")
+	var upSecond int64
+	for _, t := range times {
+		timeUnit := strings.Split(t, " ")
+		digit, _ := strconv.Atoi(timeUnit[0])
+		switch timeUnit[1] {
+		case "days":
+			upSecond += int64(digit * 60 * 60 * 24)
+		case "hours":
+			upSecond += int64(digit * 60 * 60)
+		case "minutes":
+			upSecond += int64(digit * 60)
+		case "seconds":
+			upSecond += int64(digit)
+		}
+	}
+	return upSecond
+}
