@@ -3,7 +3,9 @@ package client
 import (
 	"emqx-exporter/collector"
 	"fmt"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/valyala/fasthttp"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -12,15 +14,15 @@ import (
 var _ client = &cluster4x{}
 
 type cluster4x struct {
-	edition edition
+	version string
 	client  *fasthttp.Client
 }
 
-func (n *cluster4x) getEdition() edition {
-	return n.edition
+func (n *cluster4x) getVersion() string {
+	return n.version
 }
 
-func (n *cluster4x) GetLicense() (lic collector.LicenseInfo, err error) {
+func (n *cluster4x) GetLicense() (lic *collector.LicenseInfo, err error) {
 	resp := struct {
 		Data struct {
 			MaxConnections int64  `json:"max_connections"`
@@ -28,10 +30,23 @@ func (n *cluster4x) GetLicense() (lic collector.LicenseInfo, err error) {
 		}
 		Code int
 	}{}
-	err = callHTTPGetWithResp(n.client, "/api/v4/license", &resp)
+
+	data, statusCode, err := callHTTPGet(n.client, "/api/v4/license")
+	if statusCode == http.StatusNotFound {
+		// open source version doesn't support license api
+		err = nil
+		return
+	}
 	if err != nil {
 		return
 	}
+
+	err = jsoniter.Unmarshal(data, &resp)
+	if err != nil {
+		err = fmt.Errorf("unmarshal license failed: /api/v4/license")
+		return
+	}
+
 	if resp.Code != 0 {
 		err = fmt.Errorf("get err from license api: %d", resp.Code)
 		return
@@ -43,8 +58,10 @@ func (n *cluster4x) GetLicense() (lic collector.LicenseInfo, err error) {
 		return
 	}
 
-	lic.MaxClientLimit = resp.Data.MaxConnections
-	lic.Expiration = expiryAt.UnixMilli()
+	lic = &collector.LicenseInfo{
+		MaxClientLimit: resp.Data.MaxConnections,
+		Expiration:     expiryAt.UnixMilli(),
+	}
 	return
 }
 
@@ -73,7 +90,6 @@ func (n *cluster4x) GetClusterStatus() (cluster collector.ClusterStatus, err err
 	cluster.Status = healthy
 	cluster.NodeUptime = make(map[string]int64)
 	cluster.NodeMaxFDs = make(map[string]int)
-	cluster.NodeVer = make(map[string]int)
 
 	for _, data := range resp.Data {
 		if data.NodeStatus != "Running" {
@@ -81,18 +97,14 @@ func (n *cluster4x) GetClusterStatus() (cluster collector.ClusterStatus, err err
 		}
 		cluster.NodeUptime[data.Node] = parseUptimeFor4x(data.Uptime)
 		cluster.NodeMaxFDs[data.Node] = data.MaxFds
-		cluster.NodeVer[data.Node] = version4x
-		if data.Edition == "Opensource" {
-			n.edition = openSource
-		} else {
-			n.edition = enterprise
-		}
+		n.version = data.Version
 	}
 	return
 }
 
-func (n *cluster4x) GetBrokerMetrics() (metrics collector.Broker, err error) {
-	resp := struct {
+func (n *cluster4x) GetBrokerMetrics() (metrics *collector.Broker, err error) {
+	return
+	/*resp := struct {
 		Data struct {
 			Sent     int64
 			Received int64
@@ -111,7 +123,7 @@ func (n *cluster4x) GetBrokerMetrics() (metrics collector.Broker, err error) {
 
 	metrics.MsgInputPeriodSec = resp.Data.Received
 	metrics.MsgOutputPeriodSec = resp.Data.Sent
-	return
+	return*/
 }
 
 func (n *cluster4x) GetRuleEngineMetrics() (metrics []collector.RuleEngine, err error) {
@@ -135,8 +147,6 @@ func (n *cluster4x) GetRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 					Success int64
 					Failed  int64
 				}
-				//Id   string
-				//ResType string
 			}
 			Id      string
 			Enabled bool

@@ -10,7 +10,6 @@ type ClusterStatus struct {
 	Status     int
 	NodeUptime map[string]int64
 	NodeMaxFDs map[string]int
-	NodeVer    map[string]int
 }
 
 type Broker struct {
@@ -78,7 +77,7 @@ type DataSource struct {
 type Cluster interface {
 	GetLicense() (*LicenseInfo, error)
 	GetClusterStatus() (ClusterStatus, error)
-	GetBrokerMetrics() (Broker, error)
+	GetBrokerMetrics() (*Broker, error)
 	GetRuleEngineMetrics() ([]DataBridge, []RuleEngine, error)
 	GetAuthenticationMetrics() ([]DataSource, []Authentication, error)
 	GetAuthorizationMetrics() ([]DataSource, []Authorization, error)

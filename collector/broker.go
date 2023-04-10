@@ -85,6 +85,9 @@ func (c *brokerCollector) Update(ch chan<- prometheus.Metric) error {
 	if err != nil {
 		return err
 	}
+	if metrics == nil {
+		return nil
+	}
 
 	bucket, err := getBucket(metrics.MsgConsumeTimeCosts)
 	if err != nil {

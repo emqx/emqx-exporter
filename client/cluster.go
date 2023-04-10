@@ -52,6 +52,7 @@ func NewCluster(logger log.Logger) collector.Cluster {
 
 func (c *cluster) checkNodes() {
 	httpClient := getHTTPClient(*emqxNodes)
+	var currentVersion string
 	for {
 		var client client
 		client = &cluster4x{client: httpClient}
@@ -63,7 +64,11 @@ func (c *cluster) checkNodes() {
 		if err != nil {
 			level.Warn(c.logger).Log("check nodes", "couldn't get node info", "addr", *emqxNodes, "err", err.Error())
 			client = nil
+		} else if currentVersion != client.getVersion() {
+			currentVersion = client.getVersion()
+			level.Info(c.logger).Log("ClusterVersion", currentVersion)
 		}
+
 		c.nodeLock.Lock()
 		c.client = client
 		c.nodeLock.Unlock()
@@ -81,17 +86,14 @@ func (c *cluster) GetLicense() (lic *collector.LicenseInfo, err error) {
 	if client == nil {
 		return
 	}
-	if client.getEdition() == openSource {
-		return
-	}
 
-	l, err := client.GetLicense()
-	if err != nil {
+	lic, err = client.GetLicense()
+	if err != nil || lic == nil {
 		return
 	}
-	l.RemainingDays = time.UnixMilli(l.Expiration).Sub(time.Now()).Hours() / 24
-	l.RemainingDays, _ = strconv.ParseFloat(fmt.Sprintf("%.1f", l.RemainingDays), 64)
-	return &l, nil
+	lic.RemainingDays = time.UnixMilli(lic.Expiration).Sub(time.Now()).Hours() / 24
+	lic.RemainingDays, _ = strconv.ParseFloat(fmt.Sprintf("%.1f", lic.RemainingDays), 64)
+	return
 }
 
 func (c *cluster) GetClusterStatus() (cluster collector.ClusterStatus, err error) {
@@ -103,7 +105,7 @@ func (c *cluster) GetClusterStatus() (cluster collector.ClusterStatus, err error
 	return client.GetClusterStatus()
 }
 
-func (c *cluster) GetBrokerMetrics() (brokers collector.Broker, err error) {
+func (c *cluster) GetBrokerMetrics() (brokers *collector.Broker, err error) {
 	client := c.getNode()
 	if client == nil {
 		return

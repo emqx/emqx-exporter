@@ -10,23 +10,27 @@ const (
 	healthy
 )
 
-const (
-	version4x = 440
-	version5x = 500
-)
-
-type edition = int
+type edition int
 
 const (
 	openSource edition = iota
 	enterprise
 )
 
+func (e edition) String() string {
+	switch e {
+	case enterprise:
+		return "Enterprise"
+	default:
+		return "OpenSource"
+	}
+}
+
 type client interface {
-	getEdition() edition
-	GetLicense() (collector.LicenseInfo, error)
+	getVersion() string
+	GetLicense() (*collector.LicenseInfo, error)
 	GetClusterStatus() (collector.ClusterStatus, error)
-	GetBrokerMetrics() (collector.Broker, error)
+	GetBrokerMetrics() (*collector.Broker, error)
 	GetDataBridge() ([]collector.DataBridge, error)
 	GetRuleEngineMetrics() ([]collector.RuleEngine, error)
 	GetAuthenticationMetrics() ([]collector.DataSource, []collector.Authentication, error)

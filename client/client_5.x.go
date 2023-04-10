@@ -10,15 +10,20 @@ import (
 var _ client = &cluster5x{}
 
 type cluster5x struct {
+	version string
 	edition edition
 	client  *fasthttp.Client
 }
 
-func (n *cluster5x) getEdition() edition {
-	return n.edition
+func (n *cluster5x) getVersion() string {
+	return n.version + "-" + n.edition.String()
 }
 
-func (n *cluster5x) GetLicense() (lic collector.LicenseInfo, err error) {
+func (n *cluster5x) GetLicense() (lic *collector.LicenseInfo, err error) {
+	if n.edition == openSource {
+		return
+	}
+
 	resp := struct {
 		MaxConnections int64  `json:"max_connections"`
 		ExpiryAt       string `json:"expiry_at"`
@@ -34,8 +39,10 @@ func (n *cluster5x) GetLicense() (lic collector.LicenseInfo, err error) {
 		return
 	}
 
-	lic.MaxClientLimit = resp.MaxConnections
-	lic.Expiration = expiryAt.UnixMilli()
+	lic = &collector.LicenseInfo{
+		MaxClientLimit: resp.MaxConnections,
+		Expiration:     expiryAt.UnixMilli(),
+	}
 	return
 }
 
@@ -57,7 +64,6 @@ func (n *cluster5x) GetClusterStatus() (cluster collector.ClusterStatus, err err
 	cluster.Status = healthy
 	cluster.NodeUptime = make(map[string]int64)
 	cluster.NodeMaxFDs = make(map[string]int)
-	cluster.NodeVer = make(map[string]int)
 
 	for _, data := range resp {
 		if data.NodeStatus != "running" {
@@ -65,17 +71,17 @@ func (n *cluster5x) GetClusterStatus() (cluster collector.ClusterStatus, err err
 		}
 		cluster.NodeUptime[data.Node] = data.Uptime / 1000
 		cluster.NodeMaxFDs[data.Node] = data.MaxFds
-		cluster.NodeVer[data.Node] = version5x
 		if data.Edition == "Opensource" {
 			n.edition = openSource
 		} else {
 			n.edition = enterprise
 		}
+		n.version = data.Version
 	}
 	return
 }
 
-func (n *cluster5x) GetBrokerMetrics() (metrics collector.Broker, err error) {
+func (n *cluster5x) GetBrokerMetrics() (metrics *collector.Broker, err error) {
 	resp := struct {
 		SentMsgRate     int64 `json:"sent_msg_rate"`
 		ReceivedMsgRate int64 `json:"received_msg_rate"`
@@ -85,8 +91,10 @@ func (n *cluster5x) GetBrokerMetrics() (metrics collector.Broker, err error) {
 		return
 	}
 
-	metrics.MsgInputPeriodSec = resp.ReceivedMsgRate
-	metrics.MsgOutputPeriodSec = resp.SentMsgRate
+	metrics = &collector.Broker{
+		MsgInputPeriodSec:  resp.ReceivedMsgRate,
+		MsgOutputPeriodSec: resp.SentMsgRate,
+	}
 	return
 }
 

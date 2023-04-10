@@ -25,7 +25,7 @@ func getHTTPClient(host string) *fasthttp.Client {
 	}
 }
 
-func callHTTPGet(client *fasthttp.Client, uri string) (data []byte, err error) {
+func callHTTPGet(client *fasthttp.Client, uri string) (data []byte, statusCode int, err error) {
 	req := fasthttp.AcquireRequest()
 	defer fasthttp.ReleaseRequest(req)
 
@@ -42,17 +42,15 @@ func callHTTPGet(client *fasthttp.Client, uri string) (data []byte, err error) {
 		err = fmt.Errorf("request %s failed. %w", uri, err)
 		return
 	}
+
+	statusCode = resp.StatusCode()
+
 	if resp.StatusCode() != http.StatusOK {
 		err = fmt.Errorf("%s: %s", uri, http.StatusText(resp.StatusCode()))
 		return
 	}
 
-	//fmt.Fprintln(os.Stdout, "request:", uri, "code", resp.StatusCode(), "err", err, "body:", string(resp.Body()))
-	return resp.Body(), nil
-}
-
-func callHTTPGetWithResp(client *fasthttp.Client, uri string, respData interface{}) (err error) {
-	data, err := callHTTPGet(client, uri)
+	data = resp.Body()
 	if len(data) == 0 {
 		err = fmt.Errorf("get nothing from api %s", uri)
 		return
@@ -61,6 +59,15 @@ func callHTTPGetWithResp(client *fasthttp.Client, uri string, respData interface
 		err = errors.New("get response from api isn't valid json format")
 		return
 	}
+	return
+}
+
+func callHTTPGetWithResp(client *fasthttp.Client, uri string, respData interface{}) (err error) {
+	data, _, err := callHTTPGet(client, uri)
+	if err != nil {
+		return
+	}
+
 	err = jsoniter.Unmarshal(data, respData)
 	if err != nil {
 		err = fmt.Errorf("unmarshal api resp failed: %s", uri)
