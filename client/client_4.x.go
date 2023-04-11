@@ -103,16 +103,26 @@ func (n *cluster4x) GetClusterStatus() (cluster collector.ClusterStatus, err err
 }
 
 func (n *cluster4x) GetBrokerMetrics() (metrics *collector.Broker, err error) {
-	return
-	/*resp := struct {
+	resp := struct {
 		Data struct {
 			Sent     int64
 			Received int64
 		}
 		Code int
 	}{}
-	err = callHTTPGetWithResp(n.client, "/api/v4/monitor/current_metrics", &resp)
+	data, statusCode, err := callHTTPGet(n.client, "/api/v4/monitor/current_metrics")
+	if statusCode == http.StatusNotFound {
+		// open source version doesn't support this api
+		err = nil
+		return
+	}
 	if err != nil {
+		return
+	}
+
+	err = jsoniter.Unmarshal(data, &resp)
+	if err != nil {
+		err = fmt.Errorf("unmarshal license failed: /api/v4/monitor/current_metrics")
 		return
 	}
 
@@ -121,9 +131,11 @@ func (n *cluster4x) GetBrokerMetrics() (metrics *collector.Broker, err error) {
 		return
 	}
 
-	metrics.MsgInputPeriodSec = resp.Data.Received
-	metrics.MsgOutputPeriodSec = resp.Data.Sent
-	return*/
+	metrics = &collector.Broker{
+		MsgInputPeriodSec:  resp.Data.Received,
+		MsgOutputPeriodSec: resp.Data.Sent,
+	}
+	return
 }
 
 func (n *cluster4x) GetRuleEngineMetrics() (metrics []collector.RuleEngine, err error) {

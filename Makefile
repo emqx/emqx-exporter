@@ -27,7 +27,7 @@ build:
 	CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -o .build/${OS}-${ARCH}/emqx-exporter
 
 .PHONY: docker-build
-docker-build:
+docker-build: build
 	docker build -t ${DOCKER_IMAGE_NAME} --build-arg ARCH=${ARCH} --build-arg OS=${OS} .
 
 ## Location to install dependencies to
