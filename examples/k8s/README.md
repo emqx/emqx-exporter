@@ -162,3 +162,5 @@ spec:
 EOF
 ```
 
+## Load Grafana Templates
+Import all [templates](../../config/grafana-template) to your grafana, then browse the dashboard EMQX and enjoy yourself!

@@ -320,7 +320,7 @@ spec:
 ```
 
 ## Grafana Dashboard
-Import all [templates](config/dashboard) to your grafana, then browse the dashboard `EMQX` and enjoy yourself!
+Import all [templates](./config/grafana-template) to your grafana, then browse the dashboard `EMQX` and enjoy yourself!
 
 Refer the [Instruction](docs/en/grafana/instruction.md) to learn how to use grafana dashboard.
 
