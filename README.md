@@ -209,8 +209,8 @@ spec:
           sourceLabels: ['pod']
           targetLabel: "instance"
   namespaceSelector:
-    # modify the namespace if your EMQX cluster deployed in other namespace
     matchNames:
+      # modify the namespace if your EMQX cluster deployed in other namespace
       - default
   
 ---
@@ -241,8 +241,8 @@ spec:
       - action: labeldrop
         regex: 'pod'
   namespaceSelector:
-    # modify the namespace if your exporter deployed in other namespace
     matchNames:
+      # modify the namespace if your exporter deployed in other namespace
       - default
 ```
 

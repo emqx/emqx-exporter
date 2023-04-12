@@ -1,0 +1,26 @@
+global:
+  scrape_interval: 10s
+
+scrape_configs:
+  - job_name: 'emqx'
+    metrics_path: /api/v5/prometheus/stats
+    scrape_interval: 5s
+    honor_labels: true
+    static_configs:
+      # EMQX IP address and port
+      - targets: [emqx-ee-demo:18083]
+        labels:
+          # label the cluster name of where the metrics data from
+          cluster: test
+          # fix value, don't modify
+          from: emqx
+  - job_name: 'exporter'
+    metrics_path: /metrics
+    scrape_interval: 5s
+    static_configs:
+      - targets: [exporter-demo:8085]
+        labels:
+          # label the cluster name of where the metrics data from
+          cluster: test
+          # fix value, don't modify
+          from: exporter
