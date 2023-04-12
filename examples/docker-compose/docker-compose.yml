@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  emqx:
+    image: emqx/emqx-enterprise:5.0.1
+    container_name: emqx-demo
+    ports:
+      - 18083:18083
+      - 1883:1883
+      - 8083:8083
+      - 8084:8084
+      - 8883:8883
+    environment:
+      EMQX_DASHBOARD__BOOTSTRAP_USERS_FILE: '"/opt/emqx/data/bootstrap_user"'
+    volumes:
+      - ./bootstrap_user:/opt/emqx/data/bootstrap_user
+
+  emqx-exporter:
+    image: emqx-exporter
+    container_name: exporter-demo
+    ports:
+      - 8085:8085
+    command:
+      - '--emqx.nodes=emqx-demo:18083'
+      - '--emqx.auth-username=admin'
+      - '--emqx.auth-password=admin'
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus-demo
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus-emqx5.yaml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana-demo
+    ports:
+      - 3000:3000
+    volumes:
+      - ../../config/grafana-template/EMQX5-enterprise:/grafana-dashboard-definitions
+      - ../provisioning/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
+      - ../provisioning/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml

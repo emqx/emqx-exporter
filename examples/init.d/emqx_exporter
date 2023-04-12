@@ -4,7 +4,7 @@ RETVAL=0
 PROG="emqx_exporter"
 EXEC="/etc/emqx_exporter/emqx_exporter"
 LOCKFILE="/var/lock/subsys/$PROG"
-OPTIONS="--web.listen-address=:8085"
+OPTIONS="--web.listen-address=:8085 --emqx.auth-username=${your_api_key} --emqx.auth-password=${your_api_secret}"
 
 # Source function library.
 if [ -f /etc/rc.d/init.d/functions ]; then

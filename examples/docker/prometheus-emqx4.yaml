@@ -3,7 +3,7 @@ global:
 
 scrape_configs:
   - job_name: 'emqx'
-    metrics_path: /api/v5/prometheus/stats
+    metrics_path: /api/v4/emqx_prometheus
     scrape_interval: 5s
     honor_labels: true
     static_configs:
@@ -14,6 +14,12 @@ scrape_configs:
           cluster: test
           # fix value, don't modify
           from: emqx
+    params:
+      type: [ prometheus ]
+    basic_auth:
+      # EMQX 4 requires to use basic auth to access emqx_prometheus api
+      username: admin
+      password: admin
   - job_name: 'exporter'
     metrics_path: /metrics
     scrape_interval: 5s

@@ -55,14 +55,16 @@ func (c *cluster) checkNodes() {
 	var currentVersion string
 	for {
 		var client client
+		var err4, err5 error
 		client = &cluster4x{client: httpClient}
-		_, err := client.GetClusterStatus()
-		if err != nil {
+		_, err4 = client.GetClusterStatus()
+		if err4 != nil {
 			client = &cluster5x{client: httpClient}
-			_, err = client.GetClusterStatus()
+			_, err5 = client.GetClusterStatus()
 		}
-		if err != nil {
-			level.Warn(c.logger).Log("check nodes", "couldn't get node info", "addr", *emqxNodes, "err", err.Error())
+		if err4 != nil && err5 != nil {
+			level.Warn(c.logger).Log("check nodes", "couldn't get node info", "addr", *emqxNodes,
+				"err4", err4.Error(), "err5", err5.Error())
 			client = nil
 		} else if currentVersion != client.getVersion() {
 			currentVersion = client.getVersion()

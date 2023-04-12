@@ -8,7 +8,7 @@ The `emqx-exporter` listens on HTTP port 8085 by default. See the `--help` outpu
 ### API Secret
 The `emqx-exporter` is designed to expose partial metrics that doesn't include in the EMQX prometheus API.
 It requires access to the EMQX dashboard API with basic auth, so you need to sign in dashboard to create an API secret,
-then pass the API key and Secret Key to startup argument as username and password.
+then pass the API key and secret to startup argument as username and password.
 
 Note that it is different to create secret between EMQX 5.x and EMQX 4.x.  
 * **EMQX 5** create a new [API KEY](https://www.emqx.io/docs/en/v5.0/dashboard/system.html#api-keys) in dashboard.
@@ -55,7 +55,7 @@ kind: Service
 metadata:
   labels:
     app: emqx-exporter
-  name: emqx-exporter-metrics-service
+  name: emqx-exporter-service
 spec:
   ports:
   - name: metrics

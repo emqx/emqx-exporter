@@ -213,8 +213,31 @@ func (n *cluster4x) GetRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 	return
 }
 
-func (n *cluster4x) GetDataBridge() ([]collector.DataBridge, error) {
-	return nil, nil
+func (n *cluster4x) GetDataBridge() (bridges []collector.DataBridge, err error) {
+	bridgesResp := struct {
+		Data []struct {
+			Id     string
+			Type   string
+			Status bool
+		}
+		Code int
+	}{}
+	err = callHTTPGetWithResp(n.client, "/api/v4/resources", &bridgesResp)
+	if err != nil {
+		return
+	}
+
+	bridges = make([]collector.DataBridge, len(bridgesResp.Data))
+	for i, data := range bridgesResp.Data {
+		enabled := unhealthy
+		if data.Status {
+			enabled = healthy
+		}
+		bridges[i].Type = data.Type
+		bridges[i].Name = data.Id
+		bridges[i].Status = enabled
+	}
+	return
 }
 
 func (n *cluster4x) GetAuthenticationMetrics() ([]collector.DataSource, []collector.Authentication, error) {
