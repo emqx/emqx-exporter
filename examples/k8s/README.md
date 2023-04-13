@@ -1,3 +1,5 @@
+The purpose of this tutorial is to show you how to deploy a complete demo with EMQX5 on k8s, you can get some helps from the [README](../../README.md) of this repo if you using EMQX4.
+
 ## Install EMQX-Operator
 Refer [Getting Started](https://docs.emqx.com/en/emqx-operator/latest/getting-started/getting-started.html#deploy-emqx-operator) to learn how to deploy EMQX operator
 
@@ -9,7 +11,7 @@ kind: EMQX
 metadata:
   name: emqx
 spec:
-  image: emqx/emqx:latest
+  image: emqx/emqx-enterprise:latest
   coreTemplate:
     spec:
       replicas: 1
@@ -91,6 +93,13 @@ kubectl apply -f emqx.yaml
 ```
 
 ## Import Prometheus Scrape Config
+Assuming that you have deployed prometheus in your k8s env by [Prometheus Operator](https://prometheus-operator.dev/) or [Kube-Prometheus](https://github.com/prometheus-operator/kube-prometheus), you need to add scrape config by define `PodMonitor` and `ServiceMonitor` CR.  
+
+[Here](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md) is a sample example about `PodMonitor` and `ServiceMonitor`.  
+In addition, you can use cmd `kubectl explain` to see the comment about the CR spec. 
+
+In most cases, it's easier to deploy prometheus by `Deployment` without operator if you are new for this, you can get the scrape config example from [here](../docker) 
+
 ```shell
 cat << "EOF" | kubectl apply -f -
 apiVersion: monitoring.coreos.com/v1

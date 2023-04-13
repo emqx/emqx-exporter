@@ -1,6 +1,7 @@
 # EMQX Exporter
-
 Prometheus exporter for EMQX cluster metrics exposed.
+
+![Dashboard](./docs/_assets/EMQX-Dashboards.png)
 
 ## Installation and Usage
 The `emqx-exporter` listens on HTTP port 8085 by default. See the `--help` output for more options.
@@ -175,7 +176,7 @@ scrape_configs:
         from: exporter
 ```
 
-If you have deployed prometheus by [operator](https://prometheus-operator.dev/), then you need to create **PodMonitor** for
+If you have deployed prometheus by [prometheus operator](https://prometheus-operator.dev/) or [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus), then you need to create **PodMonitor** for
 EMQX node and **ServiceMonitor** for exporter to add scrape jobs to prometheus config.
 
 * EMQX 5:
