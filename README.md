@@ -35,20 +35,6 @@ Refer to the [example](examples/docker) to deploy a complete demo by docker.
 
 ### Docker-Compose
 
-```yaml
-version: '3.8'
-
-services:
-  emqx-exporter:
-    image: emqx-exporter:latest
-    container_name: emqx-exporter
-    command:
-      - '--emqx.nodes=${your_cluster_addr}:18083'
-      - '--emqx.auth-username=${apiKey}'
-      - '--emqx.auth-password=${secretKey}'
-    restart: unless-stopped
-```
-
 Refer to the [example](examples/docker-compose) to deploy a complete demo by docker-compose.
 
 ### Kubernetes
