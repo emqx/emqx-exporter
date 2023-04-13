@@ -1,13 +1,12 @@
-# EMQX Exporter
-Prometheus exporter for EMQX cluster metrics exposed.
+# EMQX Exporter 
+The `emqx-exporter` is designed to expose partial metrics that doesn't include in the EMQX prometheus API. It adapted to EMQX 4.x and EMQX 5.X, both open-source and enterprise.
 
 ![Dashboard](./docs/_assets/EMQX-Dashboards.png)
 
 ## Installation and Usage
 The `emqx-exporter` listens on HTTP port 8085 by default. See the `--help` output for more options.
 
-### API Secret
-The `emqx-exporter` is designed to expose partial metrics that doesn't include in the EMQX prometheus API.
+### Preparation
 It requires access to the EMQX dashboard API with basic auth, so you need to sign in dashboard to create an API secret,
 then pass the API key and secret to startup argument as username and password.
 
@@ -32,6 +31,8 @@ EMQX Dashboard HTTP service listens on port `18083` by default, you may need to 
 
 For excluding metrics about exporter itself, add a flag `--web.disable-exporter-metrics`.
 
+Refer to the [example](examples/docker) to deploy a complete demo by docker.
+
 ### Docker-Compose
 
 ```yaml
@@ -48,69 +49,15 @@ services:
     restart: unless-stopped
 ```
 
-### Kubernetes
+Refer to the [example](examples/docker-compose) to deploy a complete demo by docker-compose.
 
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: emqx-exporter
-  name: emqx-exporter-service
-spec:
-  ports:
-  - name: metrics
-    port: 8085
-    targetPort: metrics
-  selector:
-    app: emqx-exporter
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: emqx-exporter
-  labels:
-    app: emqx-exporter
-spec:
-  selector:
-    matchLabels:
-      app: emqx-exporter
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: emqx-exporter
-    spec:
-      securityContext:
-        runAsUser: 1000
-      containers:
-      - name: exporter
-        image: emqx-exporter:latest
-        imagePullPolicy: IfNotPresent
-        args:
-        - --emqx.nodes=${svc-name}:18083
-        - --emqx.auth-username=${apiKey}
-        - --emqx.auth-password=${secretKey}
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsNonRoot: true
-        ports:
-        - containerPort: 8085
-          name: metrics
-          protocol: HTTP
-        resources:
-          limits:
-            cpu: 100m
-            memory: 100Mi
-          requests:
-            cpu: 100m
-            memory: 20Mi
-```
+### Kubernetes
+Refer to the [example](examples/k8s/README.md) to learn how to deploy `emqx-exporter` on the k8s.
 
 ## Prometheus Config
 For EMQX 5 and above, make sure the EMQX cluster has exposed metrics by prometheus, check it in dashboard(http://your_cluster_addr:18083/#/monitoring/integration).
 
-__Note that disable the prometheus push mode(PushGateway)__  
+__Note that disable the prometheus push mode(PushGateway)__
 
 Scrape Config:
 
@@ -142,191 +89,12 @@ scrape_configs:
 
 For EMQX 4, make sure the `emqx_prometheus` plugin has been started, check it in dashboard(http://your_cluster_addr:18083/#/plugins).
 
-Scrape Config:
-
-```yaml
-scrape_configs:
-- job_name: 'emqx'
-  metrics_path: /api/v4/emqx_prometheus
-  scrape_interval: 5s
-  honor_labels: true
-  static_configs:
-    # EMQX IP address and port
-    - targets: [${your_cluster_addr}:18083]
-      labels:
-        # label the cluster name of where the metrics data from
-        cluster: ${your_cluster_name}
-        # fix value
-        from: emqx
-  params:
-    type: [prometheus]
-  basic_auth:
-    # EMQX 4 requires to use basic auth to access emqx_prometheus api 
-    username: ${apiKey}
-    password: ${secretKey}
-- job_name: 'exporter'
-  metrics_path: /metrics
-  scrape_interval: 5s
-  static_configs:
-    - targets: [${your_exporter_addr}:8085]
-      labels:
-        # label the cluster name of where the metrics data from
-        cluster: ${your_cluster_name}
-        # fix value
-        from: exporter
-```
-
-If you have deployed prometheus by [prometheus operator](https://prometheus-operator.dev/) or [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus), then you need to create **PodMonitor** for
-EMQX node and **ServiceMonitor** for exporter to add scrape jobs to prometheus config.
-
-* EMQX 5:
-```yaml
-apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor
-metadata:
-  name: emqx-metrics
-  labels:
-    app: emqx-metrics
-spec:
-  selector:
-    matchLabels:
-      # the label of emqx pod
-      apps.emqx.io/instance: emqx
-      apps.emqx.io/managed-by: emqx-operator
-  podMetricsEndpoints:
-    # dashboard port
-    - targetPort: 18083
-      honorLabels: true
-      interval: 5s
-      path: /api/v5/prometheus/stats
-      relabelings:
-        - action: replace
-          replacement: ${your_cluster_name}
-          targetLabel: cluster
-        - action: replace
-          replacement: emqx
-          targetLabel: from
-        - action: replace
-          sourceLabels: ['pod']
-          targetLabel: "instance"
-  namespaceSelector:
-    matchNames:
-      # modify the namespace if your EMQX cluster deployed in other namespace
-      - default
-  
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: emqx-exporter
-  labels:
-    app: emqx-exporter
-spec:
-  selector:
-    matchLabels:
-      # the label in emqx exporter svc
-      app: emqx-exporter
-  endpoints:
-    # the port name of exporter svc
-    - port: 8085
-      honorLabels: true
-      interval: 5s
-      path: /metrics
-      relabelings:
-      - action: replace
-        replacement: ${your_cluster_name}
-        targetLabel: cluster
-      - action: replace
-        replacement: exporter
-        targetLabel: from
-      - action: labeldrop
-        regex: 'pod'
-  namespaceSelector:
-    matchNames:
-      # modify the namespace if your exporter deployed in other namespace
-      - default
-```
-
-* EMQX 4:
-```yaml
-apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor
-metadata:
-  name: emqx-metrics
-  labels:
-    app: emqx-metrics
-spec:
-  selector:
-    matchLabels:
-      # the label of emqx pod
-      apps.emqx.io/instance: emqx
-      apps.emqx.io/managed-by: emqx-operator
-  podMetricsEndpoints:
-    # dashboard port
-    - targetPort: 18083
-      honorLabels: true
-      interval: 5s
-      path: /api/v4/emqx_prometheus
-      params:
-        type: prometheus
-      basicAuth:
-        username: ${apiKey}
-        password: ${secretKey}
-      relabelings:
-        - action: replace
-          replacement: ${your_cluster_name}
-          targetLabel: cluster
-        - action: replace
-          replacement: emqx
-          targetLabel: from
-        - action: replace
-          sourceLabels: ['pod']
-          targetLabel: "instance"
-  namespaceSelector:
-    # modify the namespace if your EMQX cluster deployed in other namespace
-    matchNames:
-      - default
-  
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: emqx-exporter
-  labels:
-    app: emqx-exporter
-spec:
-  selector:
-    matchLabels:
-      # the label in emqx exporter svc
-      app: emqx-exporter
-  endpoints:
-    # the port name of exporter svc
-    - port: 8085
-      honorLabels: true
-      interval: 5s
-      path: /metrics
-      relabelings:
-      - action: replace
-        replacement: ${your_cluster_name}
-        targetLabel: cluster
-      - action: replace
-        replacement: exporter
-        targetLabel: from
-     - action: labeldrop
-        regex: 'pod'
-  namespaceSelector:
-    # modify the namespace if your exporter deployed in other namespace
-    matchNames:
-      - default
-```
+Refer to the [example](examples/docker/prometheus-emqx4.yaml) to learn how to add scrape configs for EMQX 4. 
 
 ## Grafana Dashboard
 Import all [templates](./config/grafana-template) to your grafana, then browse the dashboard `EMQX` and enjoy yourself!
 
-Refer the [Instruction](docs/en/grafana/instruction.md) to learn how to use grafana dashboard.
-
-## Examples
-You can get some examples [here](./examples).
+Check out the [Instruction](docs/en/grafana/instruction.md) to learn how to use grafana dashboard.
 
 ## Development building and running
 

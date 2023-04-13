@@ -1,0 +1,69 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: emqx-metrics
+  labels:
+    app: emqx-metrics
+spec:
+  selector:
+    matchLabels:
+      # the label of emqx pod
+      apps.emqx.io/instance: emqx
+      apps.emqx.io/managed-by: emqx-operator
+  podMetricsEndpoints:
+    # dashboard port
+    - targetPort: 18083
+      honorLabels: true
+      interval: 5s
+      path: /api/v4/emqx_prometheus
+      params:
+        type: prometheus
+      basicAuth:
+        username: ${apiKey}
+        password: ${secretKey}
+      relabelings:
+        - action: replace
+          replacement: ${your_cluster_name}
+          targetLabel: cluster
+        - action: replace
+          replacement: emqx
+          targetLabel: from
+        - action: replace
+          sourceLabels: ['pod']
+          targetLabel: "instance"
+  namespaceSelector:
+    # modify the namespace if your EMQX cluster deployed in other namespace
+    matchNames:
+      - default
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: emqx-exporter
+  labels:
+    app: emqx-exporter
+spec:
+  selector:
+    matchLabels:
+      # the label in emqx exporter svc
+      app: emqx-exporter
+  endpoints:
+    # the port name of exporter svc
+    - port: 8085
+      honorLabels: true
+      interval: 5s
+      path: /metrics
+      relabelings:
+        - action: replace
+          replacement: ${your_cluster_name}
+          targetLabel: cluster
+        - action: replace
+          replacement: exporter
+          targetLabel: from
+    - action: labeldrop
+        regex: 'pod'
+  namespaceSelector:
+    # modify the namespace if your exporter deployed in other namespace
+    matchNames:
+      - default
