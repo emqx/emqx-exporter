@@ -325,6 +325,9 @@ Import all [templates](./config/grafana-template) to your grafana, then browse t
 
 Refer the [Instruction](docs/en/grafana/instruction.md) to learn how to use grafana dashboard.
 
+## Examples
+You can get some examples [here](./examples).
+
 ## Development building and running
 
 Prerequisites:
