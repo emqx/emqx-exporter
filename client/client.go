@@ -28,11 +28,11 @@ func (e edition) String() string {
 
 type client interface {
 	getVersion() string
-	GetLicense() (*collector.LicenseInfo, error)
-	GetClusterStatus() (collector.ClusterStatus, error)
-	GetBrokerMetrics() (*collector.Broker, error)
-	GetDataBridge() ([]collector.DataBridge, error)
-	GetRuleEngineMetrics() ([]collector.RuleEngine, error)
-	GetAuthenticationMetrics() ([]collector.DataSource, []collector.Authentication, error)
-	GetAuthorizationMetrics() ([]collector.DataSource, []collector.Authorization, error)
+	getLicense() (*collector.LicenseInfo, error)
+	getClusterStatus() (collector.ClusterStatus, error)
+	getBrokerMetrics() (*collector.Broker, error)
+	getDataBridge() ([]collector.DataBridge, error)
+	getRuleEngineMetrics() ([]collector.RuleEngine, error)
+	getAuthenticationMetrics() ([]collector.DataSource, []collector.Authentication, error)
+	getAuthorizationMetrics() ([]collector.DataSource, []collector.Authorization, error)
 }

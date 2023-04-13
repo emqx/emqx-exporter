@@ -19,7 +19,7 @@ func (n *cluster5x) getVersion() string {
 	return n.version + "-" + n.edition.String()
 }
 
-func (n *cluster5x) GetLicense() (lic *collector.LicenseInfo, err error) {
+func (n *cluster5x) getLicense() (lic *collector.LicenseInfo, err error) {
 	if n.edition == openSource {
 		return
 	}
@@ -46,7 +46,7 @@ func (n *cluster5x) GetLicense() (lic *collector.LicenseInfo, err error) {
 	return
 }
 
-func (n *cluster5x) GetClusterStatus() (cluster collector.ClusterStatus, err error) {
+func (n *cluster5x) getClusterStatus() (cluster collector.ClusterStatus, err error) {
 	resp := []struct {
 		Version     string
 		Uptime      int64
@@ -81,7 +81,7 @@ func (n *cluster5x) GetClusterStatus() (cluster collector.ClusterStatus, err err
 	return
 }
 
-func (n *cluster5x) GetBrokerMetrics() (metrics *collector.Broker, err error) {
+func (n *cluster5x) getBrokerMetrics() (metrics *collector.Broker, err error) {
 	resp := struct {
 		SentMsgRate     int64 `json:"sent_msg_rate"`
 		ReceivedMsgRate int64 `json:"received_msg_rate"`
@@ -98,7 +98,7 @@ func (n *cluster5x) GetBrokerMetrics() (metrics *collector.Broker, err error) {
 	return
 }
 
-func (n *cluster5x) GetRuleEngineMetrics() (metrics []collector.RuleEngine, err error) {
+func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err error) {
 	resp := struct {
 		Data []struct {
 			Actions []string
@@ -161,7 +161,7 @@ func (n *cluster5x) GetRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 	return
 }
 
-func (n *cluster5x) GetDataBridge() (bridges []collector.DataBridge, err error) {
+func (n *cluster5x) getDataBridge() (bridges []collector.DataBridge, err error) {
 	bridgesResp := []struct {
 		Name   string
 		Type   string
@@ -185,7 +185,7 @@ func (n *cluster5x) GetDataBridge() (bridges []collector.DataBridge, err error) 
 	return
 }
 
-func (n *cluster5x) GetAuthenticationMetrics() (dataSources []collector.DataSource, metrics []collector.Authentication, err error) {
+func (n *cluster5x) getAuthenticationMetrics() (dataSources []collector.DataSource, metrics []collector.Authentication, err error) {
 	resp := []struct {
 		Id      string
 		Backend string
@@ -247,7 +247,7 @@ func (n *cluster5x) GetAuthenticationMetrics() (dataSources []collector.DataSour
 	return
 }
 
-func (n *cluster5x) GetAuthorizationMetrics() (dataSources []collector.DataSource, metrics []collector.Authorization, err error) {
+func (n *cluster5x) getAuthorizationMetrics() (dataSources []collector.DataSource, metrics []collector.Authorization, err error) {
 	resp := struct {
 		Sources []struct {
 			Type   string

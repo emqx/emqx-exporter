@@ -57,10 +57,10 @@ func (c *cluster) checkNodes() {
 		var client client
 		var err4, err5 error
 		client = &cluster4x{client: httpClient}
-		_, err4 = client.GetClusterStatus()
+		_, err4 = client.getClusterStatus()
 		if err4 != nil {
 			client = &cluster5x{client: httpClient}
-			_, err5 = client.GetClusterStatus()
+			_, err5 = client.getClusterStatus()
 		}
 		if err4 != nil && err5 != nil {
 			level.Warn(c.logger).Log("check nodes", "couldn't get node info", "addr", *emqxNodes,
@@ -89,7 +89,7 @@ func (c *cluster) GetLicense() (lic *collector.LicenseInfo, err error) {
 		return
 	}
 
-	lic, err = client.GetLicense()
+	lic, err = client.getLicense()
 	if err != nil || lic == nil {
 		return
 	}
@@ -104,7 +104,7 @@ func (c *cluster) GetClusterStatus() (cluster collector.ClusterStatus, err error
 		cluster.Status = unknown
 		return
 	}
-	return client.GetClusterStatus()
+	return client.getClusterStatus()
 }
 
 func (c *cluster) GetBrokerMetrics() (brokers *collector.Broker, err error) {
@@ -112,7 +112,7 @@ func (c *cluster) GetBrokerMetrics() (brokers *collector.Broker, err error) {
 	if client == nil {
 		return
 	}
-	return client.GetBrokerMetrics()
+	return client.getBrokerMetrics()
 }
 
 func (c *cluster) GetRuleEngineMetrics() (bridges []collector.DataBridge, res []collector.RuleEngine, err error) {
@@ -120,11 +120,11 @@ func (c *cluster) GetRuleEngineMetrics() (bridges []collector.DataBridge, res []
 	if client == nil {
 		return
 	}
-	bridges, err = client.GetDataBridge()
+	bridges, err = client.getDataBridge()
 	if err != nil {
 		return
 	}
-	res, err = client.GetRuleEngineMetrics()
+	res, err = client.getRuleEngineMetrics()
 	if err != nil {
 		return
 	}
@@ -136,7 +136,7 @@ func (c *cluster) GetAuthenticationMetrics() (dataSources []collector.DataSource
 	if client == nil {
 		return
 	}
-	return client.GetAuthenticationMetrics()
+	return client.getAuthenticationMetrics()
 }
 
 func (c *cluster) GetAuthorizationMetrics() (dataSources []collector.DataSource, auths []collector.Authorization, err error) {
@@ -144,7 +144,7 @@ func (c *cluster) GetAuthorizationMetrics() (dataSources []collector.DataSource,
 	if client == nil {
 		return
 	}
-	return client.GetAuthorizationMetrics()
+	return client.getAuthorizationMetrics()
 }
 
 func (c *cluster) getNode() client {

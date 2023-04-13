@@ -22,7 +22,7 @@ func (n *cluster4x) getVersion() string {
 	return n.version
 }
 
-func (n *cluster4x) GetLicense() (lic *collector.LicenseInfo, err error) {
+func (n *cluster4x) getLicense() (lic *collector.LicenseInfo, err error) {
 	resp := struct {
 		Data struct {
 			MaxConnections int64  `json:"max_connections"`
@@ -65,7 +65,7 @@ func (n *cluster4x) GetLicense() (lic *collector.LicenseInfo, err error) {
 	return
 }
 
-func (n *cluster4x) GetClusterStatus() (cluster collector.ClusterStatus, err error) {
+func (n *cluster4x) getClusterStatus() (cluster collector.ClusterStatus, err error) {
 	resp := struct {
 		Data []struct {
 			Version     string
@@ -102,7 +102,7 @@ func (n *cluster4x) GetClusterStatus() (cluster collector.ClusterStatus, err err
 	return
 }
 
-func (n *cluster4x) GetBrokerMetrics() (metrics *collector.Broker, err error) {
+func (n *cluster4x) getBrokerMetrics() (metrics *collector.Broker, err error) {
 	resp := struct {
 		Data struct {
 			Sent     int64
@@ -138,7 +138,7 @@ func (n *cluster4x) GetBrokerMetrics() (metrics *collector.Broker, err error) {
 	return
 }
 
-func (n *cluster4x) GetRuleEngineMetrics() (metrics []collector.RuleEngine, err error) {
+func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err error) {
 	resp := struct {
 		Data []struct {
 			Metrics []struct {
@@ -213,7 +213,7 @@ func (n *cluster4x) GetRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 	return
 }
 
-func (n *cluster4x) GetDataBridge() (bridges []collector.DataBridge, err error) {
+func (n *cluster4x) getDataBridge() (bridges []collector.DataBridge, err error) {
 	bridgesResp := struct {
 		Data []struct {
 			Id     string
@@ -240,11 +240,11 @@ func (n *cluster4x) GetDataBridge() (bridges []collector.DataBridge, err error) 
 	return
 }
 
-func (n *cluster4x) GetAuthenticationMetrics() ([]collector.DataSource, []collector.Authentication, error) {
+func (n *cluster4x) getAuthenticationMetrics() ([]collector.DataSource, []collector.Authentication, error) {
 	return nil, nil, nil
 }
 
-func (n *cluster4x) GetAuthorizationMetrics() ([]collector.DataSource, []collector.Authorization, error) {
+func (n *cluster4x) getAuthorizationMetrics() ([]collector.DataSource, []collector.Authorization, error) {
 	return nil, nil, nil
 }
 

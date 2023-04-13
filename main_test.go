@@ -27,7 +27,7 @@ import (
 )
 
 var (
-	binary = filepath.Join(os.Getenv("GOPATH"), "bin/node_exporter")
+	binary = filepath.Join(os.Getenv("GOPATH"), "bin/emqx-exporter")
 )
 
 const (
@@ -36,7 +36,7 @@ const (
 
 func TestFileDescriptorLeak(t *testing.T) {
 	if _, err := os.Stat(binary); err != nil {
-		t.Skipf("node_exporter binary not available, try to run `make build` first: %s", err)
+		t.Skipf("emqx-exporter binary not available, try to run `make build` first: %s", err)
 	}
 	fs, err := procfs.NewDefaultFS()
 	if err != nil {
@@ -81,7 +81,7 @@ func TestFileDescriptorLeak(t *testing.T) {
 
 func TestHandlingOfDuplicatedMetrics(t *testing.T) {
 	if _, err := os.Stat(binary); err != nil {
-		t.Skipf("node_exporter binary not available, try to run `make build` first: %s", err)
+		t.Skipf("emqx-exporter binary not available, try to run `make build` first: %s", err)
 	}
 
 	dir, err := os.MkdirTemp("", "node-exporter")
