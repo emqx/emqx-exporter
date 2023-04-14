@@ -21,7 +21,7 @@ type Broker struct {
 type RuleEngine struct {
 	// NodeName the name of emqx node
 	NodeName string
-	RuleId   string
+	RuleID   string
 	// TopicHitCount
 	TopicHitCount      int64
 	ExecPassCount      int64

@@ -156,47 +156,47 @@ func (c *ruleEngineCollector) Update(ch chan<- prometheus.Metric) error {
 		ch <- prometheus.MustNewConstHistogram(c.desc[ruleExecTimeCost],
 			metric.ActionExecTimeCost["count"],
 			float64(metric.ActionExecTimeCost["sum"]),
-			bucket, metric.NodeName, metric.RuleId)
+			bucket, metric.NodeName, metric.RuleID)
 
 		ch <- prometheus.MustNewConstMetric(
 			c.desc[ruleTopicHitCount],
-			prometheus.CounterValue, float64(metric.TopicHitCount), metric.NodeName, metric.RuleId,
+			prometheus.CounterValue, float64(metric.TopicHitCount), metric.NodeName, metric.RuleID,
 		)
 		ch <- prometheus.MustNewConstMetric(
 			c.desc[ruleExecPassCount],
-			prometheus.CounterValue, float64(metric.ExecPassCount), metric.NodeName, metric.RuleId,
+			prometheus.CounterValue, float64(metric.ExecPassCount), metric.NodeName, metric.RuleID,
 		)
 		ch <- prometheus.MustNewConstMetric(
 			c.desc[ruleExecFailureCount],
-			prometheus.CounterValue, float64(metric.ExecFailureCount), metric.NodeName, metric.RuleId,
+			prometheus.CounterValue, float64(metric.ExecFailureCount), metric.NodeName, metric.RuleID,
 		)
 		ch <- prometheus.MustNewConstMetric(
 			c.desc[ruleNoResultCount],
-			prometheus.CounterValue, float64(metric.NoResultCount), metric.NodeName, metric.RuleId,
+			prometheus.CounterValue, float64(metric.NoResultCount), metric.NodeName, metric.RuleID,
 		)
 		ch <- prometheus.MustNewConstMetric(
 			c.desc[ruleExecRate],
-			prometheus.GaugeValue, metric.ExecRate, metric.NodeName, metric.RuleId,
+			prometheus.GaugeValue, metric.ExecRate, metric.NodeName, metric.RuleID,
 		)
 		ch <- prometheus.MustNewConstMetric(
 			c.desc[ruleExecLast5mRate],
-			prometheus.GaugeValue, metric.ExecLast5mRate, metric.NodeName, metric.RuleId,
+			prometheus.GaugeValue, metric.ExecLast5mRate, metric.NodeName, metric.RuleID,
 		)
 		ch <- prometheus.MustNewConstMetric(
 			c.desc[ruleExecMaxRate],
-			prometheus.GaugeValue, metric.ExecMaxRate, metric.NodeName, metric.RuleId,
+			prometheus.GaugeValue, metric.ExecMaxRate, metric.NodeName, metric.RuleID,
 		)
 		ch <- prometheus.MustNewConstMetric(
 			c.desc[ruleActionTotal],
-			prometheus.CounterValue, float64(metric.ActionTotal), metric.NodeName, metric.RuleId,
+			prometheus.CounterValue, float64(metric.ActionTotal), metric.NodeName, metric.RuleID,
 		)
 		ch <- prometheus.MustNewConstMetric(
 			c.desc[ruleActionSuccess],
-			prometheus.CounterValue, float64(metric.ActionSuccess), metric.NodeName, metric.RuleId,
+			prometheus.CounterValue, float64(metric.ActionSuccess), metric.NodeName, metric.RuleID,
 		)
 		ch <- prometheus.MustNewConstMetric(
 			c.desc[ruleActionFailed],
-			prometheus.CounterValue, float64(metric.ActionFailed), metric.NodeName, metric.RuleId,
+			prometheus.CounterValue, float64(metric.ActionFailed), metric.NodeName, metric.RuleID,
 		)
 	}
 
