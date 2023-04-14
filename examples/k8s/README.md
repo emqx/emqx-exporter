@@ -16,14 +16,14 @@ spec:
     spec:
       replicas: 1
       ports:
-        # prometheus monitor requires the pod must to name the target port 
+        # prometheus monitor requires the pod must name the target port 
         - containerPort: 18083
           name: dashboard
   replicantTemplate:
     spec:
       replicas: 1
       ports:
-        # prometheus monitor requires the pod must to name the target port
+        # prometheus monitor requires the pod must name the target port
         - containerPort: 18083
           name: dashboard
 EOF
