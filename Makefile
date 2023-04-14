@@ -26,6 +26,10 @@ DOCKER_IMAGE_NAME       ?= emqx-exporter:latest
 build:
 	CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -o .build/${OS}-${ARCH}/emqx-exporter
 
+.PHONY: test
+test:
+	go test -race --cover -covermode=atomic -coverpkg=./... -coverprofile=cover.out ./...
+
 .PHONY: docker-build
 docker-build: build
 	docker build -t ${DOCKER_IMAGE_NAME} --build-arg ARCH=${ARCH} --build-arg OS=${OS} .
