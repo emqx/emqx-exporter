@@ -1,7 +1,7 @@
 The purpose of this tutorial is to show you how to deploy a complete demo with EMQX5 on k8s
 
 ## Install EMQX-Operator
-Refer to [Getting Started](https://docs.emqx.com/en/emqx-operator/latest/getting-started/getting-started.html#deploy-emqx-operator) to learn how to deploy EMQX operator
+Refer to [Getting Started](https://docs.emqx.com/en/emqx-operator/latest/getting-started/getting-started.html#deploy-emqx-operator) to learn how to deploy the EMQX operator
 
 ## Deploy EMQX Cluster
 ```shell
@@ -30,7 +30,7 @@ EOF
 ```
 
 ## Deploy Exporter
-You need to sign in EMQX dashboard to create an API secret, then pass the API key and secret to exporter startup argument as username and password.
+You need to sign in EMQX dashboard to create an API secret, then pass the API key and secret to the exporter startup argument as username and password.
 
 ```yaml
 apiVersion: v1
@@ -95,12 +95,12 @@ kubectl apply -f emqx.yaml
 ```
 
 ## Import Prometheus Scrape Config
-Assuming that you have deployed prometheus by [Prometheus Operator](https://prometheus-operator.dev/) or [Kube-Prometheus](https://github.com/prometheus-operator/kube-prometheus), you need to add scrape config by define `PodMonitor` and `ServiceMonitor` CR.  
+Assuming that you have deployed Prometheus by [Prometheus Operator](https://prometheus-operator.dev/) or [Kube-Prometheus](https://github.com/prometheus-operator/kube-prometheus), you need to add scrape config by defining `PodMonitor` and `ServiceMonitor` CR.  
 
-[Here](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md) is a sample example about `PodMonitor` and `ServiceMonitor`.  
+[Here](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md) is a sample example of `PodMonitor` and `ServiceMonitor`.  
 In addition, you can use cmd `kubectl explain` to see the comment about the CR spec. 
 
-In most cases, it's easier to deploy prometheus by `Deployment` without operator if you are new for this, and you can get the scrape config example from [here](../docker) 
+In most cases, it's easier to deploy Prometheus by `Deployment`` without the operator if you are new to this, and you can get the scrape config example from [here](../docker) 
 
 The yaml below is available for EMQX5, you can check out the [template](./template_monitor_emqx4.yaml) for EMQX4. 
 
@@ -176,4 +176,4 @@ EOF
 ```
 
 ## Load Grafana Templates
-Import all [templates](../../config/grafana-template) to your grafana, then browse the dashboard EMQX and enjoy yourself!
+Import all [templates](../../config/grafana-template) to your Grafana, then browse the dashboard EMQX and enjoy yourself!

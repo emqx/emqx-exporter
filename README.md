@@ -1,5 +1,5 @@
 # EMQX Exporter 
-The `emqx-exporter` is designed to expose partial metrics that doesn't include in the EMQX prometheus API. It adapted to EMQX 4.x and EMQX 5.X, both open-source and enterprise.
+The `emqx-exporter` is designed to expose partial metrics that don't include in the EMQX Prometheus API. It adapted to EMQX 4.x and EMQX 5.x, both open-source and enterprise.
 
 ![Dashboard](./docs/_assets/EMQX-Dashboards.png)
 
@@ -7,11 +7,11 @@ The `emqx-exporter` is designed to expose partial metrics that doesn't include i
 The `emqx-exporter` listens on HTTP port 8085 by default. See the `--help` output for more options.
 
 ### Preparation
-It requires access to the EMQX dashboard API with basic auth, so you need to sign in dashboard to create an API secret,
-then pass the API key and secret to startup argument as username and password.
+It requires access to the EMQX dashboard API with basic auth, so you need to sign in to the dashboard to create an API secret,
+then pass the API key and secret to the startup argument as username and password.
 
-Note that it is different to create secret between EMQX 5.x and EMQX 4.x.  
-* **EMQX 5** create a new [API KEY](https://www.emqx.io/docs/en/v5.0/dashboard/system.html#api-keys) in dashboard.
+Note that it is different to create a secret between EMQX 5.x and EMQX 4.x.  
+* **EMQX 5** create a new [API KEY](https://www.emqx.io/docs/en/v5.0/dashboard/system.html#api-keys) in the dashboard.
 * **EMQX 4** create a new `User` instead of `Application`
 
 ### Docker
@@ -29,7 +29,7 @@ The arg `emqx.nodes` is a host list, the exporter will choose one to establish c
 
 EMQX Dashboard HTTP service listens on port `18083` by default, you may need to modify it according to the actual configuration.
 
-For excluding metrics about exporter itself, add a flag `--web.disable-exporter-metrics`.
+For excluding metrics about the exporter itself, add a flag `--web.disable-exporter-metrics`.
 
 Refer to the [example](examples/docker) to deploy a complete demo by docker.
 
@@ -41,9 +41,9 @@ Refer to the [example](examples/docker-compose) to deploy a complete demo by doc
 Refer to the [example](examples/k8s/README.md) to learn how to deploy `emqx-exporter` on the k8s.
 
 ## Prometheus Config
-For EMQX 5 and above, make sure the EMQX cluster has exposed metrics by prometheus, check it in dashboard(http://your_cluster_addr:18083/#/monitoring/integration).
+For EMQX 5 and above, make sure the EMQX cluster has exposed metrics by Prometheus, and check it in the dashboard(http://your_cluster_addr:18083/#/monitoring/integration).
 
-__Note that disable the prometheus push mode(PushGateway)__
+__Note that disable the Prometheus push mode(PushGateway)__
 
 Scrape Config:
 
@@ -73,14 +73,14 @@ scrape_configs:
         from: exporter
 ```
 
-For EMQX 4, make sure the `emqx_prometheus` plugin has been started, check it in dashboard(http://your_cluster_addr:18083/#/plugins).
+For EMQX 4, make sure the `emqx_prometheus` plugin has been started, and check it in the dashboard(http://your_cluster_addr:18083/#/plugins).
 
 Refer to the [example](examples/docker/prometheus-emqx4.yaml) to learn how to add scrape configs for EMQX 4. 
 
 ## Grafana Dashboard
-Import all [templates](./config/grafana-template) to your grafana, then browse the dashboard `EMQX` and enjoy yourself!
+Import all [templates](./config/grafana-template) to your Grafana, then browse the dashboard `EMQX` and enjoy yourself!
 
-Check out the [Instruction](docs/en/grafana/instruction.md) to learn how to use grafana dashboard.
+Check out the [Instruction](docs/en/grafana/instruction.md) to learn how to use the Grafana dashboard.
 
 ## Development building and running
 

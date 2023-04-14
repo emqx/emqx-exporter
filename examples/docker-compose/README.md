@@ -3,4 +3,4 @@ Deploy a complete demo by the cmd below
 docker-compose up
 ```
 
-**Note the default account of EMQX dashboard has been set to admin/admin**
+**Note the default account of the EMQX dashboard has been set to admin/admin**
