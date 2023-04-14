@@ -7,10 +7,10 @@ chmod +x statrup.sh
 
 **Note the default account of EMQX dashboard has been set to admin/admin**
 
-The shell deploys EMQX5 enterprise by default, it also supports deploying other versions by passing an additional arg `emqx4`, `emqx4-ee` and `emqx5`.
+The shell deploys EMQX 5 enterprise by default, it also supports deploying other versions by passing an additional arg `emqx4`, `emqx4-ee` and `emqx5`.
 
 For example:
 ```shell
-# deploy EMQX5 opensource version
+# deploy EMQX 5 opensource version
 ./startup.sh emqx5
 ```

@@ -1,5 +1,5 @@
 # EMQX Exporter 
-The `emqx-exporter` is designed to expose partial metrics that don't include in the EMQX Prometheus API. It adapted to EMQX 4.x and EMQX 5.x, both open-source and enterprise.
+The `emqx-exporter` is designed to expose partial metrics that don't include in the EMQX Prometheus API. It adapted to EMQX 4.4 and EMQX 5, both open-source and enterprise.
 
 ![Dashboard](./docs/_assets/EMQX-Dashboards.png)
 
@@ -10,9 +10,9 @@ The `emqx-exporter` listens on HTTP port 8085 by default. See the `--help` outpu
 It requires access to the EMQX dashboard API with basic auth, so you need to sign in to the dashboard to create an API secret,
 then pass the API key and secret to the startup argument as username and password.
 
-Note that it is different to create a secret between EMQX 5.x and EMQX 4.x.  
+Note that it is different to create a secret between EMQX 5 and EMQX 4.4.  
 * **EMQX 5** create a new [API KEY](https://www.emqx.io/docs/en/v5.0/dashboard/system.html#api-keys) in the dashboard.
-* **EMQX 4** create a new `User` instead of `Application`
+* **EMQX 4.4** create a new `User` instead of `Application`
 
 ### Docker
 
@@ -41,7 +41,7 @@ Refer to the [example](examples/docker-compose) to deploy a complete demo by doc
 Refer to the [example](examples/k8s/README.md) to learn how to deploy `emqx-exporter` on the k8s.
 
 ## Prometheus Config
-For EMQX 5 and above, make sure the EMQX cluster has exposed metrics by Prometheus, and check it in the dashboard(http://your_cluster_addr:18083/#/monitoring/integration).
+For EMQX 5 and above, make sure the EMQX cluster has exposed metrics by Prometheus, and check it in the dashboard(http://${your_cluster_addr}:18083/#/monitoring/integration).
 
 __Note that disable the Prometheus push mode(PushGateway)__
 
@@ -73,9 +73,9 @@ scrape_configs:
         from: exporter
 ```
 
-For EMQX 4, make sure the `emqx_prometheus` plugin has been started, and check it in the dashboard(http://your_cluster_addr:18083/#/plugins).
+For EMQX 4.4, make sure the `emqx_prometheus` plugin has been started, and check it in the dashboard(http://your_cluster_addr:18083/#/plugins).
 
-Refer to the [example](examples/docker/prometheus-emqx4.yaml) to learn how to add scrape configs for EMQX 4. 
+Refer to the [example](examples/docker/prometheus-emqx4.yaml) to learn how to add scrape configs for EMQX 4.4. 
 
 ## Grafana Dashboard
 Import all [templates](./config/grafana-template) to your Grafana, then browse the dashboard `EMQX` and enjoy yourself!

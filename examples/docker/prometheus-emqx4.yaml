@@ -17,7 +17,7 @@ scrape_configs:
     params:
       type: [ prometheus ]
     basic_auth:
-      # EMQX 4 requires to use basic auth to access emqx_prometheus api
+      # EMQX 4.4 requires to use basic auth to access emqx_prometheus api
       username: admin
       password: admin
   - job_name: 'exporter'

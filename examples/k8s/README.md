@@ -1,4 +1,4 @@
-The purpose of this tutorial is to show you how to deploy a complete demo with EMQX5 on k8s
+The purpose of this tutorial is to show you how to deploy a complete demo with EMQX 5 on k8s
 
 ## Install EMQX-Operator
 Refer to [Getting Started](https://docs.emqx.com/en/emqx-operator/latest/getting-started/getting-started.html#deploy-emqx-operator) to learn how to deploy the EMQX operator
@@ -102,7 +102,7 @@ In addition, you can use cmd `kubectl explain` to see the comment about the CR s
 
 In most cases, it's easier to deploy Prometheus by `Deployment`` without the operator if you are new to this, and you can get the scrape config example from [here](../docker) 
 
-The yaml below is available for EMQX5, you can check out the [template](./template_monitor_emqx4.yaml) for EMQX4. 
+The yaml below is available for EMQX 5, you can check out the [template](./template_monitor_emqx4.yaml) for EMQX4. 
 
 ```shell
 cat << "EOF" | kubectl apply -f -
