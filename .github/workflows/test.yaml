@@ -20,5 +20,7 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: '1.20.x'
+      - run: go install github.com/google/go-licenses@latest
+      - run: $(go env GOPATH)/bin/go-licenses check . --disallowed_types forbidden,restricted,unknown
       - run: make test
 
