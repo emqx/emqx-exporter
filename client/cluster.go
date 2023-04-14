@@ -93,7 +93,8 @@ func (c *cluster) GetLicense() (lic *collector.LicenseInfo, err error) {
 	if err != nil || lic == nil {
 		return
 	}
-	lic.RemainingDays = time.UnixMilli(lic.Expiration).Sub(time.Now()).Hours() / 24
+
+	lic.RemainingDays = time.Until(time.UnixMilli(lic.Expiration)).Hours() / 24
 	lic.RemainingDays, _ = strconv.ParseFloat(fmt.Sprintf("%.1f", lic.RemainingDays), 64)
 	return
 }

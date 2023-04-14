@@ -160,7 +160,7 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 					Failed  int64
 				}
 			}
-			Id      string
+			ID      string `json:"id"`
 			Enabled bool
 		}
 		Code int
@@ -195,7 +195,7 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 		for _, m := range rule.Metrics {
 			re := collector.RuleEngine{
 				NodeName: m.Node,
-				RuleId:   rule.Id,
+				RuleID:   rule.ID,
 				//ResStatus:           unknown,
 				TopicHitCount:    m.Matched,
 				ExecPassCount:    m.Passed,
@@ -216,7 +216,7 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 func (n *cluster4x) getDataBridge() (bridges []collector.DataBridge, err error) {
 	bridgesResp := struct {
 		Data []struct {
-			Id     string
+			ID     string `json:"id"`
 			Type   string
 			Status bool
 		}
@@ -234,7 +234,7 @@ func (n *cluster4x) getDataBridge() (bridges []collector.DataBridge, err error) 
 			enabled = healthy
 		}
 		bridges[i].Type = data.Type
-		bridges[i].Name = data.Id
+		bridges[i].Name = data.ID
 		bridges[i].Status = enabled
 	}
 	return

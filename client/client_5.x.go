@@ -102,7 +102,7 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 	resp := struct {
 		Data []struct {
 			Actions []string
-			Id      string
+			ID      string `json:"id"`
 			Name    string
 			Enable  bool
 		}
@@ -135,7 +135,7 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 				}
 			} `json:"node_metrics"`
 		}{}
-		err = callHTTPGetWithResp(n.client, fmt.Sprintf("/api/v5/rules/%s/metrics", rule.Id), &metricsResp)
+		err = callHTTPGetWithResp(n.client, fmt.Sprintf("/api/v5/rules/%s/metrics", rule.ID), &metricsResp)
 		if err != nil {
 			return
 		}
@@ -143,7 +143,7 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 		for _, node := range metricsResp.NodeMetrics {
 			metrics = append(metrics, collector.RuleEngine{
 				NodeName:           node.Node,
-				RuleId:             rule.Id,
+				RuleID:             rule.ID,
 				TopicHitCount:      node.Metrics.Matched,
 				ExecPassCount:      node.Metrics.Passed,
 				ExecFailureCount:   node.Metrics.Failed,
@@ -187,7 +187,7 @@ func (n *cluster5x) getDataBridge() (bridges []collector.DataBridge, err error) 
 
 func (n *cluster5x) getAuthenticationMetrics() (dataSources []collector.DataSource, metrics []collector.Authentication, err error) {
 	resp := []struct {
-		Id      string
+		ID      string `json:"id"`
 		Backend string
 		Enable  bool
 	}{{}}
@@ -215,7 +215,7 @@ func (n *cluster5x) getAuthenticationMetrics() (dataSources []collector.DataSour
 			} `json:"node_metrics"`
 			Status string
 		}{}
-		err = callHTTPGetWithResp(n.client, fmt.Sprintf("/api/v5/authentication/%s/status", plugin.Id), &status)
+		err = callHTTPGetWithResp(n.client, fmt.Sprintf("/api/v5/authentication/%s/status", plugin.ID), &status)
 		if err != nil {
 			return
 		}

@@ -1,4 +1,4 @@
-The purpose of this tutorial is to show you how to deploy a complete demo with EMQX 5 on k8s
+The purpose of this tutorial is to show you how to deploy a complete demo with EMQX 5 on Kubernetes.
 
 ## Install EMQX-Operator
 Refer to [Getting Started](https://docs.emqx.com/en/emqx-operator/latest/getting-started/getting-started.html#deploy-emqx-operator) to learn how to deploy the EMQX operator
@@ -16,14 +16,14 @@ spec:
     spec:
       replicas: 1
       ports:
-        # prometheus monitor requires the pod must to name the target port 
+        # prometheus monitor requires the pod must name the target port 
         - containerPort: 18083
           name: dashboard
   replicantTemplate:
     spec:
       replicas: 1
       ports:
-        # prometheus monitor requires the pod must to name the target port
+        # prometheus monitor requires the pod must name the target port
         - containerPort: 18083
           name: dashboard
 EOF
