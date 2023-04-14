@@ -1,11 +1,17 @@
-ARG ARCH="amd64"
-ARG OS="linux"
-FROM quay.io/prometheus/busybox-${OS}-${ARCH}:latest
+# Build the manager binary
+FROM golang:1.20.3 as builder
+
+WORKDIR /workspace
+COPY . .
+RUN go work init \
+    && go work use . \
+    && go mod download \
+    && CGO_ENABLED=0 GOOS=linux go build -o emqx-exporter
+
+FROM quay.io/prometheus/busybox:latest
 LABEL maintainer="EMQX"
 
-ARG ARCH="amd64"
-ARG OS="linux"
-COPY .build/${OS}-${ARCH}/emqx-exporter /bin/emqx-exporter
+COPY --from=builder /workspace/emqx-exporter /bin/emqx-exporter
 
 EXPOSE      8085
 USER        nobody
