@@ -1,4 +1,4 @@
-Deploy a complete demo by the cmd below
+Deploy a complete demo for practice by the cmd below. Do not use it directly in your production environment!
 ```shell
 chmod +x statrup.sh
 
