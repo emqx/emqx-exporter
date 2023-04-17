@@ -30,7 +30,7 @@ EOF
 ```
 
 ## Deploy Exporter
-You need to sign in EMQX dashboard to create an API secret, then pass the API key and secret to the exporter startup argument as username and password.
+You need to sign in to EMQX dashboard to create an API secret, then pass the API key and secret to the exporter startup argument as username and password.
 
 ```yaml
 apiVersion: v1
@@ -89,9 +89,9 @@ spec:
               memory: 20Mi
 ```
 
-Save the yaml content to file `emqx.yaml`, paste your new creating API key and secret, then apply it
+Save the yaml content to file `emqx-exporter.yaml`, paste your new creating API key and secret, then apply it
 ```shell
-kubectl apply -f emqx.yaml
+kubectl apply -f emqx-exporter.yaml
 ```
 
 ## Import Prometheus Scrape Config
