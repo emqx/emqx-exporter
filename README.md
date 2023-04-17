@@ -80,14 +80,15 @@ Refer to the [example](examples/docker/prometheus-emqx4.yaml) to learn how to ad
 ## Grafana Dashboard
 Import all [templates](./config/grafana-template) to your Grafana, then browse the dashboard `EMQX` and enjoy yourself!
 
-Check out the [Instruction](docs/en/grafana/instruction.md) to learn how to use the Grafana dashboard.
+Check out the [Instruction](config/grafana-template/README.md) to learn how to use the Grafana dashboard.
 
-## Development building and running
+The templates of dashboard ares JSON files, about how to upload a dashboard JSON file, you can check out [here](https://grafana.com/docs/grafana/latest/dashboards/manage-dashboards/#import-a-dashboard). 
+
+## Development
 
 Prerequisites:
 
 * [Go compiler](https://golang.org/dl/)
-* RHEL/CentOS: `glibc-static` package.
 
 Building:
 
