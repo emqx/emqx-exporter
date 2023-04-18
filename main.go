@@ -68,7 +68,7 @@ func (h *handler) innerHandler() (http.Handler, error) {
 	}
 
 	r := prometheus.NewRegistry()
-	r.MustRegister(version.NewCollector("emqx-exporter"))
+	r.MustRegister(version.NewCollector("emqx_exporter"))
 	if err := r.Register(nc); err != nil {
 		return nil, fmt.Errorf("couldn't register node collector: %s", err)
 	}
