@@ -79,7 +79,7 @@ spec:
           ports:
             - containerPort: 8085
               name: metrics
-              protocol: HTTP
+              protocol: TCP
           resources:
             limits:
               cpu: 100m
