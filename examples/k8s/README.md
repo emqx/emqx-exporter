@@ -11,7 +11,7 @@ kind: EMQX
 metadata:
   name: emqx
 spec:
-  image: emqx/emqx-enterprise:latest
+  image: emqx/emqx-enterprise:5.0.1
   coreTemplate:
     spec:
       replicas: 1
@@ -70,6 +70,7 @@ spec:
           image: emqx-exporter:latest
           imagePullPolicy: IfNotPresent
           args:
+            # "emqx-dashboard" is the default service name that creating by operator for exposing 18083 port 
             - --emqx.nodes=emqx-dashboard:18083
             - --emqx.auth-username=${paste_your_new_api_key_here}
             - --emqx.auth-password=${paste_your_new_secret_here}
@@ -92,6 +93,14 @@ spec:
 Save the yaml content to file `emqx-exporter.yaml`, paste your new creating API key and secret, then apply it
 ```shell
 kubectl apply -f emqx-exporter.yaml
+```
+
+Check the status of emqx-exporter pod。
+```bash
+$ kubectl get po -l="app=emqx-exporter"
+
+NAME      STATUS   AGE
+emqx-exporter-856564c95-j4q5v   Running  8m33s
 ```
 
 ## Import Prometheus Scrape Config
@@ -119,17 +128,21 @@ spec:
       apps.emqx.io/instance: emqx
       apps.emqx.io/managed-by: emqx-operator
   podMetricsEndpoints:
+    # the name of emqx dashboard containerPort
     - port: dashboard
       interval: 5s
       path: /api/v5/prometheus/stats
       relabelings:
         - action: replace
+          # user-defined cluster name, requires unique
           replacement: emqx5.0
           targetLabel: cluster
         - action: replace
+          # fix value, don't modify
           replacement: emqx
           targetLabel: from
         - action: replace
+          # fix value, don't modify
           sourceLabels: ['pod']
           targetLabel: "instance"
   namespaceSelector:
@@ -155,19 +168,22 @@ spec:
       path: /metrics
       relabelings:
         - action: replace
+          # user-defined cluster name, requires unique
           replacement: emqx5.0
           targetLabel: cluster
         - action: replace
+          # fix value, don't modify
           replacement: exporter
           targetLabel: from
         - action: replace
+          # fix value, don't modify
           sourceLabels: ['pod']
           regex: '(.*)-.*-.*'
           replacement: $1
           targetLabel: "instance"
         - action: labeldrop
+          # fix value, don't modify
           regex: 'pod'
-          #sourceLabels: ['pod']
   namespaceSelector:
     # modify the namespace if your exporter deployed in other namespace
     matchNames:

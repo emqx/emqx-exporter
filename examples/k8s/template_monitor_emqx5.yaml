@@ -7,23 +7,26 @@ metadata:
 spec:
   selector:
     matchLabels:
-      # the label of emqx pod
+      # the label is the same as the label of emqx pod
       apps.emqx.io/instance: emqx
       apps.emqx.io/managed-by: emqx-operator
   podMetricsEndpoints:
-    # dashboard port
-    - targetPort: 18083
+    # the name of emqx dashboard containerPort
+    - port: dashboard
       honorLabels: true
       interval: 5s
       path: /api/v5/prometheus/stats
       relabelings:
         - action: replace
+          # user-defined cluster name, requires unique
           replacement: ${your_cluster_name}
           targetLabel: cluster
         - action: replace
+          # fix value, don't modify
           replacement: emqx
           targetLabel: from
         - action: replace
+          # fix value, don't modify
           sourceLabels: ['pod']
           targetLabel: "instance"
   namespaceSelector:
@@ -41,7 +44,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      # the label in emqx exporter svc
+      # the label is the same as the label of emqx exporter svc
       app: emqx-exporter
   endpoints:
     # the port name of exporter svc
@@ -51,12 +54,15 @@ spec:
       path: /metrics
       relabelings:
         - action: replace
+          # user-defined cluster name, requires unique
           replacement: ${your_cluster_name}
           targetLabel: cluster
         - action: replace
+          # fix value, don't modify
           replacement: exporter
           targetLabel: from
         - action: labeldrop
+          # fix value, don't modify
           regex: 'pod'
   namespaceSelector:
     matchNames:
