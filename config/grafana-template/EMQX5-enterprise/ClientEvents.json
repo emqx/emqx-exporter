@@ -956,6 +956,7 @@
       "type": "timeseries"
     }
   ],
+  "refresh": "5s",
   "schemaVersion": 36,
   "style": "dark",
   "tags": [],
