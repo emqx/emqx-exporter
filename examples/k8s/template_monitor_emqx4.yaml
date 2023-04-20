@@ -1,3 +1,13 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: emqx-basic-auth
+  namespace: default
+type: kubernetes.io/basic-auth
+stringData:
+  username: ${paste_your_new_username_here}
+  password: ${paste_your_new_password_here}
+---
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -21,11 +31,15 @@ spec:
         - prometheus
       basicAuth:
         username:
+          # the secret's name defined above
+          name: emqx-basic-auth
+          # refer to the value of the secret's key "username"
           key: username
-          name: ${paste_your_new_username_here}
         password:
+          # the secret's name defined above
+          name: emqx-basic-auth
+          # refer to the value of the secret's key "password"
           key: password
-          name: ${paste_your_new_password_here}
       relabelings:
         - action: replace
           # user-defined cluster name, requires unique
