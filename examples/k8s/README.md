@@ -29,7 +29,8 @@ spec:
 EOF
 ```
 
-**Note ** if you are deploying EMQX 4.4, you need to enable plugin `emqx_prometheus` by `EmqxPlugin` CRD:
+If you are deploying EMQX 4.4, you need to enable plugin `emqx_prometheus` by `EmqxPlugin` CRD:
+
 ```shell
 cat << "EOF" | kubectl apply -f -
 apiVersion: apps.emqx.io/v1beta4
