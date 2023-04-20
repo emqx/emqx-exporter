@@ -29,7 +29,8 @@ spec:
 EOF
 ```
 
-**Note ** if you are deploying EMQX 4.4, you need to enable plugin `emqx_prometheus` by `EmqxPlugin` CRD:
+If you are deploying EMQX 4.4, you need to enable plugin `emqx_prometheus` by `EmqxPlugin` CRD:
+
 ```shell
 cat << "EOF" | kubectl apply -f -
 apiVersion: apps.emqx.io/v1beta4
@@ -219,3 +220,5 @@ EOF
 
 ## Load Grafana Templates
 Import all [templates](../../config/grafana-template) to your Grafana, then browse the dashboard EMQX and enjoy yourself!
+
+The templates of dashboard ares JSON files, about how to upload a dashboard JSON file, you can check out [here](https://grafana.com/docs/grafana/latest/dashboards/manage-dashboards/#import-a-dashboard). 

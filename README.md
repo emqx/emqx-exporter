@@ -25,7 +25,7 @@ docker run -d \
   --emqx.auth-password=${secretKey}
 ```
 
-The arg `emqx.nodes` is a host list, the exporter will choose one to establish connection.  
+The arg `emqx.nodes` is a comma-separated list of host, the exporter will choose one to establish connection.  
 
 EMQX Dashboard HTTP service listens on port `18083` by default, you may need to modify it according to the actual configuration.
 
