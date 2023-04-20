@@ -3540,7 +3540,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Value"
+              "options": "Value #status"
             },
             "properties": [
               {
@@ -3592,14 +3592,14 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 221
+                "value": 176
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Status"
+              "options": "Value #status"
             },
             "properties": [
               {
@@ -3616,7 +3616,55 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 326
+                "value": 241
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #queuing"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Queuing"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "custom.width",
+                "value": 130
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 128
               }
             ]
           }
@@ -3647,14 +3695,29 @@
             "type": "prometheus",
             "uid": "$datasource"
           },
-          "editorMode": "builder",
+          "editorMode": "code",
           "exemplar": false,
           "expr": "sum by(type, name) (emqx_rule_bridge_status{cluster=\"$cluster\"})",
           "format": "table",
           "instant": true,
           "legendFormat": "Status",
           "range": false,
-          "refId": "A"
+          "refId": "status"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by(type, name) (emqx_rule_bridge_queuing{cluster=\"$cluster\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "Queuing",
+          "range": false,
+          "refId": "queuing"
         }
       ],
       "title": "Data Bridge Status",

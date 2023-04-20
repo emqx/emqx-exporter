@@ -1,4 +1,4 @@
-The purpose of this tutorial is to show you how to deploy a complete demo with EMQX 5 on Kubernetes.
+The purpose of this tutorial is to show you how to deploy a complete demo with EMQX 5 on Kubernetes. 
 
 ## Install EMQX-Operator
 Refer to [Getting Started](https://docs.emqx.com/en/emqx-operator/latest/getting-started/getting-started.html#deploy-emqx-operator) to learn how to deploy the EMQX operator
@@ -28,6 +28,30 @@ spec:
           name: dashboard
 EOF
 ```
+
+**Note ** if you are deploying EMQX 4.4, you need to enable plugin `emqx_prometheus` by `EmqxPlugin` CRD:
+```shell
+cat << "EOF" | kubectl apply -f -
+apiVersion: apps.emqx.io/v1beta4
+kind: EmqxPlugin
+metadata:
+  name: emqx-prometheus
+spec:
+  selector:
+    # EMQX pod labels
+    apps.emqx.io/instance: emqx
+    apps.emqx.io/managed-by: emqx-operator
+  # enable plugin emqx_prometheus
+  pluginName: emqx_prometheus
+EOF
+```
+
+## Create API secret
+emqx-exporter and Prometheus will pull metrics from EMQX dashboard API, so you need to sign in to dashboard to create an API secret.
+
+It is different to create a secret between EMQX 5 and EMQX 4.4.
+* **EMQX 5** create a new [API KEY](https://www.emqx.io/docs/en/v5.0/dashboard/system.html#api-keys) in the dashboard.
+* **EMQX 4.4** create a new `User` instead of `Application`
 
 ## Deploy Exporter
 You need to sign in to EMQX dashboard to create an API secret, then pass the API key and secret to the exporter startup argument as username and password.
@@ -90,6 +114,8 @@ spec:
               memory: 20Mi
 ```
 
+> Set the arg "--emqx.nodes" to the service name that creating by operator for exposing 18083 port. Check out the service name by call `kubectl get svc`.   
+
 Save the yaml content to file `emqx-exporter.yaml`, paste your new creating API key and secret, then apply it
 ```shell
 kubectl apply -f emqx-exporter.yaml
@@ -109,9 +135,9 @@ Assuming that you have deployed Prometheus by [Prometheus Operator](https://prom
 [Here](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md) is a sample example of `PodMonitor` and `ServiceMonitor`.  
 In addition, you can use cmd `kubectl explain` to see the comment about the CR spec. 
 
-In most cases, it's easier to deploy Prometheus by `Deployment`` without the operator if you are new to this, and you can get the scrape config example from [here](../docker) 
+In most cases, it's easier to deploy Prometheus by `Deployment` without the operator if you are new to this, and you can get the scrape config example from [here](../docker) 
 
-The yaml below is available for EMQX 5, you can check out the [template](./template_monitor_emqx4.yaml) for EMQX4. 
+The yaml below is available for EMQX 5, you can check out the [template](./template_monitor_emqx4.yaml) for EMQX 4. 
 
 ```shell
 cat << "EOF" | kubectl apply -f -
@@ -124,7 +150,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      # the label in emqx svc
+      # the label is the same as the label of emqx pod
       apps.emqx.io/instance: emqx
       apps.emqx.io/managed-by: emqx-operator
   podMetricsEndpoints:
@@ -160,7 +186,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      # the label in emqx exporter svc
+      # the label is the same as the label of emqx-exporter svc
       app: emqx-exporter
   endpoints:
     - port: metrics
