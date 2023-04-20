@@ -24,7 +24,13 @@ const (
 )
 
 const (
-	ruleResStatus        = "bridge_status"
+	bridgeResStatus  = "bridge_status"
+	bridgeQueuing    = "bridge_queuing"
+	bridgeLast5mRate = "bridge_last5m_rate"
+	bridgeRateMax    = "bridge_max_rate"
+	bridgeFailed     = "bridge_failed"
+	bridgeDropped    = "bridge_dropped"
+
 	ruleTopicHitCount    = "topic_hit_count"
 	ruleExecPassCount    = "exec_pass_count"
 	ruleExecFailureCount = "exec_failure_count"
@@ -62,8 +68,33 @@ func NewRuleEngineCollector(client Cluster, logger log.Logger) (Collector, error
 		labels []string
 	}{
 		{
-			name:   ruleResStatus,
+			name:   bridgeResStatus,
 			help:   "The status of rule engine resource",
+			labels: []string{"type", "name"},
+		},
+		{
+			name:   bridgeQueuing,
+			help:   "The count of messages that are currently queuing",
+			labels: []string{"type", "name"},
+		},
+		{
+			name:   bridgeLast5mRate,
+			help:   "The last 5m average rate of rule engine resource",
+			labels: []string{"type", "name"},
+		},
+		{
+			name:   bridgeRateMax,
+			help:   "The max rate of rule engine resource",
+			labels: []string{"type", "name"},
+		},
+		{
+			name:   bridgeFailed,
+			help:   "The failure messages count of rule engine resource",
+			labels: []string{"type", "name"},
+		},
+		{
+			name:   bridgeDropped,
+			help:   "The dropped messages count of rule engine resource",
 			labels: []string{"type", "name"},
 		},
 		{
@@ -202,8 +233,28 @@ func (c *ruleEngineCollector) Update(ch chan<- prometheus.Metric) error {
 
 	for i := range bridges {
 		ch <- prometheus.MustNewConstMetric(
-			c.desc[ruleResStatus],
+			c.desc[bridgeResStatus],
 			prometheus.GaugeValue, float64(bridges[i].Status), bridges[i].Type, bridges[i].Name,
+		)
+		ch <- prometheus.MustNewConstMetric(
+			c.desc[bridgeQueuing],
+			prometheus.GaugeValue, float64(bridges[i].Queuing), bridges[i].Type, bridges[i].Name,
+		)
+		ch <- prometheus.MustNewConstMetric(
+			c.desc[bridgeLast5mRate],
+			prometheus.GaugeValue, bridges[i].RateLast5m, bridges[i].Type, bridges[i].Name,
+		)
+		ch <- prometheus.MustNewConstMetric(
+			c.desc[bridgeRateMax],
+			prometheus.GaugeValue, bridges[i].RateMax, bridges[i].Type, bridges[i].Name,
+		)
+		ch <- prometheus.MustNewConstMetric(
+			c.desc[bridgeFailed],
+			prometheus.CounterValue, float64(bridges[i].Failed), bridges[i].Type, bridges[i].Name,
+		)
+		ch <- prometheus.MustNewConstMetric(
+			c.desc[bridgeDropped],
+			prometheus.CounterValue, float64(bridges[i].Dropped), bridges[i].Type, bridges[i].Name,
 		)
 	}
 	return nil
