@@ -32,7 +32,7 @@ test:
 
 .PHONY: docker-build
 docker-build: build
-	docker build -t ${DOCKER_IMAGE_NAME} --build-arg ARCH=${ARCH} --build-arg OS=${OS} .
+	docker build -t ${DOCKER_IMAGE_NAME} .
 
 ## Location to install dependencies to
 LOCALBIN ?= $(shell pwd)/.build/${OS}-${ARCH}

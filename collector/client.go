@@ -41,6 +41,13 @@ type DataBridge struct {
 	Name string
 	// Status define the status of the third-party resource. It's ok if the value is 2, else is not ready
 	Status int
+
+	// bridge Metrics
+	Queuing    int64
+	RateLast5m float64
+	RateMax    float64
+	Failed     int64
+	Dropped    int64
 }
 
 type Authentication struct {
