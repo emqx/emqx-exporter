@@ -1,7 +1,7 @@
 # EMQX Exporter 
 The `emqx-exporter` is designed to expose partial metrics that don't include in the EMQX Prometheus API. It adapted to EMQX 4.4 and EMQX 5, both open-source and enterprise.
 
-![Dashboard](./docs/_assets/EMQX-Dashboards.png)
+![Dashboard](https://assets.emqx.com/images/77c49fa6bab98c26927cfd38d585bf62.png)
 
 ## Installation and Usage
 The `emqx-exporter` listens on HTTP port 8085 by default. See the `--help` output for more options.
