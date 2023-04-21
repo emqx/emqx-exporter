@@ -174,8 +174,8 @@ spec:
           targetLabel: "instance"
   namespaceSelector:
     # modify the namespace if your EMQX cluster deployed in other namespace
-    matchNames:
-      - default
+    #matchNames:
+    #  - default
 
 ---
 apiVersion: monitoring.coreos.com/v1
@@ -213,8 +213,8 @@ spec:
           regex: 'pod'
   namespaceSelector:
     # modify the namespace if your exporter deployed in other namespace
-    matchNames:
-      - default
+    #matchNames:
+    #  - default
 EOF
 ```
 
