@@ -1,11 +1,11 @@
 ## Dashboard Instruction
-EMQX 指标分成多个不同的 dashboard 进行展示。
-* **EMQX** 主 dashboard, 用于展示集群整体的指标数据。
-* **Authentication** 客户端认证相关指标，可按集群、节点和第三方组件进行筛选查看.
-* **Authorization** 客户端 ACL 授权相关指标，可按集群、节点和第三方组件进行筛选查看.
-* **Client Events** EMQX 集群事件统计. 
-* **Messages** EMQX 集群消息统计.
-* **Rule Engine** EMQX 集群规则引擎相关指标，可按集群、节点和数据处理组件进行筛选查看.
+Grafana dashboard has been split multipart to display different metrics.
+* **EMQX** the main dashboard, it shows the overall metrics of the EMQX cluster.
+* **Authentication** client connection metrics statistics.
+* **Authorization** client ACL metrics statistics.
+* **Client Events** client events that handled successfully by system. 
+* **Messages** client packets that system received.
+* **Rule Engine** message flow and device event processing and response metrics statistics.
 
 The main dashboard `EMQX` shows the overall metrics of the EMQX cluster, you can switch data source and cluster by the global variable at the top of the dashboard.  
 

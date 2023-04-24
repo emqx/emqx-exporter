@@ -716,7 +716,7 @@
   "timepicker": {},
   "timezone": "",
   "title": "Messages",
-  "uid": "messages",
+  "uid": "EMQX4-ee-messages",
   "version": 5,
   "weekStart": ""
 }

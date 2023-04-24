@@ -25,7 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 36,
+  "id": 108,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -780,7 +780,7 @@
         {
           "datasource": "$datasource",
           "editorMode": "code",
-          "expr": "sum(emqx_connections_count{instance=~\".*\", cluster=\"$cluster\"})",
+          "expr": "sum(emqx_live_connections_count{instance=~\".*\", cluster=\"$cluster\"})",
           "legendFormat": "Total",
           "range": true,
           "refId": "A"
@@ -913,14 +913,14 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 18,
-            "gradientMode": "opacity",
+            "fillOpacity": 0,
+            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "smooth",
+            "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
@@ -933,16 +933,25 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "area"
             }
           },
           "mappings": [],
+          "min": 0,
           "thresholds": {
-            "mode": "absolute",
+            "mode": "percentage",
             "steps": [
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
               }
             ]
           }
@@ -955,7 +964,7 @@
         "x": 12,
         "y": 7
       },
-      "id": 20,
+      "id": 132,
       "options": {
         "legend": {
           "calcs": [],
@@ -970,15 +979,52 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$datasource"
+          },
           "editorMode": "code",
-          "expr": "max(emqx_topics_count{instance=~\".*\", cluster=\"$cluster\"})",
-          "legendFormat": "Topics",
+          "expr": "sum(emqx_sessions_count{instance=~\".*\", cluster=\"$cluster\"})",
+          "legendFormat": "Count",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "sum(emqx_license_max_client_limit{cluster=\"$cluster\"})",
+          "hide": false,
+          "legendFormat": "max",
+          "range": true,
+          "refId": "B"
         }
       ],
-      "title": "Topics",
+      "title": "Sessions",
+      "transformations": [
+        {
+          "id": "configFromData",
+          "options": {
+            "applyTo": {
+              "id": "byName",
+              "options": "Count"
+            },
+            "configRefId": "B",
+            "mappings": [
+              {
+                "fieldName": "Time",
+                "handlerKey": "__ignore"
+              },
+              {
+                "fieldName": "max",
+                "handlerKey": "max"
+              }
+            ]
+          }
+        }
+      ],
       "type": "timeseries"
     },
     {
@@ -1045,7 +1091,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Detail Metrics",
-          "url": "/d/rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&&var-node=All&viewPanel=6"
+          "url": "/d/EMQX5-ee-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&&var-node=All&viewPanel=6"
         }
       ],
       "options": {
@@ -1293,7 +1339,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1327,25 +1373,16 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "area"
+              "mode": "off"
             }
           },
           "mappings": [],
-          "min": 0,
           "thresholds": {
-            "mode": "percentage",
+            "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "orange",
-                "value": 80
-              },
-              {
-                "color": "red",
-                "value": 90
               }
             ]
           }
@@ -1358,13 +1395,13 @@
         "x": 12,
         "y": 14
       },
-      "id": 132,
+      "id": 136,
       "options": {
         "legend": {
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
@@ -1375,50 +1412,16 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum(emqx_sessions_count{instance=~\".*\", cluster=\"$cluster\"})",
-          "legendFormat": "Count",
+          "expr": "sum by(type, name) (emqx_rule_bridge_queuing{cluster=\"$cluster\"})",
+          "legendFormat": "{{type}}-{{name}}",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "sum(emqx_license_max_client_limit{cluster=\"$cluster\"})",
-          "hide": false,
-          "legendFormat": "max",
-          "range": true,
-          "refId": "B"
         }
       ],
-      "title": "Session",
-      "transformations": [
-        {
-          "id": "configFromData",
-          "options": {
-            "applyTo": {
-              "id": "byName",
-              "options": "Count"
-            },
-            "configRefId": "B",
-            "mappings": [
-              {
-                "fieldName": "Time",
-                "handlerKey": "__ignore"
-              },
-              {
-                "fieldName": "max",
-                "handlerKey": "max"
-              }
-            ]
-          }
-        }
-      ],
+      "title": "Data Bridge Queuing",
       "type": "timeseries"
     },
     {
@@ -1548,12 +1551,12 @@
         {
           "targetBlank": true,
           "title": "Show Node Connection Events",
-          "url": "/d/client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=2"
+          "url": "/d/EMQX5-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=2"
         },
         {
           "targetBlank": true,
           "title": "Show Node Disconnection Events",
-          "url": "/d/client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=3"
+          "url": "/d/EMQX5-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=3"
         }
       ],
       "options": {
@@ -1718,12 +1721,12 @@
         {
           "targetBlank": true,
           "title": "Show Node Subscribe Events",
-          "url": "/d/client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=5"
+          "url": "/d/EMQX5-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=5"
         },
         {
           "targetBlank": true,
           "title": "Show Node Unsubscribe Events",
-          "url": "/d/client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=7"
+          "url": "/d/EMQX5-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=7"
         }
       ],
       "options": {
@@ -1888,7 +1891,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Auth Events",
-          "url": "/d/client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All"
+          "url": "/d/EMQX5-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All"
         }
       ],
       "options": {
@@ -2053,7 +2056,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Auth Events",
-          "url": "/d/client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All"
+          "url": "/d/EMQX5-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All"
         }
       ],
       "options": {
@@ -2431,7 +2434,7 @@
               "refId": "B"
             }
           ],
-          "title": "Packets Disconnection",
+          "title": "Packets Disconnections",
           "type": "timeseries"
         },
         {
@@ -3067,7 +3070,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
+        "w": 8,
         "x": 0,
         "y": 33
       },
@@ -3076,7 +3079,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Messages Detail",
-          "url": "/﻿d/messages/messages?var-datasource=$datasource&var-cluster=$cluster&var-node=All"
+          "url": "/d/EMQX5-ee-messages/messages?var-datasource=$datasource&var-cluster=$cluster&var-node=All"
         }
       ],
       "options": {
@@ -3191,108 +3194,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 6,
-        "y": 33
-      },
-      "id": 72,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": "$datasource",
-          "editorMode": "code",
-          "expr": "sum(emqx_vm_process_messages_in_queues{cluster=\"$cluster\", instance=~\".*\"})",
-          "legendFormat": "Total",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": "$datasource",
-          "editorMode": "code",
-          "expr": "sum by(instance) (emqx_vm_process_messages_in_queues{cluster=\"$cluster\"})",
-          "hide": false,
-          "legendFormat": "{{ instance }}",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "Message Queue",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 6,
-        "x": 12,
+        "w": 8,
+        "x": 8,
         "y": 33
       },
       "id": 80,
@@ -3431,8 +3334,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 18,
+        "w": 8,
+        "x": 16,
         "y": 33
       },
       "id": 10,
@@ -3928,7 +3831,7 @@
                   {
                     "targetBlank": true,
                     "title": "Show Node Metrics Detail",
-                    "url": "/d/rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&var-rule=${__value.text}&viewPanel=4"
+                    "url": "/d/EMQX5-ee-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&var-rule=${__value.text}&viewPanel=4"
                   }
                 ]
               }
@@ -4274,7 +4177,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Exec Rate",
-          "url": "/d/rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=2"
+          "url": "/d/EMQX5-ee-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=2"
         }
       ],
       "options": {
@@ -4481,7 +4384,7 @@
                   {
                     "targetBlank": true,
                     "title": "Show Node Authentication Detail",
-                    "url": "/d/authz/authentication?var-cluster=$cluster&var-node=All&resource=${__value.text}﻿﻿&viewPanel=2"
+                    "url": "/d/EMQX5-ee-authn/authentication?var-cluster=$cluster&var-node=All&resource=${__value.text}﻿﻿&viewPanel=2"
                   }
                 ]
               }
@@ -4729,7 +4632,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Metrics details",
-          "url": "/d/authn/authentication?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=4"
+          "url": "/d/EMQX5-ee-authn/authentication?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=4"
         }
       ],
       "options": {
@@ -4825,7 +4728,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Metrics Details",
-          "url": "/d/authn/authentication?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=6"
+          "url": "/d/EMQX5-ee-authn/authentication?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=6"
         }
       ],
       "options": {
@@ -4890,8 +4793,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -4957,8 +4859,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -5048,7 +4949,7 @@
                   {
                     "targetBlank": true,
                     "title": "Show Node Metrics Detail",
-                    "url": "/d/authz/authorization?var-cluster=$cluster&var-node=All&var-resource=${__value.text}&viewPanel=8"
+                    "url": "/d/EMQX5-ee-authz/authorization?var-cluster=$cluster&var-node=All&var-resource=${__value.text}&viewPanel=8"
                   }
                 ]
               }
@@ -5223,7 +5124,7 @@
           "refId": "D"
         }
       ],
-      "title": "Authorizate Count",
+      "title": "Authorize Count",
       "transformations": [
         {
           "id": "merge",
@@ -5277,8 +5178,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -5296,7 +5196,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Metrics Detail",
-          "url": "/d/authz/authorization?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=10"
+          "url": "/d/EMQX5-ee-authz/authorization?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=10"
         }
       ],
       "options": {
@@ -5325,7 +5225,7 @@
           "refId": "A"
         }
       ],
-      "title": "Authorizate Current Exec Rate",
+      "title": "Authorize Current Exec Rate",
       "type": "timeseries"
     },
     {
@@ -5373,8 +5273,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -5392,7 +5291,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Metrics Details",
-          "url": "/d/authz/authorization?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=12"
+          "url": "/d/EMQX5-ee-authz/authorization?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=12"
         }
       ],
       "options": {
@@ -5421,7 +5320,7 @@
           "refId": "A"
         }
       ],
-      "title": "Authorizate Last 5m Exec Rate",
+      "title": "Authorize Last 5m Exec Rate",
       "type": "timeseries"
     },
     {
@@ -5446,6 +5345,8 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
@@ -5533,6 +5434,8 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
@@ -5631,6 +5534,8 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
@@ -5712,6 +5617,8 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
@@ -5824,7 +5731,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "emqx5.0-opensource",
           "value": "emqx5.0-opensource"
         },
@@ -5857,7 +5764,7 @@
   "timepicker": {},
   "timezone": "",
   "title": "EMQX",
-  "uid": "uAUUbySVze",
-  "version": 1,
+  "uid": "EMQX5-ee",
+  "version": 7,
   "weekStart": ""
 }

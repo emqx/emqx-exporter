@@ -984,7 +984,7 @@
   "timepicker": {},
   "timezone": "",
   "title": "Rule Engine",
-  "uid": "rule-engine",
+  "uid": "EMQX5-rule-engine",
   "version": 16,
   "weekStart": ""
 }

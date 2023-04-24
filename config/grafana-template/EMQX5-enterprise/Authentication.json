@@ -598,7 +598,7 @@
   "timepicker": {},
   "timezone": "",
   "title": "Authentication",
-  "uid": "authn",
+  "uid": "EMQX5-ee-authn",
   "version": 14,
   "weekStart": ""
 }
