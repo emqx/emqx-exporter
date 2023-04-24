@@ -29,7 +29,7 @@ spec:
 EOF
 ```
 
-If you are deploying EMQX 4.4, you need to enable plugin `emqx_prometheus` by `EmqxPlugin` CRD:
+If you are deploying EMQX 4.4 open-source, you need to enable plugin `emqx_prometheus` by `EmqxPlugin` CRD:
 
 ```shell
 cat << "EOF" | kubectl apply -f -
@@ -95,8 +95,8 @@ spec:
           image: emqx-exporter:latest
           imagePullPolicy: IfNotPresent
           args:
-            # "emqx-dashboard" is the default service name that creating by operator for exposing 18083 port 
-            - --emqx.nodes=emqx-dashboard:18083
+            # "emqx-dashboard-service-name" is the service name that creating by operator for exposing 18083 port 
+            - --emqx.nodes=${emqx-dashboard-service-name}:18083
             - --emqx.auth-username=${paste_your_new_api_key_here}
             - --emqx.auth-password=${paste_your_new_secret_here}
           securityContext:

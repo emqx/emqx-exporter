@@ -72,7 +72,7 @@ spec:
       app: emqx-exporter
   endpoints:
     # the port name of exporter svc
-    - port: 8085
+    - port: metrics
       honorLabels: true
       interval: 5s
       path: /metrics
