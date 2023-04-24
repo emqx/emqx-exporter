@@ -1,6 +1,8 @@
 # Build the manager binary
 FROM golang:1.20.3 as builder
 
+ARG GOPROXY=https://goproxy.cn,direct
+
 WORKDIR /workspace
 COPY . .
 RUN go work init \

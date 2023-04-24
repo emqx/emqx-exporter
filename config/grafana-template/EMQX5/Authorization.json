@@ -310,7 +310,7 @@
           "refId": "D"
         }
       ],
-      "title": "Authorizate Count",
+      "title": "Authorize Count",
       "transformations": [
         {
           "id": "merge",
@@ -402,7 +402,7 @@
           "refId": "A"
         }
       ],
-      "title": "Authorizate Current Exec Rate",
+      "title": "Authorize Current Exec Rate",
       "type": "timeseries"
     },
     {
@@ -488,7 +488,7 @@
           "refId": "A"
         }
       ],
-      "title": "Authorizate Last 5m Exec Rate",
+      "title": "Authorize Last 5m Exec Rate",
       "type": "timeseries"
     }
   ],
@@ -613,7 +613,7 @@
   "timepicker": {},
   "timezone": "",
   "title": "Authorization",
-  "uid": "authz",
+  "uid": "EMQX5-authz",
   "version": 8,
   "weekStart": ""
 }

@@ -25,8 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 3,
-  "iteration": 1681298834016,
+  "id": 99,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -119,7 +118,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "9.0.0",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -191,7 +190,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.0.0",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": "$datasource",
@@ -228,6 +227,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -334,6 +335,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -644,7 +647,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "9.0.0",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -711,6 +714,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -775,7 +780,7 @@
         {
           "datasource": "$datasource",
           "editorMode": "code",
-          "expr": "sum(emqx_connections_count{instance=~\".*\", cluster=\"$cluster\"})",
+          "expr": "sum(emqx_live_connections_count{instance=~\".*\", cluster=\"$cluster\"})",
           "legendFormat": "Total",
           "range": true,
           "refId": "A"
@@ -801,6 +806,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -900,6 +907,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -993,7 +1002,7 @@
           "refId": "B"
         }
       ],
-      "title": "Session",
+      "title": "Sessions",
       "transformations": [
         {
           "id": "configFromData",
@@ -1029,6 +1038,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1080,7 +1091,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Detail Metrics",
-          "url": "/d/rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&&var-node=All&viewPanel=6"
+          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&&var-node=All&viewPanel=6"
         }
       ],
       "options": {
@@ -1123,6 +1134,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1229,6 +1242,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1322,6 +1337,146 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 11,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Bytes received"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#4aef34",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Bytes sent"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#ffd500",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 14
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max",
+            "mean",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": "$datasource",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(increase(emqx_bytes_received{instance=~\".*\",cluster=\"$cluster\"}[$__interval]))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "20s",
+          "legendFormat": "Bytes received",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": "$datasource",
+          "editorMode": "code",
+          "expr": "sum(increase(emqx_bytes_sent{instance=~\".*\",cluster=\"$cluster\"}[$__interval]))",
+          "hide": false,
+          "interval": "20s",
+          "legendFormat": "Bytes sent",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Cluster Traffic Statistics",
+      "type": "timeseries"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -1345,6 +1500,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1446,12 +1603,12 @@
         {
           "targetBlank": true,
           "title": "Show Node Connection Events",
-          "url": "/d/client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=2"
+          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=2"
         },
         {
           "targetBlank": true,
           "title": "Show Node Disconnection Events",
-          "url": "/d/client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=3"
+          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=3"
         }
       ],
       "options": {
@@ -1512,6 +1669,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1614,12 +1773,12 @@
         {
           "targetBlank": true,
           "title": "Show Node Subscribe Events",
-          "url": "/d/client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=5"
+          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=5"
         },
         {
           "targetBlank": true,
           "title": "Show Node Unsubscribe Events",
-          "url": "/d/client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=7"
+          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=7"
         }
       ],
       "options": {
@@ -1681,6 +1840,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1782,7 +1943,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Auth Events",
-          "url": "/d/client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All"
+          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All"
         }
       ],
       "options": {
@@ -1833,29 +1994,19 @@
       "type": "timeseries"
     },
     {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 31
-      },
-      "id": 52,
-      "panels": [],
-      "title": "Packets",
-      "type": "row"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "$datasource"
       },
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1890,6 +2041,170 @@
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Packets Connect"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Packets Connack Sent"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Packets Connack Error"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 23
+      },
+      "id": 135,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "Show Node Auth Events",
+          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=12"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max",
+            "mean",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "sum(increase(emqx_client_check_acl{cluster=\"$cluster\", instance=~\".*\"}[$__interval]))",
+          "hide": false,
+          "legendFormat": "ACL Auth",
+          "range": true,
+          "refId": "E"
+        }
+      ],
+      "title": "Client ACL Auth Events",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 31
+      },
+      "id": 52,
+      "panels": [],
+      "title": "Packets",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 18,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2013,6 +2328,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -2045,8 +2362,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2177,7 +2493,7 @@
           "refId": "B"
         }
       ],
-      "title": "Packets Disconnection",
+      "title": "Packets Disconnections",
       "type": "timeseries"
     },
     {
@@ -2191,6 +2507,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -2223,8 +2541,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -2398,6 +2715,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -2430,8 +2749,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -2657,6 +2975,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -2692,8 +3012,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -2809,7 +3128,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
+        "w": 12,
         "x": 0,
         "y": 41
       },
@@ -2818,7 +3137,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Messages Detail",
-          "url": "/﻿d/messages/messages?var-datasource=$datasource&var-cluster=$cluster&var-node=All"
+          "url": "/d/EMQX4-ee-messages/messages?var-datasource=$datasource&var-cluster=$cluster&var-node=All"
         }
       ],
       "options": {
@@ -2885,6 +3204,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -2917,8 +3238,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2931,105 +3251,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 6,
-        "y": 41
-      },
-      "id": 72,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": "$datasource",
-          "editorMode": "code",
-          "expr": "sum(emqx_vm_process_messages_in_queues{cluster=\"$cluster\", instance=~\".*\"})",
-          "legendFormat": "Total",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": "$datasource",
-          "editorMode": "code",
-          "expr": "sum by(instance) (emqx_vm_process_messages_in_queues{cluster=\"$cluster\"})",
-          "hide": false,
-          "legendFormat": "{{ instance }}",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "Message Queue",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 6,
+        "w": 12,
         "x": 12,
         "y": 41
       },
@@ -3077,144 +3299,6 @@
         }
       ],
       "title": "Messages QOS Received",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 11,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "smooth",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 1,
-            "pointSize": 4,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "decbytes"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Bytes received"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#4aef34",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Bytes sent"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#ffd500",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 6,
-        "x": 18,
-        "y": 41
-      },
-      "id": 10,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "min",
-            "max",
-            "mean",
-            "sum"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": "$datasource",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "sum(increase(emqx_bytes_received{instance=~\".*\",cluster=\"$cluster\"}[$__interval]))",
-          "format": "time_series",
-          "instant": false,
-          "interval": "20s",
-          "legendFormat": "Bytes received",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": "$datasource",
-          "editorMode": "code",
-          "expr": "sum(increase(emqx_bytes_sent{instance=~\".*\",cluster=\"$cluster\"}[$__interval]))",
-          "hide": false,
-          "interval": "20s",
-          "legendFormat": "Bytes sent",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "Cluster Traffic Statistics",
       "type": "timeseries"
     },
     {
@@ -3375,7 +3459,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "9.0.0",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -3596,7 +3680,7 @@
                   {
                     "targetBlank": true,
                     "title": "Show Node Metrics Detail",
-                    "url": "/d/rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&var-rule=${__value.text}&viewPanel=4"
+                    "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&var-rule=${__value.text}&viewPanel=4"
                   }
                 ]
               }
@@ -3747,7 +3831,7 @@
           }
         ]
       },
-      "pluginVersion": "9.0.0",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -3889,6 +3973,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -3939,7 +4025,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Exec Rate",
-          "url": "/d/rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=2"
+          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=2"
         }
       ],
       "options": {
@@ -3995,6 +4081,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -4040,7 +4128,7 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 6,
+        "w": 8,
         "x": 0,
         "y": 63
       },
@@ -4082,6 +4170,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -4127,8 +4217,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 6,
-        "x": 6,
+        "w": 8,
+        "x": 8,
         "y": 63
       },
       "id": 89,
@@ -4180,6 +4270,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -4222,8 +4314,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 6,
-        "x": 12,
+        "w": 8,
+        "x": 16,
         "y": 63
       },
       "id": 16,
@@ -4255,7 +4347,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 36,
+  "schemaVersion": 37,
   "style": "dark",
   "tags": [
     "EMQX",
@@ -4286,8 +4378,8 @@
       {
         "current": {
           "selected": false,
-          "text": "test",
-          "value": "test"
+          "text": "emqx4",
+          "value": "emqx4"
         },
         "datasource": {
           "uid": "$datasource"
@@ -4318,7 +4410,7 @@
   "timepicker": {},
   "timezone": "",
   "title": "EMQX",
-  "uid": "uAUUbySVze",
-  "version": 1,
+  "uid": "EMQX4-ee",
+  "version": 6,
   "weekStart": ""
 }
