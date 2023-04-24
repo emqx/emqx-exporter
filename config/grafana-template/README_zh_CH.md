@@ -1,11 +1,11 @@
 ## Dashboard Instruction
-Grafana dashboard has been split multipart to display different metrics.
-* **EMQX** the main dashboard, it shows the overall metrics of the EMQX cluster.
-* **Authentication** client connection metrics statistics.
-* **Authorization** client ACL metrics statistics.
-* **Client Events** client events that handled successfully by system. 
-* **Messages** client packets that system received.
-* **Rule Engine** message flow and device event processing and response metrics statistics.
+EMQX 指标分成多个不同的 dashboard 进行展示。
+* **EMQX** 主 dashboard, 用于展示集群整体的指标数据。
+* **Authentication** 客户端认证相关指标，可按集群、节点和第三方组件进行筛选查看.
+* **Authorization** 客户端 ACL 授权相关指标，可按集群、节点和第三方组件进行筛选查看.
+* **Client Events** EMQX 集群事件统计.
+* **Messages** EMQX 集群消息统计.
+* **Rule Engine** EMQX 集群规则引擎相关指标，可按集群、节点和数据处理组件进行筛选查看.
 
 The main dashboard `EMQX` shows the overall metrics of the EMQX cluster, you can switch data source and cluster by the global variable at the top of the dashboard.  
 
@@ -46,8 +46,8 @@ License 信息，包括剩余天数、到期日期以及最大连接数
 * **Auth Failure** 认证失败的客户端 CONNECT 报文数
 
 ### ACL Auth
-* **Publish ACL Failure** 认证失败的客户端 PUBLISH 报文数量
-* **Sub ACL Failure** 认证失败的客户端 SUBSCRIBE 报文数量
+* **Publish ACL Failure** 授权失败的客户端 PUBLISH 报文数量
+* **Sub ACL Failure** 授权失败的客户端 SUBSCRIBE 报文数量
 
 ### Client Connection Events
 * **Connections** `client.connected`钩子触发次数
@@ -130,10 +130,8 @@ Erlang VM 中未处理的消息队列长度
 ### Authorize Last 5m Exec Rate
 客户端授权(Pub&Sub)插件的最近5分钟的执行速率
 
-### Erlang VM Run Queue
-The value of `run_queue_length` can be used to evaluate the current Erlang scheduler load. If the value of run_queue_length is high, it means that there are many processes waiting to be executed in the run queue, and the scheduler may need more processor cores or a better scheduling strategy to better handle these processes
-
 ### Erlang VM Process
+Erlang VM 进程数
 
 ### Erlang VM Memory Used
 Erlang VM 的内存占用

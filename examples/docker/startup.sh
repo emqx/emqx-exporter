@@ -38,8 +38,8 @@ docker run -d --name emqx-demo \
  -e EMQX_DASHBOARD__DEFAULT_USER__PASSWORD=$emqxDashboardPassword \
  -p 1883:1883 -p 8083:8083 -p 8084:8084 -p 8883:8883 -p 18083:18083 $emqxImage
 
-# load emqx_prometheus if the EMQX version is under 5.x
-if [[ $emqxVersion == "emqx4" || $emqxVersion == "emqx4-ee" ]]; then
+# load emqx_prometheus if the EMQX version is 4.4 open-source
+if [[ $emqxVersion == "emqx4" ]]; then
 while
  plugin=$(docker exec -it emqx-demo ./bin/emqx_ctl plugins list | grep emqx_prometheus | grep true)
  [[ $plugin == "" ]]
