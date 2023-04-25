@@ -6,6 +6,10 @@ on:
       - "go.mod"
       - "**.go"
   pull_request:
+    paths:
+      - "go.sum"
+      - "go.mod"
+      - "**.go"
 
 concurrency:
   group: test-${{ github.event_name }}-${{ github.ref }}
