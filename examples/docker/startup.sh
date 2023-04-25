@@ -20,7 +20,7 @@ emqx4-ee)
 emqx5)
   prometheusConfig=prometheus-emqx5.yaml
   dashboardDefinitions=$(dirname $(dirname $(pwd)))/config/grafana-template/EMQX5
-  emqxImage=emqx/emqx:5.0.21
+  emqxImage=emqx/emqx:5.0.1
   ;;
 *)
   # deploy emqx5 enterprise by default
@@ -50,7 +50,7 @@ while
 done
 fi
 
-docker run -d --name exporter-demo -p 8085:8085 emqx-exporter:latest \
+docker run -d --name exporter-demo -p 8085:8085 emqx/emqx-exporter:latest \
  --emqx.nodes="emqx-demo:18083" --emqx.auth-username=$emqxDashboardUsername --emqx.auth-password=$emqxDashboardPassword
 
 

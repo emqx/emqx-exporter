@@ -15,7 +15,7 @@ services:
       - ./bootstrap_user:/opt/emqx/data/bootstrap_user
 
   emqx-exporter:
-    image: emqx-exporter
+    image: emqx/emqx-exporter
     container_name: exporter-demo
     ports:
       - 8085:8085
