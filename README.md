@@ -1,5 +1,5 @@
 # EMQX Exporter 
-The `emqx-exporter` is designed to expose partial metrics that don't include in the EMQX Prometheus API. It adapted to EMQX 4.4 and EMQX 5, both open-source and enterprise.
+The `emqx-exporter` is designed to expose partial metrics that don't include in the EMQX Prometheus API. It is compatible with EMQX 4.4 and EMQX 5, both open-source and enterprise.
 
 ![Dashboard](https://assets.emqx.com/images/77c49fa6bab98c26927cfd38d585bf62.png)
 
@@ -10,20 +10,17 @@ The `emqx-exporter` listens on HTTP port 8085 by default. See the `--help` outpu
 EMQX exporter requires access to the EMQX dashboard API with basic auth, so you need to sign in to the dashboard to create an API secret,
 then pass the API key and secret to the startup argument as username and password.
 
-Note that it is different to create a secret between EMQX 5 and EMQX 4.4.  
-* **EMQX 5** create a new [API KEY](https://www.emqx.io/docs/en/v5.0/dashboard/system.html#api-keys) in the dashboard.
+Note that it is different to create a secret between EMQX 5 and EMQX 4.4 on the dashboard.
+
+* **EMQX 5** create a new [API KEY](https://www.emqx.io/docs/en/v5.0/dashboard/system.html#api-keys).
 * **EMQX 4.4** create a new `User` instead of `Application`
-
-For EMQX 4.4 open-source, make sure the EMQX cluster has enabled plugin `emqx_prometheus` for all nodes, check it in the dashboard plugins <http://your_cluster_addr:18083/#/plugins>.
-
-> Note that couldn't enable module and plugin at the same time.
 
 ### Docker
 
 ```bash
 docker run -d \
   -p 8085:8085 \
-  emqx-exporter:latest \
+  emqx/emqx-exporter:latest \
   --emqx.nodes="${your_cluster_addr}:18083"  \
   --emqx.auth-username=${apiKey} \
   --emqx.auth-password=${secretKey}
@@ -45,7 +42,8 @@ Refer to the [example](examples/docker-compose) to deploy a complete demo by doc
 Refer to the [example](examples/k8s/README.md) to learn how to deploy `emqx-exporter` on the k8s.
 
 ## Prometheus Config
-Scrape Config:
+
+The scrape config below is available for EMQX 5, you can get the config template for EMQX 4.4 from [here](examples/docker/prometheus-emqx4.yaml).
 
 ```yaml
 scrape_configs:
@@ -73,9 +71,7 @@ scrape_configs:
         from: exporter
 ```
 
-For EMQX 4.4, make sure the `emqx_prometheus` plugin has been started, and check it in the dashboard(http://your_cluster_addr:18083/#/plugins).
-
-Refer to the [example](examples/docker/prometheus-emqx4.yaml) to learn how to add scrape configs for EMQX 4.4. 
+For EMQX 4.4 open-source, make sure the `emqx_prometheus` plugin has been started on all nodes, check it one by one on the dashboard <http://your_cluster_addr:18083/#/plugins>.
 
 ## Grafana Dashboard
 Import all [templates](./config/grafana-template) to your Grafana, then browse the dashboard `EMQX` and enjoy yourself!
