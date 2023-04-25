@@ -2,6 +2,11 @@ name: Build Exporter Image
 
 on:
   pull_request:
+    paths:
+      - "go.sum"
+      - "go.mod"
+      - "**.go"
+      - "Dockerfile"
   push:
     branches:
       - main
