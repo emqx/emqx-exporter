@@ -1209,6 +1209,101 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 14
+      },
+      "id": 122,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "Show Node Exec Rate",
+          "url": "/d/EMQX5-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=2"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "sum by(rule) (emqx_rule_exec_rate{cluster=\"$cluster\", node=~\".*\"})",
+          "legendFormat": "{{ rule }}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Rule Engine Current Exec Rate",
+      "type": "timeseries"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -2745,7 +2840,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -2971,7 +3067,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3082,7 +3179,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -3206,7 +3304,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3327,7 +3426,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "red",
@@ -3439,7 +3539,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3501,7 +3602,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "red",
@@ -3532,7 +3634,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "orange",
@@ -3587,7 +3690,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "red",
@@ -3897,106 +4001,12 @@
       "type": "table"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 9,
-        "x": 0,
-        "y": 46
-      },
-      "id": 122,
-      "links": [
-        {
-          "targetBlank": true,
-          "title": "Show Node Exec Rate",
-          "url": "/d/EMQX5-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=2"
-        }
-      ],
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "sum by(rule) (emqx_rule_exec_rate{cluster=\"$cluster\", node=~\".*\"})",
-          "legendFormat": "{{ rule }}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Rule Engine Current Exec Rate",
-      "type": "timeseries"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 54
+        "y": 46
       },
       "id": 118,
       "panels": [],
@@ -4023,7 +4033,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4089,7 +4100,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "red",
@@ -4247,7 +4259,7 @@
         "h": 6,
         "w": 10,
         "x": 0,
-        "y": 55
+        "y": 47
       },
       "id": 116,
       "options": {
@@ -4393,7 +4405,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -4404,7 +4417,7 @@
         "h": 6,
         "w": 7,
         "x": 10,
-        "y": 55
+        "y": 47
       },
       "id": 127,
       "links": [
@@ -4488,7 +4501,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -4499,7 +4513,7 @@
         "h": 6,
         "w": 7,
         "x": 17,
-        "y": 55
+        "y": 47
       },
       "id": 121,
       "links": [
@@ -4544,7 +4558,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 53
       },
       "id": 111,
       "panels": [],
@@ -4571,7 +4585,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4637,7 +4652,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "red",
@@ -4810,7 +4826,7 @@
         "h": 6,
         "w": 10,
         "x": 0,
-        "y": 62
+        "y": 54
       },
       "id": 126,
       "options": {
@@ -4956,7 +4972,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -4967,7 +4984,7 @@
         "h": 6,
         "w": 7,
         "x": 10,
-        "y": 62
+        "y": 54
       },
       "id": 120,
       "links": [
@@ -5051,7 +5068,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -5062,7 +5080,7 @@
         "h": 6,
         "w": 7,
         "x": 17,
-        "y": 62
+        "y": 54
       },
       "id": 128,
       "links": [
@@ -5107,7 +5125,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 68
+        "y": 60
       },
       "id": 28,
       "panels": [],
@@ -5175,7 +5193,7 @@
         "h": 6,
         "w": 6,
         "x": 0,
-        "y": 69
+        "y": 61
       },
       "id": 46,
       "options": {
@@ -5264,7 +5282,7 @@
         "h": 6,
         "w": 6,
         "x": 6,
-        "y": 69
+        "y": 61
       },
       "id": 89,
       "options": {
@@ -5361,7 +5379,7 @@
         "h": 6,
         "w": 6,
         "x": 12,
-        "y": 69
+        "y": 61
       },
       "id": 16,
       "options": {
@@ -5448,7 +5466,7 @@
         "h": 5,
         "w": 6,
         "x": 18,
-        "y": 69
+        "y": 61
       },
       "id": 48,
       "options": {
@@ -5542,6 +5560,6 @@
   "timezone": "",
   "title": "EMQX",
   "uid": "EMQX5",
-  "version": 8,
+  "version": 9,
   "weekStart": ""
 }
