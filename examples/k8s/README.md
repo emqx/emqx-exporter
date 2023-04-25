@@ -50,8 +50,9 @@ EOF
 ## Create API secret
 emqx-exporter and Prometheus will pull metrics from EMQX dashboard API, so you need to sign in to dashboard to create an API secret.
 
-It is different to create a secret between EMQX 5 and EMQX 4.4.
-* **EMQX 5** create a new [API KEY](https://www.emqx.io/docs/en/v5.0/dashboard/system.html#api-keys) in the dashboard.
+It is different to create a secret between EMQX 5 and EMQX 4.4 on the dashboard.
+
+* **EMQX 5** create a new [API KEY](https://www.emqx.io/docs/en/v5.0/dashboard/system.html#api-keys).
 * **EMQX 4.4** create a new `User` instead of `Application`
 
 ## Deploy Exporter
