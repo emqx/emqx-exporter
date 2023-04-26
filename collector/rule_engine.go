@@ -15,7 +15,6 @@ package collector
 
 import (
 	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -173,7 +172,6 @@ func NewRuleEngineCollector(client Cluster, logger log.Logger) (Collector, error
 func (c *ruleEngineCollector) Update(ch chan<- prometheus.Metric) error {
 	bridges, metrics, err := c.client.GetRuleEngineMetrics()
 	if err != nil {
-		level.Error(c.logger).Log("collect rule engine metrics failed", err.Error())
 		return err
 	}
 

@@ -10,6 +10,13 @@ type ClusterStatus struct {
 	Status     int
 	NodeUptime map[string]int64
 	NodeMaxFDs map[string]int
+	CPULoads   map[string]CPULoad
+}
+
+type CPULoad struct {
+	Load1  float64
+	Load5  float64
+	Load15 float64
 }
 
 type Broker struct {

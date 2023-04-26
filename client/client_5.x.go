@@ -55,6 +55,9 @@ func (n *cluster5x) getClusterStatus() (cluster collector.ClusterStatus, err err
 		MaxFds      int `json:"max_fds"`
 		Connections int64
 		Edition     string
+		Load1       float64 `json:"load1"`
+		Load5       float64 `json:"load5"`
+		Load15      float64 `json:"load15"`
 	}{{}}
 	err = callHTTPGetWithResp(n.client, "/api/v5/nodes", &resp)
 	if err != nil {
@@ -64,13 +67,21 @@ func (n *cluster5x) getClusterStatus() (cluster collector.ClusterStatus, err err
 	cluster.Status = healthy
 	cluster.NodeUptime = make(map[string]int64)
 	cluster.NodeMaxFDs = make(map[string]int)
+	cluster.CPULoads = make(map[string]collector.CPULoad)
 
 	for _, data := range resp {
 		if data.NodeStatus != "running" {
 			cluster.Status = unhealthy
 		}
-		cluster.NodeUptime[data.Node] = data.Uptime / 1000
-		cluster.NodeMaxFDs[data.Node] = data.MaxFds
+		nodeName := cutNodeName(data.Node)
+		cluster.NodeUptime[nodeName] = data.Uptime / 1000
+		cluster.NodeMaxFDs[nodeName] = data.MaxFds
+		cluster.CPULoads[nodeName] = collector.CPULoad{
+			Load1:  data.Load1,
+			Load5:  data.Load5,
+			Load15: data.Load15,
+		}
+
 		if data.Edition == "Opensource" {
 			n.edition = openSource
 		} else {
@@ -101,10 +112,9 @@ func (n *cluster5x) getBrokerMetrics() (metrics *collector.Broker, err error) {
 func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err error) {
 	resp := struct {
 		Data []struct {
-			Actions []string
-			ID      string `json:"id"`
-			Name    string
-			Enable  bool
+			ID     string `json:"id"`
+			Name   string
+			Enable bool
 		}
 	}{}
 	err = callHTTPGetWithResp(n.client, "/api/v5/rules?limit=10000", &resp)
@@ -142,7 +152,7 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 
 		for _, node := range metricsResp.NodeMetrics {
 			metrics = append(metrics, collector.RuleEngine{
-				NodeName:           node.Node,
+				NodeName:           cutNodeName(node.Node),
 				RuleID:             rule.ID,
 				TopicHitCount:      node.Metrics.Matched,
 				ExecPassCount:      node.Metrics.Passed,
@@ -243,7 +253,7 @@ func (n *cluster5x) getAuthenticationMetrics() (dataSources []collector.DataSour
 
 		for _, node := range status.NodeMetrics {
 			m := collector.Authentication{
-				NodeName:       node.Node,
+				NodeName:       cutNodeName(node.Node),
 				ResType:        plugin.Backend,
 				Total:          node.Metrics.Total,
 				AllowCount:     node.Metrics.Success,
@@ -306,7 +316,7 @@ func (n *cluster5x) getAuthorizationMetrics() (dataSources []collector.DataSourc
 
 		for _, node := range status.NodeMetrics {
 			m := collector.Authorization{
-				NodeName:       node.Node,
+				NodeName:       cutNodeName(node.Node),
 				ResType:        plugin.Type,
 				Total:          node.Metrics.Total,
 				AllowCount:     node.Metrics.Allow,
