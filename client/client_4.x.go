@@ -74,7 +74,9 @@ func (n *cluster4x) getClusterStatus() (cluster collector.ClusterStatus, err err
 			Node        string
 			MaxFds      int `json:"max_fds"`
 			Connections int64
-			Edition     string
+			Load1       string `json:"load1"`
+			Load5       string `json:"load5"`
+			Load15      string `json:"load15"`
 		}
 		Code int
 	}{}
@@ -90,13 +92,22 @@ func (n *cluster4x) getClusterStatus() (cluster collector.ClusterStatus, err err
 	cluster.Status = healthy
 	cluster.NodeUptime = make(map[string]int64)
 	cluster.NodeMaxFDs = make(map[string]int)
+	cluster.CPULoads = make(map[string]collector.CPULoad)
 
 	for _, data := range resp.Data {
 		if data.NodeStatus != "Running" {
 			cluster.Status = unhealthy
 		}
-		cluster.NodeUptime[data.Node] = parseUptimeFor4x(data.Uptime)
-		cluster.NodeMaxFDs[data.Node] = data.MaxFds
+		nodeName := cutNodeName(data.Node)
+		cluster.NodeUptime[nodeName] = parseUptimeFor4x(data.Uptime)
+		cluster.NodeMaxFDs[nodeName] = data.MaxFds
+
+		load := collector.CPULoad{}
+		load.Load1, _ = strconv.ParseFloat(data.Load1, 64)
+		load.Load5, _ = strconv.ParseFloat(data.Load5, 64)
+		load.Load15, _ = strconv.ParseFloat(data.Load15, 64)
+		cluster.CPULoads[nodeName] = load
+
 		n.version = data.Version
 	}
 	return

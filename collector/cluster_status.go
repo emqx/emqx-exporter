@@ -26,6 +26,7 @@ const (
 	clusterStatus = "status"
 	nodeUptime    = "node_uptime"
 	nodeMaxFDs    = "node_max_fds"
+	cpuLoad       = "cpu_load"
 )
 
 func init() {
@@ -65,6 +66,11 @@ func NewClusterStatusCollector(cluster Cluster, logger log.Logger) (Collector, e
 			help:   "The max fds of node",
 			labels: []string{"node"},
 		},
+		{
+			name:   cpuLoad,
+			help:   "The load of node cpu",
+			labels: []string{"node", "load"},
+		},
 	}
 
 	for _, m := range metrics {
@@ -103,6 +109,20 @@ func (c *clusterStatusCollector) Update(ch chan<- prometheus.Metric) error {
 		ch <- prometheus.MustNewConstMetric(
 			c.desc[nodeMaxFDs],
 			prometheus.GaugeValue, float64(fd), node,
+		)
+	}
+	for node, load := range status.CPULoads {
+		ch <- prometheus.MustNewConstMetric(
+			c.desc[cpuLoad],
+			prometheus.GaugeValue, load.Load1, node, "load1",
+		)
+		ch <- prometheus.MustNewConstMetric(
+			c.desc[cpuLoad],
+			prometheus.GaugeValue, load.Load5, node, "load5",
+		)
+		ch <- prometheus.MustNewConstMetric(
+			c.desc[cpuLoad],
+			prometheus.GaugeValue, load.Load15, node, "load15",
 		)
 	}
 	return nil
