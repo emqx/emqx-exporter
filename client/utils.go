@@ -7,8 +7,24 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/valyala/fasthttp"
 	"net/http"
+	"net/netip"
+	"strings"
 	"time"
 )
+
+func cutNodeName(nodeName string) string {
+	slice := strings.Split(nodeName, "@")
+	if len(slice) != 2 {
+		return nodeName
+	}
+
+	if ip, err := netip.ParseAddr(slice[1]); err == nil {
+		return ip.String()
+	} else if pos := strings.IndexRune(slice[1], '.'); pos != 0 {
+		return slice[1][:pos]
+	}
+	return slice[1]
+}
 
 func getHTTPClient(host string) *fasthttp.Client {
 	return &fasthttp.Client{
@@ -59,6 +75,28 @@ func callHTTPGet(client *fasthttp.Client, uri string) (data []byte, statusCode i
 		err = errors.New("get response from api isn't valid json format")
 		return
 	}
+
+	errMsg := ""
+	code := jsoniter.Get(data, "code")
+	if code.ValueType() == jsoniter.NumberValue {
+		// for emqx 4.4, it will return integer type code if occurred error
+		if code.ToInt() != 0 {
+			errMsg = fmt.Sprintf("%s: %d", uri, code.ToInt())
+		}
+	} else if code.ValueType() == jsoniter.StringValue {
+		// for emqx 5, it will return string type code if occurred error
+		if code.ToString() != "" {
+			errMsg = fmt.Sprintf("%s: %s", uri, code.ToString())
+		}
+	}
+
+	if errMsg != "" {
+		msg := jsoniter.Get(data, "message")
+		if msg.ValueType() == jsoniter.StringValue {
+			errMsg = fmt.Sprintf("%s, msg=%s", errMsg, msg.ToString())
+		}
+		err = errors.New(errMsg)
+	}
 	return
 }
 
@@ -68,9 +106,10 @@ func callHTTPGetWithResp(client *fasthttp.Client, uri string, respData interface
 		return
 	}
 
+	//fmt.Println("data:", string(data))
 	err = jsoniter.Unmarshal(data, respData)
 	if err != nil {
-		err = fmt.Errorf("unmarshal api resp failed: %s", uri)
+		err = fmt.Errorf("unmarshal api resp failed: %s, %s", uri, err.Error())
 		return
 	}
 	return

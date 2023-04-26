@@ -101,10 +101,9 @@ func (n *cluster5x) getBrokerMetrics() (metrics *collector.Broker, err error) {
 func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err error) {
 	resp := struct {
 		Data []struct {
-			Actions []string
-			ID      string `json:"id"`
-			Name    string
-			Enable  bool
+			ID     string `json:"id"`
+			Name   string
+			Enable bool
 		}
 	}{}
 	err = callHTTPGetWithResp(n.client, "/api/v5/rules?limit=10000", &resp)
@@ -142,7 +141,7 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 
 		for _, node := range metricsResp.NodeMetrics {
 			metrics = append(metrics, collector.RuleEngine{
-				NodeName:           node.Node,
+				NodeName:           cutNodeName(node.Node),
 				RuleID:             rule.ID,
 				TopicHitCount:      node.Metrics.Matched,
 				ExecPassCount:      node.Metrics.Passed,
@@ -243,7 +242,7 @@ func (n *cluster5x) getAuthenticationMetrics() (dataSources []collector.DataSour
 
 		for _, node := range status.NodeMetrics {
 			m := collector.Authentication{
-				NodeName:       node.Node,
+				NodeName:       cutNodeName(node.Node),
 				ResType:        plugin.Backend,
 				Total:          node.Metrics.Total,
 				AllowCount:     node.Metrics.Success,
@@ -306,7 +305,7 @@ func (n *cluster5x) getAuthorizationMetrics() (dataSources []collector.DataSourc
 
 		for _, node := range status.NodeMetrics {
 			m := collector.Authorization{
-				NodeName:       node.Node,
+				NodeName:       cutNodeName(node.Node),
 				ResType:        plugin.Type,
 				Total:          node.Metrics.Total,
 				AllowCount:     node.Metrics.Allow,

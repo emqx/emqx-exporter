@@ -63,12 +63,12 @@ func (c *cluster) checkNodes() {
 			_, err5 = client.getClusterStatus()
 		}
 		if err4 != nil && err5 != nil {
-			level.Warn(c.logger).Log("check nodes", "couldn't get node info", "addr", *emqxNodes,
+			_ = level.Warn(c.logger).Log("check nodes", "couldn't get node info", "addr", *emqxNodes,
 				"err4", err4.Error(), "err5", err5.Error())
 			client = nil
 		} else if currentVersion != client.getVersion() {
 			currentVersion = client.getVersion()
-			level.Info(c.logger).Log("ClusterVersion", currentVersion)
+			_ = level.Info(c.logger).Log("ClusterVersion", currentVersion)
 		}
 
 		c.nodeLock.Lock()
@@ -105,7 +105,12 @@ func (c *cluster) GetClusterStatus() (cluster collector.ClusterStatus, err error
 		cluster.Status = unknown
 		return
 	}
-	return client.getClusterStatus()
+	cluster, err = client.getClusterStatus()
+	if err != nil {
+		err = fmt.Errorf("collect cluster status failed. %w", err)
+		return
+	}
+	return
 }
 
 func (c *cluster) GetBrokerMetrics() (brokers *collector.Broker, err error) {
@@ -113,7 +118,12 @@ func (c *cluster) GetBrokerMetrics() (brokers *collector.Broker, err error) {
 	if client == nil {
 		return
 	}
-	return client.getBrokerMetrics()
+	brokers, err = client.getBrokerMetrics()
+	if err != nil {
+		err = fmt.Errorf("collect broker metrics failed. %w", err)
+		return
+	}
+	return
 }
 
 func (c *cluster) GetRuleEngineMetrics() (bridges []collector.DataBridge, res []collector.RuleEngine, err error) {
@@ -123,10 +133,12 @@ func (c *cluster) GetRuleEngineMetrics() (bridges []collector.DataBridge, res []
 	}
 	bridges, err = client.getDataBridge()
 	if err != nil {
+		err = fmt.Errorf("collect rule engine data bridge failed. %w", err)
 		return
 	}
 	res, err = client.getRuleEngineMetrics()
 	if err != nil {
+		err = fmt.Errorf("collect rule engine metrics failed. %w", err)
 		return
 	}
 	return
@@ -137,7 +149,12 @@ func (c *cluster) GetAuthenticationMetrics() (dataSources []collector.DataSource
 	if client == nil {
 		return
 	}
-	return client.getAuthenticationMetrics()
+	dataSources, auths, err = client.getAuthenticationMetrics()
+	if err != nil {
+		err = fmt.Errorf("collect authentication metrics failed. %w", err)
+		return
+	}
+	return
 }
 
 func (c *cluster) GetAuthorizationMetrics() (dataSources []collector.DataSource, auths []collector.Authorization, err error) {
@@ -145,7 +162,12 @@ func (c *cluster) GetAuthorizationMetrics() (dataSources []collector.DataSource,
 	if client == nil {
 		return
 	}
-	return client.getAuthorizationMetrics()
+	dataSources, auths, err = client.getAuthorizationMetrics()
+	if err != nil {
+		err = fmt.Errorf("collect authorization metrics failed. %w", err)
+		return
+	}
+	return
 }
 
 func (c *cluster) getNode() client {

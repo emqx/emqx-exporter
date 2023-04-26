@@ -194,7 +194,7 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 		}
 		for _, m := range rule.Metrics {
 			re := collector.RuleEngine{
-				NodeName: m.Node,
+				NodeName: cutNodeName(m.Node),
 				RuleID:   rule.ID,
 				//ResStatus:           unknown,
 				TopicHitCount:    m.Matched,
