@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 79,
+  "id": 121,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -879,8 +879,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1003,7 +1002,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "emqx4",
           "value": "emqx4"
         },
@@ -1057,13 +1056,13 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Client Events",
   "uid": "EMQX4-ee-client-events",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
