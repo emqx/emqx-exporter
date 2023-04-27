@@ -24,8 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 7,
-  "iteration": 1680864533509,
+  "id": 131,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -232,7 +231,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "9.0.0",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -315,6 +314,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -366,7 +367,8 @@
         "legend": {
           "calcs": [],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
@@ -401,6 +403,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -452,7 +456,8 @@
         "legend": {
           "calcs": [],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
@@ -478,7 +483,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 36,
+  "schemaVersion": 37,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -486,8 +491,8 @@
       {
         "current": {
           "selected": false,
-          "text": "Prometheus",
-          "value": "Prometheus"
+          "text": "prometheus",
+          "value": "prometheus"
         },
         "hide": 0,
         "includeAll": false,
@@ -504,8 +509,8 @@
       {
         "current": {
           "selected": false,
-          "text": "emqx_name",
-          "value": "emqx_name"
+          "text": "emqx5.0-opensource",
+          "value": "emqx5.0-opensource"
         },
         "datasource": {
           "type": "prometheus",
@@ -542,14 +547,14 @@
           "type": "prometheus",
           "uid": "$datasource"
         },
-        "definition": "label_values(node)",
+        "definition": "label_values({cluster=\"$cluster\", from=\"exporter\"}, node)",
         "hide": 0,
         "includeAll": true,
         "multi": true,
         "name": "node",
         "options": [],
         "query": {
-          "query": "label_values(node)",
+          "query": "label_values({cluster=\"$cluster\", from=\"exporter\"}, node)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -572,7 +577,7 @@
           "type": "prometheus",
           "uid": "$datasource"
         },
-        "definition": "label_values(emqx_authentication_resource_status,resource)",
+        "definition": "label_values(emqx_authentication_resource_status{cluster=\"$cluster\"},resource)",
         "description": "The third party resource of authentication",
         "hide": 0,
         "includeAll": true,
@@ -580,7 +585,7 @@
         "name": "resource",
         "options": [],
         "query": {
-          "query": "label_values(emqx_authentication_resource_status,resource)",
+          "query": "label_values(emqx_authentication_resource_status{cluster=\"$cluster\"},resource)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -592,13 +597,13 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Authentication",
   "uid": "EMQX5-ee-authn",
-  "version": 14,
+  "version": 3,
   "weekStart": ""
 }
