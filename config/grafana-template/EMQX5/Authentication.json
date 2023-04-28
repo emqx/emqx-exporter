@@ -285,7 +285,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by(node, resource) (increase(emqx_authentication_deny_count{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"}[15m]))",
+          "expr": "sum by(node, resource) (irate(emqx_authentication_deny_count{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"}[15m]))",
           "format": "table",
           "hide": false,
           "instant": true,

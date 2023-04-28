@@ -160,7 +160,7 @@
         {
           "datasource": "$datasource",
           "editorMode": "code",
-          "expr": "sum by(instance) (increase(emqx_client_connected{cluster=\"$cluster\",instance=~\"$node\"}[$__interval]))",
+          "expr": "sum by(instance) (irate(emqx_client_connected{cluster=\"$cluster\",instance=~\"$node\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "{{ instance }} Connection",
           "range": true,
@@ -302,7 +302,7 @@
         {
           "datasource": "$datasource",
           "editorMode": "code",
-          "expr": "sum by(instance) (increase(emqx_client_disconnected{cluster=\"$cluster\", instance=~\"$node\"}[$__interval]))",
+          "expr": "sum by(instance) (irate(emqx_client_disconnected{cluster=\"$cluster\", instance=~\"$node\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "{{ instance }} Disconnection",
           "range": true,
@@ -396,7 +396,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum by(instance) (increase(emqx_client_subscribe{cluster=\"$cluster\", instance=~\"$node\"}[$__interval]))",
+          "expr": "sum by(instance) (irate(emqx_client_subscribe{cluster=\"$cluster\", instance=~\"$node\"}[$__rate_interval]))",
           "legendFormat": "{{ instance }} Subscribe",
           "range": true,
           "refId": "A"
@@ -537,7 +537,7 @@
         {
           "datasource": "$datasource",
           "editorMode": "code",
-          "expr": "sum by(instance) (increase(emqx_client_unsubscribe{cluster=\"$cluster\", instance=~\"$node\"}[$__interval]))",
+          "expr": "sum by(instance) (irate(emqx_client_unsubscribe{cluster=\"$cluster\", instance=~\"$node\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "{{ instance }} Unsubscribe",
           "range": true,
@@ -680,7 +680,7 @@
         {
           "datasource": "$datasource",
           "editorMode": "code",
-          "expr": "sum by(instance) (increase(emqx_client_authenticate{cluster=\"$cluster\", instance=~\"$node\"}[$__interval]))",
+          "expr": "sum by(instance) (irate(emqx_client_authenticate{cluster=\"$cluster\", instance=~\"$node\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "{{ instance }} Connection Auth",
           "range": true,
@@ -823,7 +823,7 @@
         {
           "datasource": "$datasource",
           "editorMode": "code",
-          "expr": "sum by(instance) (increase(emqx_client_authorize{cluster=\"$cluster\", instance=~\"$node\"}[$__interval]))",
+          "expr": "sum by(instance) (irate(emqx_client_authorize{cluster=\"$cluster\", instance=~\"$node\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "{{ instance }} ACL Auth",
           "range": true,
@@ -963,7 +963,7 @@
         {
           "datasource": "$datasource",
           "editorMode": "code",
-          "expr": "sum by(instance) (increase(emqx_client_auth_anonymous{cluster=\"$cluster\", instance=~\"$node\"}[$__interval]))",
+          "expr": "sum by(instance) (irate(emqx_client_auth_anonymous{cluster=\"$cluster\", instance=~\"$node\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "{{ instance }} Anonymous Auth",
           "range": true,
