@@ -897,7 +897,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(increase(emqx_client_authorize{cluster=\"$cluster\", instance=~\".*\"}[$__interval]))",
+          "expr": "sum(irate(emqx_client_authorize{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "ACL Auth",
           "range": true,
@@ -990,7 +990,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(increase(emqx_packets_connect{instance=~\".*\", cluster=\"$cluster\"}[$__interval])) - sum(increase(emqx_packets_connack_error {instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+          "expr": "sum(irate(emqx_packets_connect{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval])) - sum(irate(emqx_packets_connack_error {instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
           "legendFormat": "Auth Success",
           "range": true,
           "refId": "A"
@@ -1002,7 +1002,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(increase(emqx_packets_connack_auth_error{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+          "expr": "sum(irate(emqx_packets_connack_auth_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -1098,7 +1098,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(increase(emqx_packets_publish_auth_error{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+          "expr": "sum(irate(emqx_packets_publish_auth_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "Publish ACL Failure",
           "range": true,
@@ -1110,7 +1110,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(increase(emqx_packets_subscribe_auth_error{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+          "expr": "sum(irate(emqx_packets_subscribe_auth_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "Sub ACL Failure ",
           "range": true,
@@ -1393,7 +1393,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum by(rule) (rate(emqx_rule_exec_pass_count{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
+          "expr": "sum by(rule) (irate(emqx_rule_exec_pass_count{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
           "legendFormat": "{{rule}}",
           "range": true,
           "refId": "A"
@@ -1492,7 +1492,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum by(rule) (rate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
+          "expr": "sum by(rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "{{rule}}",
           "range": true,
@@ -1592,7 +1592,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum by(rule) (rate(emqx_rule_action_success{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
+          "expr": "sum by(rule) (irate(emqx_rule_action_success{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "{{rule}}",
           "range": true,
@@ -1692,7 +1692,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum by(rule) (rate(emqx_rule_action_failed{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
+          "expr": "sum by(rule) (irate(emqx_rule_action_failed{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "{{rule}}",
           "range": true,
@@ -1861,7 +1861,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(increase(emqx_client_connected{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+          "expr": "sum(irate(emqx_client_connected{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "Connections",
           "range": true,
@@ -1873,7 +1873,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(increase(emqx_client_disconnected{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+          "expr": "sum(irate(emqx_client_disconnected{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "Disconnections",
           "range": true,
@@ -2030,7 +2030,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(increase(emqx_client_subscribe{cluster=\"$cluster\", instance=~\".*\"}[$__interval]))",
+          "expr": "sum(irate(emqx_client_subscribe{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "Subscribes",
           "range": true,
@@ -2042,7 +2042,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(increase(emqx_client_unsubscribe{cluster=\"$cluster\", instance=~\".*\"}[$__interval]))",
+          "expr": "sum(irate(emqx_client_unsubscribe{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "Unsubscribes",
           "range": true,
@@ -2194,7 +2194,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(increase(emqx_client_authenticate{cluster=\"$cluster\",instance=~\".*\"}[$__interval]))",
+          "expr": "sum(irate(emqx_client_authenticate{cluster=\"$cluster\",instance=~\".*\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "Connect Auth",
           "range": true,
@@ -2206,7 +2206,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(increase(emqx_client_auth_anonymous{cluster=\"$cluster\", instance=~\".*\"}[$__interval]))",
+          "expr": "sum(irate(emqx_client_auth_anonymous{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "Anonymous Auth",
           "range": true,
@@ -2358,7 +2358,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(increase(emqx_client_authorize{cluster=\"$cluster\", instance=~\".*\"}[$__interval]))",
+          "expr": "sum(irate(emqx_client_authorize{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "ACL Auth",
           "range": true,
@@ -2509,7 +2509,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_connect{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_connect{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "legendFormat": "Packets Connect",
               "range": true,
               "refId": "A"
@@ -2517,7 +2517,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_connack_sent{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_connack_sent{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
               "legendFormat": "Packets Connack Sent",
               "range": true,
@@ -2526,7 +2526,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_connack_error{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_connack_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
               "legendFormat": "Packets Connack Error",
               "range": true,
@@ -2697,7 +2697,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_disconnect_sent{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_disconnect_sent{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "legendFormat": "Packets Disconnect Sent",
               "range": true,
               "refId": "A"
@@ -2705,7 +2705,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_disconnect_received{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_disconnect_received{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
               "legendFormat": "Packets Disconnect Received",
               "range": true,
@@ -2887,7 +2887,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_publish_sent{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_publish_sent{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "legendFormat": "Packets Publish Sent",
               "range": true,
               "refId": "A"
@@ -2895,7 +2895,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_publish_received{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_publish_received{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
               "legendFormat": "Packets Publish Received",
               "range": true,
@@ -2904,7 +2904,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_publish_dropped{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_publish_dropped{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
               "legendFormat": "Packets Publish Dropped",
               "range": true,
@@ -2913,7 +2913,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_publish_error{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_publish_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
               "legendFormat": "Packets Publish Error",
               "range": true,
@@ -3125,7 +3125,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_subscribe_received{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_subscribe_received{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "legendFormat": "Packets Subscribe Received",
               "range": true,
               "refId": "A"
@@ -3133,7 +3133,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_suback_sent{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_suback_sent{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
               "legendFormat": "Packets Suback Sent",
               "range": true,
@@ -3142,7 +3142,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_subscribe_error{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_subscribe_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
               "legendFormat": "Packets Subscribe Error",
               "range": true,
@@ -3151,7 +3151,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_unsubscribe_received{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_unsubscribe_received{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
               "legendFormat": "Packets Unsubscribe Received",
               "range": true,
@@ -3160,7 +3160,7 @@
             {
               "datasource": "$datasource",
               "editorMode": "code",
-              "expr": "sum(increase(emqx_packets_unsubscribe_error{instance=~\".*\", cluster=\"$cluster\"}[$__interval]))",
+              "expr": "sum(irate(emqx_packets_unsubscribe_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
               "legendFormat": "Packets Unsubscribe Error",
               "range": true,
@@ -3386,7 +3386,7 @@
           "datasource": "$datasource",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(increase(emqx_messages_received{instance=~\".*\",cluster=\"$cluster\"}[$__interval]))",
+          "expr": "sum(irate(emqx_messages_received{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "interval": "20s",
           "legendFormat": "Messages Received",
           "range": true,
@@ -3395,7 +3395,7 @@
         {
           "datasource": "$datasource",
           "editorMode": "code",
-          "expr": "sum(increase(emqx_messages_sent{instance=~\".*\",cluster=\"$cluster\"}[$__interval]))",
+          "expr": "sum(irate(emqx_messages_sent{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
           "interval": "20s",
           "legendFormat": "Messages Sent",
@@ -3405,7 +3405,7 @@
         {
           "datasource": "$datasource",
           "editorMode": "code",
-          "expr": "sum(increase(emqx_messages_dropped{instance=~\".*\",cluster=\"$cluster\"}[$__interval]))",
+          "expr": "sum(irate(emqx_messages_dropped{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
           "interval": "20s",
           "legendFormat": "Messages Dropped",
@@ -3496,7 +3496,7 @@
           "datasource": "$datasource",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(increase(emqx_messages_qos0_received{cluster=\"$cluster\", instance=~\".*\"}[$__interval]))",
+          "expr": "sum(irate(emqx_messages_qos0_received{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
           "instant": false,
           "legendFormat": "QOS0",
           "range": true,
@@ -3505,7 +3505,7 @@
         {
           "datasource": "$datasource",
           "editorMode": "code",
-          "expr": "sum(increase(emqx_messages_qos1_received{cluster=\"$cluster\", instance=~\".*\"}[$__interval]))",
+          "expr": "sum(irate(emqx_messages_qos1_received{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "QOS1",
           "range": true,
@@ -3514,7 +3514,7 @@
         {
           "datasource": "$datasource",
           "editorMode": "code",
-          "expr": "sum(increase(emqx_messages_qos2_received{cluster=\"$cluster\", instance=~\".*\"}[$__interval]))",
+          "expr": "sum(irate(emqx_messages_qos2_received{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "QOS2",
           "range": true,
@@ -3641,7 +3641,7 @@
           "datasource": "$datasource",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(increase(emqx_bytes_received{instance=~\".*\",cluster=\"$cluster\"}[$__interval]))",
+          "expr": "sum(irate(emqx_bytes_received{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "format": "time_series",
           "instant": false,
           "interval": "20s",
@@ -3652,7 +3652,7 @@
         {
           "datasource": "$datasource",
           "editorMode": "code",
-          "expr": "sum(increase(emqx_bytes_sent{instance=~\".*\",cluster=\"$cluster\"}[$__interval]))",
+          "expr": "sum(irate(emqx_bytes_sent{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
           "interval": "20s",
           "legendFormat": "Bytes sent",
@@ -4308,7 +4308,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by(rule) (increase(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\".*\"}[15m]))",
+          "expr": "sum by(rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\".*\"}[15m]))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -4726,7 +4726,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by(resource) (increase(emqx_authentication_deny_count{cluster=\"$cluster\", node=~\".*\"}[15m]))",
+          "expr": "sum by(resource) (irate(emqx_authentication_deny_count{cluster=\"$cluster\", node=~\".*\"}[15m]))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -5289,7 +5289,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by(resource) (increase(emqx_authorization_deny_count{cluster=\"$cluster\", node=~\".*\"}[15m]))",
+          "expr": "sum by(resource) (irate(emqx_authorization_deny_count{cluster=\"$cluster\", node=~\".*\"}[15m]))",
           "format": "table",
           "hide": false,
           "instant": true,
