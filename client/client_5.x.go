@@ -4,6 +4,7 @@ import (
 	"emqx-exporter/collector"
 	"fmt"
 	"github.com/valyala/fasthttp"
+	"strconv"
 	"time"
 )
 
@@ -55,9 +56,9 @@ func (n *cluster5x) getClusterStatus() (cluster collector.ClusterStatus, err err
 		MaxFds      int `json:"max_fds"`
 		Connections int64
 		Edition     string
-		Load1       float64 `json:"load1"`
-		Load5       float64 `json:"load5"`
-		Load15      float64 `json:"load15"`
+		Load1       any `json:"load1"`
+		Load5       any `json:"load5"`
+		Load15      any `json:"load15"`
 	}{{}}
 	err = callHTTPGetWithResp(n.client, "/api/v5/nodes", &resp)
 	if err != nil {
@@ -76,11 +77,19 @@ func (n *cluster5x) getClusterStatus() (cluster collector.ClusterStatus, err err
 		nodeName := cutNodeName(data.Node)
 		cluster.NodeUptime[nodeName] = data.Uptime / 1000
 		cluster.NodeMaxFDs[nodeName] = data.MaxFds
-		cluster.CPULoads[nodeName] = collector.CPULoad{
-			Load1:  data.Load1,
-			Load5:  data.Load5,
-			Load15: data.Load15,
+
+		cpuLoad := collector.CPULoad{}
+		// the cpu load value may be string or float64
+		if value, ok := data.Load1.(float64); ok {
+			cpuLoad.Load1 = value
+			cpuLoad.Load5, _ = data.Load5.(float64)
+			cpuLoad.Load15, _ = data.Load15.(float64)
+		} else if strValue, ok := data.Load1.(string); ok {
+			cpuLoad.Load1, _ = strconv.ParseFloat(strValue, 64)
+			cpuLoad.Load5, _ = strconv.ParseFloat(data.Load5.(string), 64)
+			cpuLoad.Load15, _ = strconv.ParseFloat(data.Load15.(string), 64)
 		}
+		cluster.CPULoads[nodeName] = cpuLoad
 
 		if data.Edition == "Opensource" {
 			n.edition = openSource
