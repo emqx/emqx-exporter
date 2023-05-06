@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 125,
+  "id": 171,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -59,18 +59,6 @@
           }
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byName",
@@ -299,6 +287,21 @@
         {
           "id": "merge",
           "options": {}
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "node",
+                "resource",
+                "Value #E",
+                "Value #B",
+                "Value #C",
+                "Value #D"
+              ]
+            }
+          }
         }
       ],
       "type": "table"
@@ -604,6 +607,6 @@
   "timezone": "",
   "title": "Authentication",
   "uid": "EMQX5-authn",
-  "version": 3,
+  "version": 2,
   "weekStart": ""
 }

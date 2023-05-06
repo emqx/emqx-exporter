@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 120,
+  "id": 166,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -314,18 +314,6 @@
           }
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byName",
@@ -750,6 +738,25 @@
         {
           "id": "merge",
           "options": {}
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "node",
+                "rule",
+                "Value #A",
+                "Value #H",
+                "Value #B",
+                "Value #C",
+                "Value #D",
+                "Value #E",
+                "Value #F",
+                "Value #G"
+              ]
+            }
+          }
         }
       ],
       "type": "table"
@@ -929,7 +936,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum by(rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\".*\", rule=~\"$rule\"}[$__rate_interval]))",
+          "expr": "sum by(rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "{{rule}}",
           "range": true,
@@ -1022,7 +1029,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum by(rule) (irate(emqx_rule_action_success{cluster=\"$cluster\", node=~\".*\", rule=~\"$rule\"}[$__rate_interval]))",
+          "expr": "sum by(rule) (irate(emqx_rule_action_success{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "{{rule}}",
           "range": true,
@@ -1115,7 +1122,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum by(rule) (irate(emqx_rule_action_failed{cluster=\"$cluster\", node=~\".*\", rule=~\"$rule\"}[$__rate_interval]))",
+          "expr": "sum by(rule) (irate(emqx_rule_action_failed{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "{{rule}}",
           "range": true,
@@ -1217,7 +1224,7 @@
           "type": "prometheus",
           "uid": "$datasource"
         },
-        "definition": "label_values({cluster=\"$cluster\", node=~\"$node\"}, rule)",
+        "definition": "label_values({cluster=\"$cluster\", node=~\"$node\", from=\"exporter\"}, rule)",
         "description": "The id of rule engine",
         "hide": 0,
         "includeAll": true,
@@ -1225,7 +1232,7 @@
         "name": "rule",
         "options": [],
         "query": {
-          "query": "label_values({cluster=\"$cluster\", node=~\"$node\"}, rule)",
+          "query": "label_values({cluster=\"$cluster\", node=~\"$node\", from=\"exporter\"}, rule)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1244,6 +1251,6 @@
   "timezone": "",
   "title": "Rule Engine",
   "uid": "EMQX4-rule-engine",
-  "version": 3,
+  "version": 2,
   "weekStart": ""
 }
