@@ -25,7 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 152,
+  "id": 174,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -1760,7 +1760,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1929,7 +1930,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2098,7 +2100,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2262,7 +2265,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3235,7 +3239,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -3461,7 +3466,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3572,7 +3578,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -3696,7 +3703,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3706,18 +3714,6 @@
           }
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byName",
@@ -3817,7 +3813,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "red",
@@ -3905,6 +3902,19 @@
         {
           "id": "merge",
           "options": {}
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "name",
+                "type",
+                "Value #status",
+                "Value #queuing"
+              ]
+            }
+          }
         }
       ],
       "type": "table"
@@ -3929,7 +3939,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3939,18 +3950,6 @@
           }
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byName",
@@ -3991,7 +3990,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "red",
@@ -4022,7 +4022,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "orange",
@@ -4077,7 +4078,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "red",
@@ -4382,6 +4384,24 @@
         {
           "id": "merge",
           "options": {}
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "rule",
+                "Value #A",
+                "Value #H",
+                "Value #B",
+                "Value #C",
+                "Value #D",
+                "Value #E",
+                "Value #F",
+                "Value #G"
+              ]
+            }
+          }
         }
       ],
       "type": "table"
@@ -4419,7 +4439,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4429,18 +4450,6 @@
           }
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byName",
@@ -4485,7 +4494,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "red",
@@ -4516,7 +4526,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 111
+                "value": 133
               }
             ]
           },
@@ -4528,7 +4538,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 89
+                "value": 108
               }
             ]
           },
@@ -4740,6 +4750,21 @@
         {
           "id": "merge",
           "options": {}
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "resource",
+                "Value #A",
+                "Value #E",
+                "Value #B",
+                "Value #C",
+                "Value #D"
+              ]
+            }
+          }
         }
       ],
       "type": "table"
@@ -4789,7 +4814,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -4884,7 +4910,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -4967,7 +4994,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4977,18 +5005,6 @@
           }
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byName",
@@ -5033,7 +5049,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "red",
@@ -5079,7 +5096,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 87
+                "value": 109
               }
             ]
           },
@@ -5091,7 +5108,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 89
+                "value": 94
               }
             ]
           },
@@ -5103,7 +5120,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 89
+                "value": 120
               }
             ]
           },
@@ -5115,7 +5132,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 161
+                "value": 197
               },
               {
                 "id": "links",
@@ -5197,6 +5214,18 @@
                     "type": "special"
                   }
                 ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 96
               }
             ]
           }
@@ -5303,6 +5332,21 @@
         {
           "id": "merge",
           "options": {}
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "resource",
+                "Value #A",
+                "Value #E",
+                "Value #B",
+                "Value #C",
+                "Value #D"
+              ]
+            }
+          }
         }
       ],
       "type": "table"
@@ -5352,7 +5396,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -5447,7 +5492,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -5556,7 +5602,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -5645,7 +5692,8 @@
             "mode": "percentage",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -5745,7 +5793,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -5828,7 +5877,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -5955,7 +6005,7 @@
           },
           "editorMode": "code",
           "expr": "sum by(node) (emqx_cluster_cpu_load{cluster=\"$cluster\", load=\"load1\"})",
-          "legendFormat": "__auto",
+          "legendFormat": "{{node}}",
           "range": true,
           "refId": "A"
         }
@@ -6046,7 +6096,7 @@
           },
           "editorMode": "code",
           "expr": "sum by(node) (emqx_cluster_cpu_load{cluster=\"$cluster\", load=\"load5\"})",
-          "legendFormat": "__auto",
+          "legendFormat": "{{node}}",
           "range": true,
           "refId": "A"
         }
@@ -6137,7 +6187,7 @@
           },
           "editorMode": "code",
           "expr": "sum by(node) (emqx_cluster_cpu_load{cluster=\"$cluster\", load=\"load15\"})",
-          "legendFormat": "__auto",
+          "legendFormat": "{{node}}",
           "range": true,
           "refId": "A"
         }
@@ -6211,6 +6261,6 @@
   "timezone": "",
   "title": "EMQX",
   "uid": "EMQX5",
-  "version": 4,
+  "version": 2,
   "weekStart": ""
 }

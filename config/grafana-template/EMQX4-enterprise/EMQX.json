@@ -2016,7 +2016,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2185,7 +2186,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2354,7 +2356,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2518,7 +2521,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2682,7 +2686,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2840,7 +2845,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3019,7 +3025,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -3227,7 +3234,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -3490,7 +3498,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -3716,7 +3725,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3812,7 +3822,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3822,18 +3833,6 @@
           }
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byName",
@@ -3959,6 +3958,18 @@
         {
           "id": "merge",
           "options": {}
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "name",
+                "type",
+                "Value"
+              ]
+            }
+          }
         }
       ],
       "type": "table"
@@ -3983,7 +3994,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3993,18 +4005,6 @@
           }
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byName",
@@ -4045,7 +4045,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "red",
@@ -4076,7 +4077,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "orange",
@@ -4131,7 +4133,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "red",
@@ -4436,6 +4439,24 @@
         {
           "id": "merge",
           "options": {}
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "rule",
+                "Value #A",
+                "Value #H",
+                "Value #B",
+                "Value #C",
+                "Value #D",
+                "Value #E",
+                "Value #F",
+                "Value #G"
+              ]
+            }
+          }
         }
       ],
       "type": "table"
@@ -4499,7 +4520,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4588,7 +4610,8 @@
             "mode": "percentage",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4688,7 +4711,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -4774,7 +4798,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4812,7 +4837,7 @@
           },
           "editorMode": "code",
           "expr": "sum by(node) (emqx_cluster_cpu_load{cluster=\"$cluster\", load=\"load1\"})",
-          "legendFormat": "__auto",
+          "legendFormat": "{{node}}",
           "range": true,
           "refId": "A"
         }
@@ -4865,7 +4890,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4903,7 +4929,7 @@
           },
           "editorMode": "code",
           "expr": "sum by(node) (emqx_cluster_cpu_load{cluster=\"$cluster\", load=\"load5\"})",
-          "legendFormat": "__auto",
+          "legendFormat": "{{node}}",
           "range": true,
           "refId": "A"
         }
@@ -4956,7 +4982,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4994,7 +5021,7 @@
           },
           "editorMode": "code",
           "expr": "sum by(node) (emqx_cluster_cpu_load{cluster=\"$cluster\", load=\"load15\"})",
-          "legendFormat": "__auto",
+          "legendFormat": "{{node}}",
           "range": true,
           "refId": "A"
         }
@@ -5034,9 +5061,9 @@
       },
       {
         "current": {
-          "selected": true,
-          "text": "emqx5.0-opensource",
-          "value": "emqx5.0-opensource"
+          "selected": false,
+          "text": "emqx4",
+          "value": "emqx4"
         },
         "datasource": {
           "uid": "$datasource"
@@ -5068,6 +5095,6 @@
   "timezone": "",
   "title": "EMQX",
   "uid": "EMQX4-ee",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
