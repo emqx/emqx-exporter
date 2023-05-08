@@ -1213,7 +1213,7 @@
           "type": "prometheus",
           "uid": "$datasource"
         },
-        "definition": "label_values({cluster=\"$cluster\", node=~\"$node\"}, rule)",
+        "definition": "label_values({cluster=\"$cluster\", node=~\"$node\", from=\"exporter\"}, rule)",
         "description": "The id of rule engine",
         "hide": 0,
         "includeAll": true,
@@ -1221,7 +1221,7 @@
         "name": "rule",
         "options": [],
         "query": {
-          "query": "label_values({cluster=\"$cluster\", node=~\"$node\"}, rule)",
+          "query": "label_values({cluster=\"$cluster\", node=~\"$node\", from=\"exporter\"}, rule)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
