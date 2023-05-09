@@ -14,6 +14,11 @@ scrape_configs:
           cluster: test
           # fix value, don't modify
           from: emqx
+    relabel_configs:
+      - source_labels: [ "__address__" ]
+        target_label: "instance"
+        regex: (.*):.*
+        replacement: $1
   - job_name: 'exporter'
     metrics_path: /metrics
     scrape_interval: 5s
