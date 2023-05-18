@@ -95,7 +95,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -173,7 +173,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -190,7 +190,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -256,7 +256,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(emqx_license_max_client_limit{cluster=\"$cluster\"})",
@@ -272,7 +272,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -348,7 +348,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -361,7 +361,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "emqx_messages_output_period_second{cluster=\"$cluster\"}",
@@ -377,7 +377,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "",
       "fieldConfig": {
@@ -512,7 +512,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -683,7 +683,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -698,7 +698,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -712,7 +712,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -749,7 +749,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -950,7 +950,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1030,7 +1030,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(emqx_sessions_count{instance=~\".*\", cluster=\"$cluster\"})",
@@ -1041,7 +1041,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(emqx_license_max_client_limit{cluster=\"$cluster\"})",
@@ -1079,7 +1079,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1138,7 +1138,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Detail Metrics",
-          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&&var-node=All&viewPanel=6"
+          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&&var-node=All&viewPanel=6"
         }
       ],
       "options": {
@@ -1157,7 +1157,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(rule) (emqx_rule_exec_last5m_rate{cluster=\"$cluster\", node=~\".*\"})",
@@ -1173,7 +1173,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1248,7 +1248,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(irate(emqx_packets_connect{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval])) - sum(irate(emqx_packets_connack_error {instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
@@ -1259,7 +1259,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -1279,7 +1279,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1354,7 +1354,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(irate(emqx_packets_publish_auth_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
@@ -1366,7 +1366,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(irate(emqx_packets_subscribe_auth_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
@@ -1382,7 +1382,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1526,7 +1526,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1585,7 +1585,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Exec Rate",
-          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=2"
+          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&var-node=All&viewPanel=2"
         }
       ],
       "options": {
@@ -1604,7 +1604,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(rule) (emqx_rule_exec_rate{cluster=\"$cluster\", node=~\".*\"})",
@@ -1681,7 +1681,7 @@
         {
           "targetBlank": true,
           "title": "Show details",
-          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&var-rule=All&viewPanel=16"
+          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&var-node=All&var-rule=All&viewPanel=16"
         }
       ],
       "options": {
@@ -1777,7 +1777,7 @@
         {
           "targetBlank": true,
           "title": "Show details",
-          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&var-rule=All&viewPanel=18"
+          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&var-node=All&var-rule=All&viewPanel=18"
         }
       ],
       "options": {
@@ -1874,7 +1874,7 @@
         {
           "targetBlank": true,
           "title": "Show details",
-          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&var-rule=All&viewPanel=20"
+          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&var-node=All&var-rule=All&viewPanel=20"
         }
       ],
       "options": {
@@ -1971,7 +1971,7 @@
         {
           "targetBlank": true,
           "title": "Show details",
-          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&var-rule=All&viewPanel=22"
+          "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&var-node=All&var-rule=All&viewPanel=22"
         }
       ],
       "options": {
@@ -2019,7 +2019,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -2127,12 +2127,12 @@
         {
           "targetBlank": true,
           "title": "Show Node Connection Events",
-          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=2"
+          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&var-node=All&viewPanel=2"
         },
         {
           "targetBlank": true,
           "title": "Show Node Disconnection Events",
-          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=3"
+          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&var-node=All&viewPanel=3"
         }
       ],
       "options": {
@@ -2157,7 +2157,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(irate(emqx_client_connected{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
@@ -2169,7 +2169,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(irate(emqx_client_disconnected{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
@@ -2185,7 +2185,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -2294,12 +2294,12 @@
         {
           "targetBlank": true,
           "title": "Show Node Subscribe Events",
-          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=5"
+          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&var-node=All&viewPanel=5"
         },
         {
           "targetBlank": true,
           "title": "Show Node Unsubscribe Events",
-          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=7"
+          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&var-node=All&viewPanel=7"
         }
       ],
       "options": {
@@ -2324,7 +2324,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(irate(emqx_client_subscribe{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
@@ -2336,7 +2336,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(irate(emqx_client_unsubscribe{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
@@ -2352,7 +2352,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "",
       "fieldConfig": {
@@ -2461,7 +2461,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Auth Events",
-          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All"
+          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&var-node=All"
         }
       ],
       "options": {
@@ -2486,7 +2486,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(irate(emqx_client_authenticate{cluster=\"$cluster\",instance=~\".*\"}[$__rate_interval]))",
@@ -2498,7 +2498,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(irate(emqx_client_auth_success_anonymous {cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
@@ -2514,7 +2514,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "",
       "fieldConfig": {
@@ -2623,7 +2623,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Auth Events",
-          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=$datasource&var-cluster=$cluster&var-node=All&viewPanel=12"
+          "url": "/d/EMQX4-ee-client-events/client-events?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&var-node=All&viewPanel=12"
         }
       ],
       "options": {
@@ -2648,7 +2648,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(irate(emqx_client_check_acl{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
@@ -2677,7 +2677,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -2842,7 +2842,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -3025,7 +3025,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -3243,7 +3243,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -3516,7 +3516,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -3684,7 +3684,7 @@
         {
           "targetBlank": true,
           "title": "Show Node Messages Detail",
-          "url": "/d/EMQX4-ee-messages/messages?var-datasource=$datasource&var-cluster=$cluster&var-node=All"
+          "url": "/d/EMQX4-ee-messages/messages?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&var-node=All"
         }
       ],
       "options": {
@@ -3752,7 +3752,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -3880,7 +3880,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -4015,7 +4015,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "builder",
           "exemplar": false,
@@ -4051,7 +4051,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -4231,7 +4231,7 @@
                   {
                     "targetBlank": true,
                     "title": "Show Node Metrics Detail",
-                    "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=$datasource&var-cluster=$cluster&var-node=All&var-rule=${__value.text}&viewPanel=4"
+                    "url": "/d/EMQX4-ee-rule-engine/rule-engine?var-datasource=${DS_PROMETHEUS}&var-cluster=$cluster&var-node=All&var-rule=${__value.text}&viewPanel=4"
                   }
                 ]
               }
@@ -4387,7 +4387,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -4401,7 +4401,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -4416,7 +4416,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -4431,7 +4431,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -4446,7 +4446,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -4461,7 +4461,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -4476,7 +4476,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -4491,7 +4491,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -4832,7 +4832,7 @@
         "includeAll": false,
         "label": "datasource",
         "multi": false,
-        "name": "datasource",
+        "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
         "queryValue": "",
@@ -4844,7 +4844,7 @@
       {
         "current": {},
         "datasource": {
-          "uid": "$datasource"
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values(up, cluster)",
         "description": "A custom label of the scrape_config in prometheus to tag the cluster",

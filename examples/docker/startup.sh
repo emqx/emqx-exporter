@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# username and password is defined in the file "bootstrap_user"
 emqxDashboardUsername=admin
 emqxDashboardPassword=admin
 
@@ -32,8 +31,8 @@ esac
 
 #docker run -d --name emqx-ee -p 1883:1883 -p 8081:8081 -p 8083:8083 -p 8084:8084 -p 8883:8883 -p 18083:18083 emqx/emqx-ee:4.4.16
 docker run -d --name emqx-demo \
- -v $(pwd)/bootstrap_user:/opt/emqx/data/bootstrap_user \
- -e EMQX_DASHBOARD__BOOTSTRAP_USERS_FILE='"/opt/emqx/data/bootstrap_user"' \
+ -v $(pwd)/api_secret:/opt/emqx/data/api_secret \
+ -e EMQX_DASHBOARD__BOOTSTRAP_USERS_FILE='"/opt/emqx/data/api_secret"' \
  -e EMQX_DASHBOARD__DEFAULT_USER__LOGIN=$emqxDashboardUsername \
  -e EMQX_DASHBOARD__DEFAULT_USER__PASSWORD=$emqxDashboardPassword \
  -p 1883:1883 -p 8083:8083 -p 8084:8084 -p 8883:8883 -p 18083:18083 $emqxImage
@@ -50,8 +49,9 @@ while
 done
 fi
 
+# the username and password is defined in the file api_secret
 docker run -d --name exporter-demo -p 8085:8085 emqx/emqx-exporter:latest \
- --emqx.nodes="emqx-demo:18083" --emqx.auth-username=$emqxDashboardUsername --emqx.auth-password=$emqxDashboardPassword
+ --emqx.nodes="emqx-demo:18083" --emqx.auth-username=76668f8a2003d597 --emqx.auth-password=CRCDB6lxxzN58e5HoD82llBC0Erg1TVZIAUsdTjPU7N
 
 
 # use existing config to run prometheus

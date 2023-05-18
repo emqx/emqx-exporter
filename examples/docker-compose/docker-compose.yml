@@ -10,9 +10,9 @@ services:
       - 8084:8084
       - 8883:8883
     environment:
-      EMQX_DASHBOARD__BOOTSTRAP_USERS_FILE: '"/opt/emqx/data/bootstrap_user"'
+      EMQX_DASHBOARD__BOOTSTRAP_USERS_FILE: '"/opt/emqx/data/api_secret"'
     volumes:
-      - ./bootstrap_user:/opt/emqx/data/bootstrap_user
+      - ./api_secret:/opt/emqx/data/api_secret
 
   emqx-exporter:
     image: emqx/emqx-exporter
@@ -20,9 +20,10 @@ services:
     ports:
       - 8085:8085
     command:
+      # the username and password is defined in the file api_secret
       - '--emqx.nodes=emqx-demo:18083'
-      - '--emqx.auth-username=admin'
-      - '--emqx.auth-password=admin'
+      - '--emqx.auth-username=76668f8a2003d597'
+      - '--emqx.auth-password=CRCDB6lxxzN58e5HoD82llBC0Erg1TVZIAUsdTjPU7N'
 
   prometheus:
     image: prom/prometheus
