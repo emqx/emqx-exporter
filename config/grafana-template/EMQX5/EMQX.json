@@ -1,4 +1,47 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": [],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -25,7 +68,8 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 174,
+  "id": null,
+  "iteration": 1684380269117,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -118,7 +162,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.0.0",
       "targets": [
         {
           "datasource": {
@@ -149,8 +193,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -248,7 +290,10 @@
       "pluginVersion": "9.0.5",
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "max(emqx_cluster_nodes_running{instance=~\".*\", cluster=\"$cluster\"})",
           "legendFormat": "Running",
@@ -256,7 +301,10 @@
           "refId": "A"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "max(emqx_cluster_nodes_stopped{instance=~\".*\", cluster=\"$cluster\"})",
           "hide": false,
@@ -279,8 +327,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -386,8 +432,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -482,8 +526,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -546,7 +588,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum(emqx_live_connections_count{instance=~\".*\", cluster=\"$cluster\"})",
           "legendFormat": "Total",
@@ -554,7 +599,10 @@
           "refId": "A"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum by(instance) (emqx_connections_count{cluster=\"$cluster\"})",
           "hide": false,
@@ -567,15 +615,16 @@
       "type": "timeseries"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -653,7 +702,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "builder",
           "expr": "sum(emqx_suboptions_count{instance=~\".*\", cluster=\"$cluster\"})",
           "legendFormat": "Subscriptions",
@@ -675,8 +727,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -766,8 +816,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -918,8 +966,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1026,8 +1072,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1123,7 +1167,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1131,8 +1175,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1196,7 +1238,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(type, name) (emqx_rule_bridge_queuing{cluster=\"$cluster\"})",
@@ -1219,8 +1261,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1306,7 +1346,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1314,8 +1354,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1348,8 +1386,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1390,7 +1427,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(rule) (irate(emqx_rule_exec_pass_count{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
@@ -1405,7 +1442,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1413,8 +1450,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1447,8 +1482,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1489,7 +1523,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
@@ -1505,7 +1539,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1513,8 +1547,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1547,8 +1579,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1589,7 +1620,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(rule) (irate(emqx_rule_action_success{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
@@ -1605,7 +1636,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1613,8 +1644,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1647,8 +1676,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1689,7 +1717,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(rule) (irate(emqx_rule_action_failed{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
@@ -1726,8 +1754,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1760,8 +1786,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1895,8 +1920,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1930,8 +1953,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2066,8 +2088,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -2100,8 +2120,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2231,8 +2250,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -2265,8 +2282,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2511,7 +2527,10 @@
           },
           "targets": [
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_connect{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "legendFormat": "Packets Connect",
@@ -2519,7 +2538,10 @@
               "refId": "A"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_connack_sent{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -2528,7 +2550,10 @@
               "refId": "B"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_connack_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -2699,7 +2724,10 @@
           },
           "targets": [
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_disconnect_sent{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "legendFormat": "Packets Disconnect Sent",
@@ -2707,7 +2735,10 @@
               "refId": "A"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_disconnect_received{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -2889,7 +2920,10 @@
           },
           "targets": [
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_publish_sent{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "legendFormat": "Packets Publish Sent",
@@ -2897,7 +2931,10 @@
               "refId": "A"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_publish_received{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -2906,7 +2943,10 @@
               "refId": "B"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_publish_dropped{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -2915,7 +2955,10 @@
               "refId": "C"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_publish_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -3127,7 +3170,10 @@
           },
           "targets": [
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_subscribe_received{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "legendFormat": "Packets Subscribe Received",
@@ -3135,7 +3181,10 @@
               "refId": "A"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_suback_sent{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -3144,7 +3193,10 @@
               "refId": "B"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_subscribe_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -3153,7 +3205,10 @@
               "refId": "C"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_unsubscribe_received{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -3162,7 +3217,10 @@
               "refId": "D"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_unsubscribe_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -3202,8 +3260,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -3239,8 +3295,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -3388,7 +3443,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "exemplar": false,
           "expr": "sum(irate(emqx_messages_received{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
@@ -3398,7 +3456,10 @@
           "refId": "A"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum(irate(emqx_messages_sent{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
@@ -3408,7 +3469,10 @@
           "refId": "B"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum(irate(emqx_messages_dropped{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
@@ -3432,8 +3496,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -3466,8 +3528,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -3499,7 +3560,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "exemplar": false,
           "expr": "sum(irate(emqx_messages_qos0_received{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
@@ -3509,7 +3573,10 @@
           "refId": "A"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum(irate(emqx_messages_qos1_received{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
           "hide": false,
@@ -3518,7 +3585,10 @@
           "refId": "B"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum(irate(emqx_messages_qos2_received{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
           "hide": false,
@@ -3541,8 +3611,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -3578,8 +3646,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -3645,7 +3712,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "exemplar": false,
           "expr": "sum(irate(emqx_bytes_received{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
@@ -3657,7 +3727,10 @@
           "refId": "A"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum(irate(emqx_bytes_sent{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
@@ -3703,8 +3776,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -3813,8 +3885,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -3865,7 +3936,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.0.0",
       "targets": [
         {
           "datasource": {
@@ -3939,8 +4010,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -3990,8 +4060,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -4022,8 +4091,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "orange",
@@ -4078,8 +4146,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -4257,7 +4324,7 @@
           }
         ]
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.0.0",
       "targets": [
         {
           "datasource": {
@@ -4439,8 +4506,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -4494,8 +4560,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -4667,7 +4732,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.0.0",
       "targets": [
         {
           "datasource": {
@@ -4780,8 +4845,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -4814,8 +4877,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -4876,8 +4938,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -4910,8 +4970,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -4994,8 +5053,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -5049,8 +5107,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -5249,7 +5306,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.0.0",
       "targets": [
         {
           "datasource": {
@@ -5362,8 +5419,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -5396,8 +5451,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -5458,8 +5512,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -5492,8 +5544,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -5559,98 +5610,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "description": "The value of run_queue_length can be used to evaluate the current Erlang scheduler load. If the value of run_queue_length is high, it means that there are many processes waiting to be executed in the run queue, and the scheduler may need more processor cores or a better scheduling strategy to better handle these processes",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 18,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "smooth",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 0,
-        "y": 68
-      },
-      "id": 46,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": "$datasource",
-          "editorMode": "code",
-          "expr": "sum by(instance) (erlang_vm_statistics_run_queues_length_total{cluster=\"$cluster\"})",
-          "hide": false,
-          "legendFormat": "{{ instance }} Run Queue Length",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Erlang VM Run Queue",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -5658,283 +5618,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 18,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "smooth",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "area"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 6,
-        "y": 68
-      },
-      "id": 89,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "max by(instance) (erlang_vm_process_limit{cluster=\"$cluster\"})",
-          "hide": false,
-          "legendFormat": "{{ instance }} Max Process limit",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": "$datasource",
-          "editorMode": "code",
-          "expr": "sum by(instance) (erlang_vm_process_count{cluster=\"$cluster\"})",
-          "legendFormat": "{{ instance }} Process Count",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Erlang VM Process",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 18,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "smooth",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 12,
-        "y": 68
-      },
-      "id": 16,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": "$datasource",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "sum by(instance) (emqx_vm_used_memory{cluster=\"$cluster\"})",
-          "legendFormat": "{{ instance }}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Erlang VM Memory Used",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "$datasource",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 18,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "smooth",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 18,
-        "y": 68
-      },
-      "id": 48,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": "$datasource",
-          "editorMode": "builder",
-          "expr": "sum by(instance) (erlang_mnesia_memory_usage_bytes{cluster=\"$cluster\"})",
-          "legendFormat": "{{ instance }}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Mnesia (built-in database) Memory Usage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -5980,9 +5663,9 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
+        "w": 8,
         "x": 0,
-        "y": 74
+        "y": 68
       },
       "id": 148,
       "options": {
@@ -6001,7 +5684,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(node) (emqx_cluster_cpu_load{cluster=\"$cluster\", load=\"load1\"})",
@@ -6016,7 +5699,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -6024,8 +5707,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -6071,9 +5752,9 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 6,
-        "y": 74
+        "w": 8,
+        "x": 8,
+        "y": 68
       },
       "id": 150,
       "options": {
@@ -6092,7 +5773,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(node) (emqx_cluster_cpu_load{cluster=\"$cluster\", load=\"load5\"})",
@@ -6107,7 +5788,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -6115,8 +5796,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -6162,9 +5841,9 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 12,
-        "y": 74
+        "w": 8,
+        "x": 16,
+        "y": 68
       },
       "id": 152,
       "options": {
@@ -6183,7 +5862,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(node) (emqx_cluster_cpu_load{cluster=\"$cluster\", load=\"load15\"})",
@@ -6197,7 +5876,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 37,
+  "schemaVersion": 36,
   "style": "dark",
   "tags": [
     "EMQX",
@@ -6208,8 +5887,8 @@
       {
         "current": {
           "selected": false,
-          "text": "prometheus",
-          "value": "prometheus"
+          "text": "Prometheus",
+          "value": "Prometheus"
         },
         "datasource": "Prometheus",
         "hide": 0,
@@ -6226,11 +5905,7 @@
         "type": "datasource"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "emqx5.0-opensource",
-          "value": "emqx5.0-opensource"
-        },
+        "current": {},
         "datasource": {
           "uid": "$datasource"
         },

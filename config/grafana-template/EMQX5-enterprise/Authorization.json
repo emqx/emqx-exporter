@@ -1,4 +1,32 @@
 {
+  "__inputs": [],
+  "__elements": [],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -24,7 +52,8 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 178,
+  "id": null,
+  "iteration": 1684380097194,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -92,10 +121,6 @@
               {
                 "id": "displayName",
                 "value": "Deny(last 15m)"
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
               },
               {
                 "id": "thresholds",
@@ -224,7 +249,9 @@
       },
       "id": 8,
       "options": {
+        "cellHeight": "sm",
         "footer": {
+          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -234,7 +261,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.0.0",
       "targets": [
         {
           "datasource": {
@@ -332,8 +359,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -421,8 +446,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -501,7 +524,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 37,
+  "schemaVersion": 36,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -509,8 +532,8 @@
       {
         "current": {
           "selected": false,
-          "text": "prometheus",
-          "value": "prometheus"
+          "text": "Prometheus",
+          "value": "Prometheus"
         },
         "hide": 0,
         "includeAll": false,
@@ -525,11 +548,7 @@
         "type": "datasource"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "emqx5.0-opensource",
-          "value": "emqx5.0-opensource"
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "$datasource"
@@ -552,15 +571,7 @@
         "type": "query"
       },
       {
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "$datasource"
@@ -583,15 +594,7 @@
         "type": "query"
       },
       {
-        "current": {
-          "selected": true,
-          "text": [
-            "built_in_database"
-          ],
-          "value": [
-            "built_in_database"
-          ]
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "$datasource"
@@ -623,6 +626,6 @@
   "timezone": "",
   "title": "Authorization",
   "uid": "EMQX5-ee-authz",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
