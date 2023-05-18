@@ -1,4 +1,53 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.5.2"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -25,7 +74,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 180,
+  "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -118,7 +167,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.5.2",
       "targets": [
         {
           "datasource": {
@@ -191,10 +240,13 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.5.2",
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum(emqx_connections_count{instance=~\".*\", cluster=\"$cluster\"})",
           "legendFormat": "Connections",
@@ -435,7 +487,10 @@
       "pluginVersion": "9.0.5",
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "max(emqx_cluster_nodes_running{instance=~\".*\", cluster=\"$cluster\"})",
           "legendFormat": "Running",
@@ -443,7 +498,10 @@
           "refId": "A"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "max(emqx_cluster_nodes_stopped{instance=~\".*\", cluster=\"$cluster\"})",
           "hide": false,
@@ -467,7 +525,9 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "filterable": false,
             "inspect": false
           },
@@ -502,8 +562,10 @@
                 "value": "center"
               },
               {
-                "id": "custom.displayMode",
-                "value": "auto"
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
               },
               {
                 "id": "custom.width",
@@ -562,8 +624,11 @@
                 }
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-background"
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
               }
             ]
           },
@@ -614,7 +679,9 @@
       "id": 93,
       "links": [],
       "options": {
+        "cellHeight": "sm",
         "footer": {
+          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -624,7 +691,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.5.2",
       "targets": [
         {
           "datasource": {
@@ -767,7 +834,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum(emqx_live_connections_count{instance=~\".*\", cluster=\"$cluster\"})",
           "legendFormat": "Total",
@@ -775,7 +845,10 @@
           "refId": "A"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum by(instance) (emqx_connections_count{cluster=\"$cluster\"})",
           "hide": false,
@@ -788,7 +861,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -874,7 +950,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "builder",
           "expr": "sum(emqx_suboptions_count{instance=~\".*\", cluster=\"$cluster\"})",
           "legendFormat": "Subscriptions",
@@ -1328,7 +1407,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1401,7 +1480,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(type, name) (emqx_rule_bridge_queuing{cluster=\"$cluster\"})",
@@ -1511,7 +1590,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1553,8 +1632,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1595,7 +1673,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(rule) (irate(emqx_rule_exec_pass_count{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
@@ -1610,7 +1688,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1652,8 +1730,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1694,7 +1771,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
@@ -1710,7 +1787,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1752,8 +1829,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1794,7 +1870,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(rule) (irate(emqx_rule_action_success{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
@@ -1810,7 +1886,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1852,8 +1928,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1894,7 +1969,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(rule) (irate(emqx_rule_action_failed{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
@@ -1965,8 +2040,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2135,8 +2209,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2305,8 +2378,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2470,8 +2542,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2714,7 +2785,10 @@
           },
           "targets": [
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_connect{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "legendFormat": "Packets Connect",
@@ -2722,7 +2796,10 @@
               "refId": "A"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_connack_sent{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -2731,7 +2808,10 @@
               "refId": "B"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_connack_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -2900,7 +2980,10 @@
           },
           "targets": [
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_disconnect_sent{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "legendFormat": "Packets Disconnect Sent",
@@ -2908,7 +2991,10 @@
               "refId": "A"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_disconnect_received{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -3088,7 +3174,10 @@
           },
           "targets": [
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_publish_sent{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "legendFormat": "Packets Publish Sent",
@@ -3096,7 +3185,10 @@
               "refId": "A"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_publish_received{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -3105,7 +3197,10 @@
               "refId": "B"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_publish_dropped{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -3114,7 +3209,10 @@
               "refId": "C"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_publish_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -3324,7 +3422,10 @@
           },
           "targets": [
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_subscribe_received{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "legendFormat": "Packets Subscribe Received",
@@ -3332,7 +3433,10 @@
               "refId": "A"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_suback_sent{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -3341,7 +3445,10 @@
               "refId": "B"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_subscribe_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -3350,7 +3457,10 @@
               "refId": "C"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_unsubscribe_received{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -3359,7 +3469,10 @@
               "refId": "D"
             },
             {
-              "datasource": "$datasource",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "sum(irate(emqx_packets_unsubscribe_error{instance=~\".*\", cluster=\"$cluster\"}[$__rate_interval]))",
               "hide": false,
@@ -3436,8 +3549,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -3585,7 +3697,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "exemplar": false,
           "expr": "sum(irate(emqx_messages_received{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
@@ -3595,7 +3710,10 @@
           "refId": "A"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum(irate(emqx_messages_sent{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
@@ -3605,7 +3723,10 @@
           "refId": "B"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum(irate(emqx_messages_dropped{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
@@ -3663,8 +3784,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -3696,7 +3816,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "exemplar": false,
           "expr": "sum(irate(emqx_messages_qos0_received{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
@@ -3706,7 +3829,10 @@
           "refId": "A"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum(irate(emqx_messages_qos1_received{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
           "hide": false,
@@ -3715,7 +3841,10 @@
           "refId": "B"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum(irate(emqx_messages_qos2_received{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
           "hide": false,
@@ -3775,8 +3904,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -3842,7 +3970,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "exemplar": false,
           "expr": "sum(irate(emqx_bytes_received{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
@@ -3854,7 +3985,10 @@
           "refId": "A"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum(irate(emqx_bytes_sent{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
@@ -3892,7 +4026,9 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "mappings": [],
@@ -3900,8 +4036,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -3953,8 +4088,11 @@
                 ]
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-background"
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
               }
             ]
           },
@@ -4010,8 +4148,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -4021,8 +4158,11 @@
                 }
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-background"
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
               },
               {
                 "id": "custom.width",
@@ -4128,7 +4268,9 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "mappings": [],
@@ -4136,8 +4278,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -4187,8 +4328,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -4198,8 +4338,11 @@
                 }
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-background"
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
               }
             ]
           },
@@ -4219,8 +4362,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "orange",
@@ -4266,8 +4408,11 @@
                 "value": "Action Failed(last 15m)"
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-background"
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
               },
               {
                 "id": "thresholds",
@@ -4275,8 +4420,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -4628,7 +4772,9 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "mappings": [],
@@ -4636,8 +4782,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -4682,8 +4827,11 @@
                 "value": "Deny(last 15m)"
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-background"
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
               },
               {
                 "id": "thresholds",
@@ -4691,8 +4839,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -4827,8 +4974,11 @@
                 ]
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-background"
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
               }
             ]
           },
@@ -5011,8 +5161,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -5107,8 +5256,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -5183,7 +5331,9 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
             "inspect": false
           },
           "mappings": [],
@@ -5191,8 +5341,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -5237,8 +5386,11 @@
                 "value": "Deny(last 15m)"
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-background"
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
               },
               {
                 "id": "thresholds",
@@ -5246,8 +5398,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -5378,8 +5529,11 @@
                 "value": "Status"
               },
               {
-                "id": "custom.displayMode",
-                "value": "color-background"
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
               },
               {
                 "id": "mappings",
@@ -5581,8 +5735,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -5677,8 +5830,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -5787,8 +5939,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -5820,7 +5971,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum by(instance) (erlang_vm_statistics_run_queues_length_total{cluster=\"$cluster\"})",
           "hide": false,
@@ -5877,8 +6031,7 @@
             "mode": "percentage",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -5922,7 +6075,10 @@
           "refId": "B"
         },
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum by(instance) (erlang_vm_process_count{cluster=\"$cluster\"})",
           "legendFormat": "{{ instance }} Process Count",
@@ -5978,8 +6134,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -6008,7 +6163,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "exemplar": false,
           "expr": "sum by(instance) (emqx_vm_used_memory{cluster=\"$cluster\"})",
@@ -6021,7 +6179,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -6062,8 +6223,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -6096,7 +6256,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "builder",
           "expr": "sum by(instance) (erlang_mnesia_memory_usage_bytes{cluster=\"$cluster\"})",
           "legendFormat": "{{ instance }}",
@@ -6110,7 +6273,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -6152,8 +6315,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -6187,7 +6349,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(node) (emqx_cluster_cpu_load{cluster=\"$cluster\", load=\"load1\"})",
@@ -6202,7 +6364,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -6244,8 +6406,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -6279,7 +6440,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(node) (emqx_cluster_cpu_load{cluster=\"$cluster\", load=\"load5\"})",
@@ -6294,7 +6455,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -6336,8 +6497,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -6371,7 +6531,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(node) (emqx_cluster_cpu_load{cluster=\"$cluster\", load=\"load15\"})",
@@ -6385,7 +6545,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 37,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [
     "EMQX",
@@ -6396,8 +6556,8 @@
       {
         "current": {
           "selected": false,
-          "text": "prometheus",
-          "value": "prometheus"
+          "text": "Prometheus",
+          "value": "Prometheus"
         },
         "datasource": "Prometheus",
         "hide": 0,
@@ -6414,11 +6574,7 @@
         "type": "datasource"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "emqx5.0-opensource",
-          "value": "emqx5.0-opensource"
-        },
+        "current": {},
         "datasource": {
           "uid": "$datasource"
         },
@@ -6449,6 +6605,6 @@
   "timezone": "",
   "title": "EMQX",
   "uid": "EMQX5-ee",
-  "version": 4,
+  "version": 1,
   "weekStart": ""
 }

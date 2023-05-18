@@ -1,4 +1,35 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": [],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -24,8 +55,8 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 9,
-  "iteration": 1680864565010,
+  "id": null,
+  "iteration": 1684380174012,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -207,7 +238,8 @@
             "sum"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
@@ -216,7 +248,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum by(instance) (irate(emqx_messages_sent{cluster=\"$cluster\", instance=~\"$node\"}[$__rate_interval]))",
           "hide": false,
@@ -407,7 +442,8 @@
             "sum"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
@@ -416,7 +452,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum by(instance) (irate(emqx_messages_received{cluster=\"$cluster\", instance=~\"$node\"}[$__rate_interval]))",
           "hide": false,
@@ -607,7 +646,8 @@
             "sum"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
@@ -616,7 +656,10 @@
       },
       "targets": [
         {
-          "datasource": "$datasource",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "editorMode": "code",
           "expr": "sum by(instance) (irate(emqx_messages_dropped{cluster=\"$cluster\", instance=~\"$node\"}[$__rate_interval]))",
           "hide": false,
@@ -655,11 +698,7 @@
         "type": "datasource"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "emqx_name",
-          "value": "emqx_name"
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "$datasource"
@@ -682,11 +721,7 @@
         "type": "query"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "$datasource"
@@ -717,6 +752,6 @@
   "timezone": "",
   "title": "Messages",
   "uid": "EMQX5-ee-messages",
-  "version": 5,
+  "version": 1,
   "weekStart": ""
 }
