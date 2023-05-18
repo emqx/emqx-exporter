@@ -80,7 +80,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -223,7 +223,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -294,7 +294,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(node, rule) (emqx_rule_exec_last5m_rate{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"})",
@@ -323,7 +323,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -653,7 +653,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -667,7 +667,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -682,7 +682,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -697,7 +697,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -712,7 +712,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -727,7 +727,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -742,7 +742,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -757,7 +757,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -1178,7 +1178,7 @@
         "includeAll": false,
         "label": "datasource",
         "multi": false,
-        "name": "datasource",
+        "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
         "refresh": 1,
@@ -1190,7 +1190,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "$datasource"
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values(up, cluster)",
         "description": "A custom label of the scrape_config in prometheus to tag the cluster",
@@ -1213,7 +1213,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "$datasource"
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values({cluster=\"$cluster\", from=\"exporter\"}, node)",
         "hide": 0,
@@ -1235,7 +1235,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "$datasource"
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values({cluster=\"$cluster\", node=~\"$node\", from=\"exporter\"}, rule)",
         "description": "The id of rule engine",

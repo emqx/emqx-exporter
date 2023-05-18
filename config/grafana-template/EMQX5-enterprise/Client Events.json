@@ -63,7 +63,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -206,7 +206,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -349,7 +349,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -425,7 +425,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum by(instance) (irate(emqx_client_subscribe{cluster=\"$cluster\", instance=~\"$node\"}[$__rate_interval]))",
@@ -440,7 +440,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -583,7 +583,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "",
       "fieldConfig": {
@@ -727,7 +727,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "",
       "fieldConfig": {
@@ -871,7 +871,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$datasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "",
       "fieldConfig": {
@@ -1028,7 +1028,7 @@
         "includeAll": false,
         "label": "datasource",
         "multi": false,
-        "name": "datasource",
+        "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
         "refresh": 1,
@@ -1040,7 +1040,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "$datasource"
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values(up, cluster)",
         "description": "A custom label of the scrape_config in prometheus to tag the cluster",
@@ -1063,7 +1063,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "$datasource"
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values({from='emqx',cluster=\"$cluster\"}, instance)",
         "hide": 0,
