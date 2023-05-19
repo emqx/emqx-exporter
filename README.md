@@ -1,7 +1,7 @@
 # EMQX Exporter 
 The `emqx-exporter` is designed to expose partial metrics that are not included in the EMQX Prometheus API. It is compatible with EMQX 4.4 and EMQX 5, both open-source and enterprise.
 
-![Dashboard](./docs/_assets/EMQX-Dashboards.png)
+![Dashboard](https://assets.emqx.com/images/ed63db74a3330104a92ae18415d69db1.png)
 
 ## Structure
 ![Structure](./docs/_assets/structure.png)
