@@ -31,7 +31,7 @@ esac
 
 #docker run -d --name emqx-ee -p 1883:1883 -p 8081:8081 -p 8083:8083 -p 8084:8084 -p 8883:8883 -p 18083:18083 emqx/emqx-ee:4.4.16
 docker run -d --name emqx-demo \
- -v $(pwd)/api_secret:/opt/emqx/data/api_secret \
+ -v "$(pwd)"/api_secret:/opt/emqx/data/api_secret \
  -e EMQX_DASHBOARD__BOOTSTRAP_USERS_FILE='"/opt/emqx/data/api_secret"' \
  -e EMQX_DASHBOARD__DEFAULT_USER__LOGIN=$emqxDashboardUsername \
  -e EMQX_DASHBOARD__DEFAULT_USER__PASSWORD=$emqxDashboardPassword \
@@ -75,5 +75,5 @@ docker network connect test exporter-demo
 docker network connect test prometheus-demo
 docker network connect test grafana-demo
 
-echo ""
-echo "Open http://localhost:18083 and sign in dashboard with $emqxDashboardUsername/$emqxDashboardPassword"
+echo -e -n "\nOpen http://localhost:3000 and sign in Grafana with admin/admin"
+echo -e "\nOpen http://localhost:18083 and sign in EMQX dashboard with $emqxDashboardUsername/$emqxDashboardPassword"
