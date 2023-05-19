@@ -182,9 +182,16 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 
 func (n *cluster5x) getDataBridge() (bridges []collector.DataBridge, err error) {
 	bridgesResp := []struct {
-		Name   string
-		Type   string
-		Status string
+		Name    string
+		Type    string
+		Status  string
+		Metrics struct {
+			Queuing    int64
+			RateLast5m float64 `json:"rate_last5m"`
+			RateMax    float64 `json:"rate_max"`
+			Failed     int64
+			Dropped    int64
+		}
 	}{{}}
 	err = callHTTPGetWithResp(n.client, "/api/v5/bridges", &bridgesResp)
 	if err != nil {
@@ -200,25 +207,11 @@ func (n *cluster5x) getDataBridge() (bridges []collector.DataBridge, err error) 
 		bridges[i].Type = data.Type
 		bridges[i].Name = data.Name
 		bridges[i].Status = enabled
-
-		metricsResp := struct {
-			Metrics struct {
-				Queuing    int64
-				RateLast5m float64 `json:"rate_last5m"`
-				RateMax    float64 `json:"rate_max"`
-				Failed     int64
-				Dropped    int64
-			}
-		}{}
-		err = callHTTPGetWithResp(n.client, fmt.Sprintf("/api/v5/bridges/%s:%s/metrics", data.Type, data.Name), &metricsResp)
-		if err != nil {
-			return
-		}
-		bridges[i].Queuing = metricsResp.Metrics.Queuing
-		bridges[i].RateLast5m = metricsResp.Metrics.RateLast5m
-		bridges[i].RateMax = metricsResp.Metrics.RateMax
-		bridges[i].Failed = metricsResp.Metrics.Failed
-		bridges[i].Dropped = metricsResp.Metrics.Dropped
+		bridges[i].Queuing = data.Metrics.Queuing
+		bridges[i].RateLast5m = data.Metrics.RateLast5m
+		bridges[i].RateMax = data.Metrics.RateMax
+		bridges[i].Failed = data.Metrics.Failed
+		bridges[i].Dropped = data.Metrics.Dropped
 	}
 	return
 }
