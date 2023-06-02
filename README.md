@@ -4,7 +4,7 @@ The `emqx-exporter` is designed to expose partial metrics that are not included 
 ![Dashboard](https://assets.emqx.com/images/ed63db74a3330104a92ae18415d69db1.png)
 
 ## Structure
-![Structure](https://assets.emqx.com/images/64424c2255ae0aff2189f0b4f2e645d9.png)
+![Structure](https://assets.emqx.com/images/58adbe48aefb3388f6868854812b18ed.png)
 
 ## Metrics
 See the documentation [Instruction](config/grafana-template/README.md) for an explanation of the metrics on the dashboard
