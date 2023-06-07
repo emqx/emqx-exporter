@@ -4,12 +4,18 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"github.com/alecthomas/kingpin/v2"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/valyala/fasthttp"
 	"net/http"
 	"net/netip"
 	"strings"
 	"time"
+)
+
+var (
+	readTimeout     = kingpin.Flag("emqx.readTimeout", "Maximum seconds for full response reading (including body)").Default("5").Int()
+	connWaitTimeout = kingpin.Flag("emqx.connWaitTimeout", "Maximum seconds for waiting for a free connection").Default("5").Int()
 )
 
 func cutNodeName(nodeName string) string {
@@ -31,9 +37,9 @@ func getHTTPClient(host string) *fasthttp.Client {
 		Name:                "EMQX-Exporter", //User-Agent
 		MaxConnsPerHost:     5,
 		MaxIdleConnDuration: 30 * time.Second,
-		ReadTimeout:         3 * time.Second,
-		WriteTimeout:        3 * time.Second,
-		MaxConnWaitTimeout:  3 * time.Second,
+		ReadTimeout:         time.Duration(*readTimeout) * time.Second,
+		WriteTimeout:        5 * time.Second,
+		MaxConnWaitTimeout:  time.Duration(*connWaitTimeout) * time.Second,
 		ConfigureClient: func(hc *fasthttp.HostClient) error {
 			hc.Addr = host
 			return nil
