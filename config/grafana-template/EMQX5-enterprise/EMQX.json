@@ -75,7 +75,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1684468414653,
+  "iteration": 1686798344172,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -149,7 +149,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 7,
+        "w": 6,
         "x": 0,
         "y": 1
       },
@@ -224,8 +224,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 5,
-        "x": 7,
+        "w": 4,
+        "x": 6,
         "y": 1
       },
       "id": 4,
@@ -327,8 +327,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 6,
-        "x": 12,
+        "w": 5,
+        "x": 10,
         "y": 1
       },
       "id": 101,
@@ -336,7 +336,7 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
+          "displayMode": "hidden",
           "placement": "bottom",
           "showLegend": true
         },
@@ -388,10 +388,10 @@
           },
           "custom": {
             "axisLabel": "",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 0,
+            "fillOpacity": 15,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -433,7 +433,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "EMQX Nodes stopped"
+              "options": "Stopped"
             },
             "properties": [
               {
@@ -448,7 +448,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "EMQX Nodes running"
+              "options": "Running"
             },
             "properties": [
               {
@@ -464,15 +464,15 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 6,
-        "x": 18,
+        "w": 5,
+        "x": 15,
         "y": 1
       },
       "id": 12,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
+          "displayMode": "hidden",
           "placement": "bottom",
           "showLegend": true
         },
@@ -508,6 +508,109 @@
         }
       ],
       "title": "Nodes Running",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 147,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "builder",
+          "expr": "sum(emqx_scrape_collector_duration_seconds{cluster=\"$cluster\"})",
+          "legendFormat": "Latency",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Exporter Latency",
       "type": "timeseries"
     },
     {
@@ -585,12 +688,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Value #Remaining Days"
+              "options": "Value #Days Remaining"
             },
             "properties": [
               {
                 "id": "displayName",
-                "value": "Remaining Days"
+                "value": "Days Remaining"
               },
               {
                 "id": "custom.align",
@@ -625,7 +728,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Remaining Days"
+              "options": "Value #Days Remaining"
             },
             "properties": [
               {
@@ -637,7 +740,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Max Conns"
+              "options": "Value #Max Connections"
             },
             "properties": [
               {
@@ -649,12 +752,24 @@
           {
             "matcher": {
               "id": "byName",
+              "options": "Value #Expiry At"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 199
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
               "options": "Expiry At"
             },
             "properties": [
               {
                 "id": "custom.width",
-                "value": 273
+                "value": 194
               }
             ]
           }
@@ -662,7 +777,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 7,
+        "w": 6,
         "x": 0,
         "y": 4
       },
@@ -692,9 +807,9 @@
           "format": "table",
           "hide": false,
           "instant": true,
-          "legendFormat": "Remaining Days",
+          "legendFormat": "Days Remaining",
           "range": false,
-          "refId": "Remaining Days"
+          "refId": "Days Remaining"
         },
         {
           "datasource": {
@@ -737,7 +852,7 @@
           "options": {
             "include": {
               "names": [
-                "Value #Remaining Days",
+                "Value #Days Remaining",
                 "Value #Expiry At",
                 "Value #Max Connections"
               ]
@@ -923,7 +1038,7 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
+          "displayMode": "hidden",
           "placement": "bottom",
           "showLegend": false
         },
@@ -963,7 +1078,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 0,
+            "fillOpacity": 15,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -1018,7 +1133,7 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
+          "displayMode": "hidden",
           "placement": "bottom",
           "showLegend": false
         },
