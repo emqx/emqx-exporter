@@ -58,7 +58,7 @@ scrape_configs:
   scrape_interval: 5s
   honor_labels: true
   static_configs:
-    # EMQX IP address and port
+    # a list of addresses of all EMQX nodes
     - targets: [${your_cluster_addr}:18083]
       labels:
         # label the cluster name of where the metrics data from
