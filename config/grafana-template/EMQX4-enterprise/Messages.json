@@ -254,7 +254,7 @@
           "editorMode": "code",
           "expr": "sum by(instance) (irate(emqx_messages_sent{cluster=\"$cluster\", instance=~\"$node\"}[$__rate_interval]))",
           "hide": false,
-          "interval": "20s",
+          "interval": "",
           "legendFormat": "{{ instance }}",
           "range": true,
           "refId": "B"
@@ -457,7 +457,7 @@
           "editorMode": "code",
           "expr": "sum by(instance) (irate(emqx_messages_received{cluster=\"$cluster\", instance=~\"$node\"}[$__rate_interval]))",
           "hide": false,
-          "interval": "20s",
+          "interval": "",
           "legendFormat": "{{ instance }}",
           "range": true,
           "refId": "B"
@@ -660,7 +660,7 @@
           "editorMode": "code",
           "expr": "sum by(instance) (irate(emqx_messages_dropped{cluster=\"$cluster\", instance=~\"$node\"}[$__rate_interval]))",
           "hide": false,
-          "interval": "20s",
+          "interval": "",
           "legendFormat": "{{ instance }}",
           "range": true,
           "refId": "B"
