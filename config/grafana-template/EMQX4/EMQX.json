@@ -939,7 +939,7 @@
           "expr": "sum(irate(emqx_bytes_received{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "format": "time_series",
           "instant": false,
-          "interval": "20s",
+          "interval": "",
           "legendFormat": "Bytes received",
           "range": true,
           "refId": "A"
@@ -952,7 +952,7 @@
           "editorMode": "code",
           "expr": "sum(irate(emqx_bytes_sent{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
-          "interval": "20s",
+          "interval": "",
           "legendFormat": "Bytes sent",
           "range": true,
           "refId": "B"
@@ -1163,7 +1163,7 @@
           "editorMode": "code",
           "exemplar": false,
           "expr": "sum(irate(emqx_messages_received{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
-          "interval": "20s",
+          "interval": "",
           "legendFormat": "Messages Received",
           "range": true,
           "refId": "A"
@@ -1176,7 +1176,7 @@
           "editorMode": "code",
           "expr": "sum(irate(emqx_messages_sent{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
-          "interval": "20s",
+          "interval": "",
           "legendFormat": "Messages Sent",
           "range": true,
           "refId": "B"
@@ -1189,7 +1189,7 @@
           "editorMode": "code",
           "expr": "sum(irate(emqx_messages_dropped{instance=~\".*\",cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
-          "interval": "20s",
+          "interval": "",
           "legendFormat": "Messages Dropped",
           "range": true,
           "refId": "C"
