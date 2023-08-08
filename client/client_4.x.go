@@ -89,14 +89,14 @@ func (n *cluster4x) getClusterStatus() (cluster collector.ClusterStatus, err err
 		return
 	}
 
-	cluster.Status = healthy
+	cluster.Status = unhealthy
 	cluster.NodeUptime = make(map[string]int64)
 	cluster.NodeMaxFDs = make(map[string]int)
 	cluster.CPULoads = make(map[string]collector.CPULoad)
 
 	for _, data := range resp.Data {
-		if data.NodeStatus != "Running" {
-			cluster.Status = unhealthy
+		if data.NodeStatus == "Running" {
+			cluster.Status = healthy
 		}
 		nodeName := cutNodeName(data.Node)
 		cluster.NodeUptime[nodeName] = parseUptimeFor4x(data.Uptime)
