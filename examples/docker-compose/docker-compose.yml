@@ -39,6 +39,6 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ../../config/grafana-template/EMQX5-enterprise:/grafana-dashboard-definitions
+      - ../../config/grafana-template/emqx-enterprise-5:/grafana-dashboard-definitions
       - ../provisioning/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
       - ../provisioning/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
