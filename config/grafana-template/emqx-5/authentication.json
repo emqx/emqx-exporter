@@ -53,14 +53,14 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1684380225040,
+  "iteration": 1684380209096,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "$datasource"
       },
       "fieldConfig": {
         "defaults": {
@@ -137,25 +137,10 @@
                     },
                     {
                       "color": "red",
-                      "value": 1
+                      "value": 81
                     }
                   ]
                 }
-              },
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "options": {
-                      "match": "null",
-                      "result": {
-                        "index": 0,
-                        "text": "0"
-                      }
-                    },
-                    "type": "special"
-                  }
-                ]
               }
             ]
           },
@@ -239,19 +224,19 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 134
+                "value": 141
               }
             ]
           }
         ]
       },
       "gridPos": {
-        "h": 6,
+        "h": 5,
         "w": 11,
         "x": 0,
         "y": 0
       },
-      "id": 8,
+      "id": 2,
       "options": {
         "footer": {
           "fields": "",
@@ -268,26 +253,26 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "max by(node, resource) (emqx_authorization_exec_max_rate{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
+          "expr": "max by(node, resource) (emqx_authentication_exec_max_rate{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
           "format": "table",
           "hide": false,
           "instant": true,
-          "legendFormat": "Max Rate",
+          "legendFormat": "Total",
           "range": false,
           "refId": "E"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by(node, resource) (emqx_authorization_total{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
+          "expr": "sum by(node, resource) (emqx_authentication_total{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -298,35 +283,35 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by(node, resource) (emqx_authorization_allow_count{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
+          "expr": "sum by(node, resource) (emqx_authentication_allow_count{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
           "format": "table",
           "hide": false,
           "instant": true,
-          "legendFormat": "Allow",
+          "legendFormat": "Total",
           "range": false,
           "refId": "C"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by(node, resource) (irate(emqx_authorization_deny_count{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"}[15m]))",
+          "expr": "sum by(node, resource) (irate(emqx_authentication_deny_count{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"}[15m]))",
           "format": "table",
           "hide": false,
           "instant": true,
-          "legendFormat": "Deny",
+          "legendFormat": "Total",
           "range": false,
           "refId": "D"
         }
       ],
-      "title": "Authorize Count",
+      "title": "Authenticate Count",
       "transformations": [
         {
           "id": "merge",
@@ -353,94 +338,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 0,
-        "y": 6
-      },
-      "id": 10,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.0.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "sum by(node, resource) (emqx_authorization_exec_rate{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
-          "legendFormat": "{{node}} {{resource}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Authorize Current Exec Rate",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "$datasource"
       },
       "fieldConfig": {
         "defaults": {
@@ -491,10 +389,97 @@
       "gridPos": {
         "h": 6,
         "w": 7,
-        "x": 8,
-        "y": 6
+        "x": 0,
+        "y": 5
       },
-      "id": 12,
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "sum by(node, resource) (emqx_authentication_exec_rate{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
+          "legendFormat": "{{node}} {{resource}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Authenticate Current Exec Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 7,
+        "y": 5
+      },
+      "id": 6,
       "options": {
         "legend": {
           "calcs": [],
@@ -511,17 +496,17 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum by(node, resource) (emqx_authorization_exec_last5m_rate{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
+          "expr": "sum by(node, resource) (emqx_authentication_exec_last5m_rate{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
           "hide": false,
           "legendFormat": "{{node}} {{resource}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Authorize Last 5m Exec Rate",
+      "title": "Authenticate Last 5m Exec Rate",
       "type": "timeseries"
     }
   ],
@@ -541,7 +526,7 @@
         "includeAll": false,
         "label": "datasource",
         "multi": false,
-        "name": "DS_PROMETHEUS",
+        "name": "datasource",
         "options": [],
         "query": "prometheus",
         "refresh": 1,
@@ -553,7 +538,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "$datasource"
         },
         "definition": "label_values(up, cluster)",
         "description": "A custom label of the scrape_config in prometheus to tag the cluster",
@@ -576,7 +561,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "$datasource"
         },
         "definition": "label_values({cluster=\"$cluster\", from=\"exporter\"}, node)",
         "hide": 0,
@@ -598,9 +583,9 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "$datasource"
         },
-        "definition": "label_values(emqx_authorization_resource_status{cluster=\"$cluster\"},resource)",
+        "definition": "label_values(emqx_authentication_resource_status{cluster=\"$cluster\"},resource)",
         "description": "The third party resource of authentication",
         "hide": 0,
         "includeAll": true,
@@ -608,7 +593,7 @@
         "name": "resource",
         "options": [],
         "query": {
-          "query": "label_values(emqx_authorization_resource_status{cluster=\"$cluster\"},resource)",
+          "query": "label_values(emqx_authentication_resource_status{cluster=\"$cluster\"},resource)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -625,8 +610,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Authorization",
-  "uid": "EMQX5-authz",
-  "version": 1,
+  "title": "authentication",
+  "uid": "emqx-5-authn",
+  "version": 2,
   "weekStart": ""
 }
