@@ -19,3 +19,9 @@ bin
 
 .idea
 .build
+
+.DS_Store
+# Python
+__pycache__
+env/
+
