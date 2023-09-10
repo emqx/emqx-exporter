@@ -1,28 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""
-NAME:
-    emqx5.py
-
-DESCRIPTION:
-    This script creates Grafana dashboards using Grafanalib, and a static table
-    which defines metrics/dashboards.
-
-    The resulting dashboard can be easily uploaded to Grafana with associated script:
-
-        upload_grafana_dashboard.sh
-
-USAGE:
-    Create and upload the dashboard:
-
-    ./emqx5.py > dash.json
-    ./upload_grafana_dashboard.sh dash.json
-
-"""
-
 import io
 import re
+import argparse
 import grafanalib.core as G
 from grafanalib._gen import write_dashboard
 
@@ -435,6 +416,17 @@ def generate_table_overrides(targets):
 
 
 if __name__ == '__main__':
+    is_ee = True
+
+    parser = argparse.ArgumentParser(description="Argument Parser")
+
+    # Define a single optional argument for category (-c or --category)
+    parser.add_argument("-c", "--category", choices=["ee", "os"], help="Set EMQX Enterprise(ee) or EMQX OpenSource(os)")
+
+    args = parser.parse_args()
+
+    if args.category == "os":
+        is_ee = False
 
     # create a dashboard
     dashboard = create_dashboard()
@@ -453,16 +445,17 @@ if __name__ == '__main__':
         metrics['cluster_status']['targets'],
         format=metrics['cluster_status']['format'])
 
-    create_panel(
-        dashboard,
-        create_table(
-            title=metrics['license']['title'],
-            gridPos=create_gridpos(metrics['license']['gridPos']),
-            transformations=generate_transformations(metrics['license']['targets']),
-            overrides=generate_table_overrides(metrics['license']['targets'])),
-        metrics['license']['targets'],
-        instant=True,
-        format=metrics['license']['format'])
+    if is_ee:
+        create_panel(
+            dashboard,
+            create_table(
+                title=metrics['license']['title'],
+                gridPos=create_gridpos(metrics['license']['gridPos']),
+                transformations=generate_transformations(metrics['license']['targets']),
+                overrides=generate_table_overrides(metrics['license']['targets'])),
+            metrics['license']['targets'],
+            instant=True,
+            format=metrics['license']['format'])
 
     create_panel(
         dashboard,

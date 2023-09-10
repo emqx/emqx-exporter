@@ -2,21 +2,42 @@
   
   
 ## Setup
+
 Usage of Python 3 is required. It can be installed [on Python.org](https://www.python.org/downloads/)
 
-Optional but recommended:
+- Install Pipenv
 
 ```shell
-python3 -m venv env; source env/bin/activate
+pip install --user pipenv
 ```
 
+- Install all packages
+
 ```shell
-pip install -r requirements.txt
+pipenv install
 ```
+
+- Activate the virtual environment
+
+```shell
+pipenv shell
+```
+
 
 ## Generate Dashboard JSON
+
+- Install Enterprise Dashboard
 
 ```shell
 ./emqx5.py > emqx5.json
 ```
+
+- Install OpenSource Dashboard 
+
+```
+./emqx5.py -c os > emqx5.json 
+```
+
+
+
 
