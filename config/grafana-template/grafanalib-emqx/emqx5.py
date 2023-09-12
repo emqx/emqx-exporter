@@ -421,11 +421,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Argument Parser")
 
     # Define a single optional argument for category (-c or --category)
-    parser.add_argument("-c", "--category", choices=["ee", "os"], help="Set EMQX Enterprise(ee) or EMQX OpenSource(os)")
+    parser.add_argument("-e", "--edition", choices=["ee", "ce"], help="Set EMQX Enterprise(ee) or EMQX Community(ce)")
 
     args = parser.parse_args()
 
-    if args.category == "os":
+    if args.edition == "ce":
         is_ee = False
 
     # create a dashboard
