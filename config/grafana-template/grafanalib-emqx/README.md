@@ -26,14 +26,26 @@ pipenv shell
 
 ## Generate Dashboard JSON
 
-- Install EMQX Enterprise Dashboard
+- Install EMQX 5.x Enterprise Dashboard
 
 ```shell
-./emqx5.py -e ee > emqx5.json
+./emqx.py -e ee -v 5 > emqx5-ee.json
 ```
 
-- Install EMQX Community Edition Dashboard
+- Install EMQX 5.x Community Edition Dashboard
 
 ```
-./emqx5.py -e ce > emqx5.json
+./emqx.py -e ce -v 5 > emqx5-ce.json
+```
+
+- Install EMQX 4.x Enterprise Dashboard
+
+```shell
+./emqx.py -e ee -v 4 > emqx4-ee.json
+```
+
+- Install EMQX 4.x Community Edition Dashboard
+
+```
+./emqx.py -e ce -v 4 > emqx4-ce.json
 ```

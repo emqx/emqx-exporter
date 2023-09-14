@@ -415,21 +415,7 @@ def generate_table_overrides(targets):
     return overrides
 
 
-if __name__ == '__main__':
-    is_ee = True
-
-    parser = argparse.ArgumentParser(description="Argument Parser")
-
-    # Define a single optional argument for category (-c or --category)
-    parser.add_argument("-e", "--edition", choices=["ee", "ce"], help="Set EMQX Enterprise(ee) or EMQX Community(ce)")
-
-    args = parser.parse_args()
-
-    if args.edition == "ce":
-        is_ee = False
-
-    # create a dashboard
-    dashboard = create_dashboard()
+def emqx_dashboard(dashboard, is_ee, version):
 
     ##############################
     # General
@@ -457,11 +443,11 @@ if __name__ == '__main__':
             instant=True,
             format=metrics['license']['format'])
 
-    create_panel(
-        dashboard,
-        create_gauge(title=metrics['active_connections']['title']),
-        metrics['active_connections']['targets'],
-        format=metrics['active_connections']['format'])
+        create_panel(
+            dashboard,
+            create_gauge(title=metrics['active_connections']['title']),
+            metrics['active_connections']['targets'],
+            format=metrics['active_connections']['format'])
 
     create_panel(
         dashboard,
@@ -541,12 +527,13 @@ if __name__ == '__main__':
             thresholds=thresholds_2_steps),
         metrics['acl_auth']['targets'])
 
-    create_panel(
-        dashboard,
-        create_timeseries(
-            title=metrics['data_bridge_queuing']['title'],
-            span=3),
-        metrics['data_bridge_queuing']['targets'])
+    if version == 5:
+        create_panel(
+            dashboard,
+            create_timeseries(
+                title=metrics['data_bridge_queuing']['title'],
+                span=3),
+            metrics['data_bridge_queuing']['targets'])
 
     create_panel(
         dashboard,
@@ -643,21 +630,39 @@ if __name__ == '__main__':
             thresholds=thresholds_2_steps),
         metrics['client_connect_auth_events']['targets'])
 
-    create_panel(
-        dashboard,
-        create_timeseries(
-            title=metrics['client_acl_auth_events']['title'],
-            span=3,
-            legendDisplayMode="table",
-            legendCalcs=[
-                "lastNotNull",
-                "min",
-                "max",
-                "mean",
-                "sum",
-            ],
-            thresholds=thresholds_2_steps),
-        metrics['client_acl_auth_events']['targets'])
+    if version == 5:
+        create_panel(
+            dashboard,
+            create_timeseries(
+                title=metrics['client_acl_auth_events_v5']['title'],
+                span=3,
+                legendDisplayMode="table",
+                legendCalcs=[
+                    "lastNotNull",
+                    "min",
+                    "max",
+                    "mean",
+                    "sum",
+                ],
+                thresholds=thresholds_2_steps),
+            metrics['client_acl_auth_events_v5']['targets'])
+    else:
+        create_panel(
+            dashboard,
+            create_timeseries(
+                title=metrics['client_acl_auth_events_v4']['title'],
+                span=3,
+                legendDisplayMode="table",
+                legendCalcs=[
+                    "lastNotNull",
+                    "min",
+                    "max",
+                    "mean",
+                    "sum",
+                ],
+                thresholds=thresholds_2_steps),
+            metrics['client_acl_auth_events_v4']['targets'])
+
 
     ##############################
     # Packets
@@ -815,73 +820,74 @@ if __name__ == '__main__':
         instant=True,
         format=metrics['rule_engine_execute_count']['format'])
 
-    ##############################
-    # Connect Auth
-    ##############################
+    if version == 5:
+        ##############################
+        # Connect Auth
+        ##############################
 
-    dashboard.add_row(create_row(
-        title=metrics['connect_auth_row']['title'],
-        collapsed=True))
+        dashboard.add_row(create_row(
+            title=metrics['connect_auth_row']['title'],
+            collapsed=True))
 
-    create_panel(
-        dashboard,
-        create_table(
-            title=metrics['authenticate_count']['title'],
-            span=4,
-            transformations=generate_transformations(metrics['authenticate_count']['targets']),
-            overrides=generate_table_overrides(metrics['authenticate_count']['targets'])),
-        metrics['authenticate_count']['targets'],
-        instant=True,
-        format=metrics['authenticate_count']['format'])
+        create_panel(
+            dashboard,
+            create_table(
+                title=metrics['authenticate_count']['title'],
+                span=4,
+                transformations=generate_transformations(metrics['authenticate_count']['targets']),
+                overrides=generate_table_overrides(metrics['authenticate_count']['targets'])),
+            metrics['authenticate_count']['targets'],
+            instant=True,
+            format=metrics['authenticate_count']['format'])
 
-    create_panel(
-        dashboard,
-        create_timeseries(
-            title=metrics['authenticate_current_exec_rate']['title'],
-            span=4,
-        ),
-        metrics['authenticate_current_exec_rate']['targets'])
+        create_panel(
+            dashboard,
+            create_timeseries(
+                title=metrics['authenticate_current_exec_rate']['title'],
+                span=4,
+            ),
+            metrics['authenticate_current_exec_rate']['targets'])
 
-    create_panel(
-        dashboard,
-        create_timeseries(
-            title=metrics['authenticate_last_5m_exec_rate']['title'],
-            span=4
-        ),
-        metrics['authenticate_last_5m_exec_rate']['targets'])
+        create_panel(
+            dashboard,
+            create_timeseries(
+                title=metrics['authenticate_last_5m_exec_rate']['title'],
+                span=4
+            ),
+            metrics['authenticate_last_5m_exec_rate']['targets'])
 
-    ##############################
-    # ACL Auth
-    ##############################
+        ##############################
+        # ACL Auth
+        ##############################
 
-    dashboard.add_row(create_row(
-        title=metrics['acl_auth_row']['title'],
-        collapsed=True))
+        dashboard.add_row(create_row(
+            title=metrics['acl_auth_row']['title'],
+            collapsed=True))
 
-    create_panel(
-        dashboard,
-        create_table(
-            title=metrics['authorize_count']['title'],
-            span=4,
-            transformations=generate_transformations(metrics['authorize_count']['targets']),
-            overrides=generate_table_overrides(metrics['authorize_count']['targets'])),
-        metrics['authorize_count']['targets'],
-        instant=True,
-        format=metrics['authorize_count']['format'])
+        create_panel(
+            dashboard,
+            create_table(
+                title=metrics['authorize_count']['title'],
+                span=4,
+                transformations=generate_transformations(metrics['authorize_count']['targets']),
+                overrides=generate_table_overrides(metrics['authorize_count']['targets'])),
+            metrics['authorize_count']['targets'],
+            instant=True,
+            format=metrics['authorize_count']['format'])
 
-    create_panel(
-        dashboard,
-        create_timeseries(
-            title=metrics['authorize_current_exec_rate']['title'],
-            span=4),
-        metrics['authorize_current_exec_rate']['targets'])
+        create_panel(
+            dashboard,
+            create_timeseries(
+                title=metrics['authorize_current_exec_rate']['title'],
+                span=4),
+            metrics['authorize_current_exec_rate']['targets'])
 
-    create_panel(
-        dashboard,
-        create_timeseries(
-            title=metrics['authorize_last_5m_exec_rate']['title'],
-            span=4),
-        metrics['authorize_last_5m_exec_rate']['targets'])
+        create_panel(
+            dashboard,
+            create_timeseries(
+                title=metrics['authorize_last_5m_exec_rate']['title'],
+                span=4),
+            metrics['authorize_last_5m_exec_rate']['targets'])
 
     ##############################
     # System
@@ -914,6 +920,30 @@ if __name__ == '__main__':
             span=4,
             thresholds=thresholds_2_steps),
         metrics['last_15m_cpu_load']['targets'])
+
+
+if __name__ == '__main__':
+    is_ee = True
+    ver = 5
+
+    parser = argparse.ArgumentParser(description="Argument Parser")
+
+    # Define a single optional argument for category (-c or --category)
+    parser.add_argument("-e", "--edition", choices=["ee", "ce"], help="Set EMQX Enterprise(ee) or EMQX Community(ce)")
+    parser.add_argument("-v", "--version", type=int, choices=[4, 5], help="Set EMQX Version")
+
+    args = parser.parse_args()
+
+    if args.edition == "ce":
+        is_ee = False
+
+    if args.version == 4:
+        ver = 4
+
+    # create a dashboard
+    dashboard = create_dashboard()
+
+    emqx_dashboard(dashboard, is_ee, ver)
 
     dashboard.auto_panel_ids()
     print(dashboard.generate_dashboard())
