@@ -333,7 +333,17 @@ metrics = {
         ],
         "format": "timeseries"
     },
-    "client_acl_auth_events": {
+    "client_acl_auth_events_v4": {
+        "title": "Client ACL Auth Events",
+        "targets": [
+            {
+                "legendFormat": "ACL Auth",
+                "expr": "sum(irate(emqx_client_check_acl{cluster=\"$cluster\", instance=~\".*\"}[$__rate_interval]))",
+            }
+        ],
+        "format": "timeseries"
+    },
+    "client_acl_auth_events_v5": {
         "title": "Client ACL Auth Events",
         "targets": [
             {
