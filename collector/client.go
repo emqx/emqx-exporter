@@ -33,6 +33,7 @@ type RuleEngine struct {
 	TopicHitCount      int64
 	ExecPassCount      int64
 	ExecFailureCount   int64
+	ExecExceptionCount int64
 	NoResultCount      int64
 	ExecRate           float64
 	ExecLast5mRate     float64

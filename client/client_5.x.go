@@ -146,7 +146,7 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 					Matched    int64
 					Passed     int64
 					Failed     int64
-					//Exception     int64 `json:"failed.exception"`
+					Exception     int64 `json:"failed.exception"`
 					NoResult      int64 `json:"failed.no_result"`
 					ActionTotal   int64 `json:"actions.total"`
 					ActionSuccess int64 `json:"actions.success"`
@@ -166,6 +166,7 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 				TopicHitCount:      node.Metrics.Matched,
 				ExecPassCount:      node.Metrics.Passed,
 				ExecFailureCount:   node.Metrics.Failed,
+				ExecExceptionCount: node.Metrics.Exception,
 				NoResultCount:      node.Metrics.NoResult,
 				ExecRate:           node.Metrics.Rate,
 				ExecLast5mRate:     node.Metrics.RateLast5m,

@@ -34,6 +34,7 @@ const (
 	ruleExecPassCount    = "exec_pass_count"
 	ruleExecFailureCount = "exec_failure_count"
 	ruleNoResultCount    = "exec_no_result_count"
+	ruleExecExceptionCount   = "exec_exception_count"
 	ruleExecRate         = "exec_rate"
 	ruleExecLast5mRate   = "exec_last5m_rate"
 	ruleExecMaxRate      = "exec_max_rate"
@@ -109,6 +110,11 @@ func NewRuleEngineCollector(client Cluster, logger log.Logger) (Collector, error
 		{
 			name:   ruleExecFailureCount,
 			help:   "The failure count of rule exec",
+			labels: []string{"node", "rule"},
+		},
+		{
+			name:   ruleExecExceptionCount,
+			help:   "The exception count of rule exec",
 			labels: []string{"node", "rule"},
 		},
 		{
@@ -198,6 +204,10 @@ func (c *ruleEngineCollector) Update(ch chan<- prometheus.Metric) error {
 		ch <- prometheus.MustNewConstMetric(
 			c.desc[ruleExecFailureCount],
 			prometheus.CounterValue, float64(metric.ExecFailureCount), metric.NodeName, metric.RuleID,
+		)
+		ch <- prometheus.MustNewConstMetric(
+			c.desc[ruleExecExceptionCount],
+			prometheus.CounterValue, float64(metric.ExecExceptionCount), metric.NodeName, metric.RuleID,
 		)
 		ch <- prometheus.MustNewConstMetric(
 			c.desc[ruleNoResultCount],
