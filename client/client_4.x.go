@@ -153,22 +153,22 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 	resp := struct {
 		Data []struct {
 			Metrics []struct {
-				Node        string
+				Node        string `json:"node"`
 				SpeedMax    float64 `json:"speed_max"`
 				SpeedLast5m float64 `json:"speed_last5m"`
 				Speed       float64 `json:"speed"`
-				Matched     int64
-				Passed      int64
-				//NoResult    int64
-				//Exception   int64
-				Failed int64
+				Matched     int64 `json:"matched"`
+				Passed      int64 `json:"passed"`
+				NoResult    int64 `json:"no_result"`
+				Exception   int64 `json:"exception"`
+				Failed int64 `json:"failed"`
 			}
 			Actions []struct {
 				Metrics []struct {
-					Node    string
-					Taken   int64
-					Success int64
-					Failed  int64
+					Node    string `json:"node"`
+					Taken   int64 `json:"taken"`
+					Success int64 `json:"success"`
+					Failed  int64 `json:"failed"`
 				}
 			}
 			ID      string `json:"id"`
@@ -208,10 +208,11 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 				NodeName: cutNodeName(m.Node),
 				RuleID:   rule.ID,
 				//ResStatus:           unknown,
-				TopicHitCount:    m.Matched,
-				ExecPassCount:    m.Passed,
-				ExecFailureCount: m.Failed,
-				//NoResultCount:      m.NoResult,
+				TopicHitCount:      m.Matched,
+				ExecPassCount:      m.Passed,
+				ExecFailureCount:   m.Failed,
+				NoResultCount:      m.NoResult,
+				ExecExceptionCount: m.Exception,
 				ExecRate:           m.Speed,
 				ExecLast5mRate:     m.SpeedLast5m,
 				ExecMaxRate:        m.SpeedMax,

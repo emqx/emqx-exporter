@@ -601,8 +601,8 @@ metrics = {
                 "expr": "sum by(rule) (emqx_rule_exec_pass_count{cluster=\"$cluster\", node=~\".*\"})",
             },
             {
-                "legendFormat": "Exec Failed last 15m",
-                "expr": "sum by(rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\".*\"}[15m]))",
+                "legendFormat": "Exec Exception last 15m",
+                "expr": "sum by(rule) (irate(emqx_rule_exec_exception_count{cluster=\"$cluster\", node=~\".*\"}[15m]))",
                 "thresholds": {
                     "mode": "absolute",
                     "steps": [
@@ -618,8 +618,8 @@ metrics = {
                 }
             },
             {
-                "legendFormat": "Exec No Result",
-                "expr": "sum by(rule) (emqx_rule_exec_no_result_count{cluster=\"$cluster\", node=~\".*\"})",
+                "legendFormat": "Exec No Result 15m",
+                "expr": "sum by(rule) (irate(emqx_rule_exec_no_result_count{cluster=\"$cluster\", node=~\".*\"}[15m]))",
                 "thresholds": {
                     "mode": "absolute",
                     "steps": [
