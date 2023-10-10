@@ -29,3 +29,13 @@ scrape_configs:
           cluster: test
           # fix value, don't modify
           from: exporter
+  - job_name: 'mqtt-probe'
+    metrics_path: /probe
+    scrape_interval: 5s
+    static_configs:
+      - targets: [exporter-demo:8085]
+        labels:
+          # label the cluster name of where the metrics data from
+          cluster: test
+          # fix value, don't modify
+          from: probe

@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   emqx:
-    image: emqx/emqx-enterprise:5.0.1
+    image: emqx/emqx-enterprise:5.3
     container_name: emqx-demo
     ports:
       - 18083:18083
@@ -11,11 +11,19 @@ services:
       - 8883:8883
     environment:
       EMQX_DASHBOARD__BOOTSTRAP_USERS_FILE: '"/opt/emqx/data/api_secret"'
+      EMQX_API_KEY__BOOTSTRAP_FILE: '"/opt/emqx/data/api_secret"'
     volumes:
       - ./api_secret:/opt/emqx/data/api_secret
+    healthcheck:
+      test: ["CMD", "emqx", "ctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   emqx-exporter:
-    image: emqx/emqx-exporter
+    depends_on:
+      - emqx
+    image: emqx-exporter
     container_name: exporter-demo
     ports:
       - 8085:8085

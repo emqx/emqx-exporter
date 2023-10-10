@@ -15,11 +15,8 @@ package main
 
 import (
 	"emqx-exporter/client"
+	"emqx-exporter/prober"
 	"fmt"
-	"github.com/alecthomas/kingpin/v2"
-	promcollectors "github.com/prometheus/client_golang/prometheus/collectors"
-	"github.com/prometheus/common/promlog"
-	"github.com/prometheus/common/promlog/flag"
 	stdlog "log"
 	"net/http"
 	_ "net/http/pprof"
@@ -28,7 +25,13 @@ import (
 	"runtime"
 	"sort"
 
+	"github.com/alecthomas/kingpin/v2"
+	promcollectors "github.com/prometheus/client_golang/prometheus/collectors"
+	"github.com/prometheus/common/promlog"
+	"github.com/prometheus/common/promlog/flag"
+
 	"emqx-exporter/collector"
+
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
@@ -143,6 +146,10 @@ func main() {
 
 	http.Handle("/metrics", newHandler(!*disableExporterMetrics, *maxRequests, logger))
 
+	http.HandleFunc("/probe", func(w http.ResponseWriter, r *http.Request) {
+		prober.Handler(w, r, logger)
+	})
+
 	landingConfig := web.LandingConfig{
 		Name:        "EMQX Exporter",
 		Description: "EMQX Exporter",
@@ -151,6 +158,10 @@ func main() {
 			{
 				Address: "/metrics",
 				Text:    "Metrics",
+			},
+			{
+				Address: "/probe",
+				Text:    "Probe",
 			},
 		},
 	}
