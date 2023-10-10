@@ -7,7 +7,7 @@ The `emqx-exporter` is designed to expose partial metrics that are not included 
 ![Structure](https://assets.emqx.com/images/58adbe48aefb3388f6868854812b18ed.png)
 
 ## Metrics
-See the documentation [Instruction](config/grafana-template/README.md) for an explanation of the metrics on the dashboard
+See the documentation [Instruction](grafana-dashboard/template/README.md) for an explanation of the metrics on the dashboard
 
 ## Installation and Usage
 The `emqx-exporter` listens on HTTP port 8085 by default. See the `--help` output for more options.
@@ -80,7 +80,7 @@ scrape_configs:
 For EMQX 4.4 open-source, make sure the `emqx_prometheus` plugin has been started on all nodes, check it one by one on the dashboard <http://your_cluster_addr:18083/#/plugins>.
 
 ## Grafana Dashboard
-Import all [templates](./config/grafana-template) to your Grafana, then browse the dashboard `EMQX` and enjoy yourself!
+Import all [templates](./grafana-dashboard/template) to your Grafana, then browse the dashboard `EMQX` and enjoy yourself!
 
 The templates of dashboard ares JSON files, about how to upload a dashboard JSON file, you can check out [here](https://grafana.com/docs/grafana/latest/dashboards/manage-dashboards/#import-a-dashboard). 
 

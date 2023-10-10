@@ -8,23 +8,23 @@ emqxVersion=$1
 case $emqxVersion in
 emqx4)
   prometheusConfig=prometheus-emqx4.yaml
-  dashboardDefinitions=$(dirname $(dirname $(pwd)))/config/grafana-template/emqx-4
+  dashboardDefinitions=$(dirname $(dirname $(pwd)))/grafana-dashboard/template/emqx-4
  emqxImage=emqx/emqx:4.4.16
   ;;
 emqx4-ee)
   prometheusConfig=prometheus-emqx4.yaml
-  dashboardDefinitions=$(dirname $(dirname $(pwd)))/config/grafana-template/emqx-enterprise-4
+  dashboardDefinitions=$(dirname $(dirname $(pwd)))/grafana-dashboard/template/emqx-enterprise-4
   emqxImage=emqx/emqx-ee:4.4.16
   ;;
 emqx5)
   prometheusConfig=prometheus-emqx5.yaml
-  dashboardDefinitions=$(dirname $(dirname $(pwd)))/config/grafana-template/emqx-5
+  dashboardDefinitions=$(dirname $(dirname $(pwd)))/grafana-dashboard/template/emqx-5
   emqxImage=emqx/emqx:5.0.1
   ;;
 *)
   # deploy emqx5 enterprise by default
   prometheusConfig=prometheus-emqx5.yaml
-  dashboardDefinitions=$(dirname $(dirname $(pwd)))/config/grafana-template/emqx-enterprise-5
+  dashboardDefinitions=$(dirname $(dirname $(pwd)))/grafana-dashboard/templateate/emqx-enterprise-5
   emqxImage=emqx/emqx-enterprise:5.0.1
   ;;
 esac
