@@ -30,7 +30,10 @@ scrape_configs:
           # fix value, don't modify
           from: exporter
   - job_name: 'mqtt-probe'
-    metrics_path: /probe
+    metrics_path: '/probe'
+    params:
+      target:
+        - "emqx-demo:1883"
     scrape_interval: 5s
     static_configs:
       - targets: [exporter-demo:8085]

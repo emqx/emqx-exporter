@@ -1,6 +1,7 @@
 package prober
 
 import (
+	"emqx-exporter/config"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -15,8 +16,8 @@ type MQTTProbe struct {
 
 var mqttProbe *MQTTProbe
 
-func initMQTTProbe(logger log.Logger) (*MQTTProbe, error) {
-	opt := mqtt.NewClientOptions().AddBroker("tcp://broker.emqx.io:1883").SetClientID("emqx-exporter")
+func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
+	opt := mqtt.NewClientOptions().AddBroker(probe.Scheme + "://" + probe.Target).SetClientID(probe.ClientID).SetUsername(probe.Username).SetPassword(probe.Password)
 	opt.SetOnConnectHandler(func(c mqtt.Client) {
 		level.Info(logger).Log("msg", "Connected to MQTT broker")
 	})
@@ -30,7 +31,7 @@ func initMQTTProbe(logger log.Logger) (*MQTTProbe, error) {
 	}
 
 	var msgChan = make(chan mqtt.Message)
-	if token := c.Subscribe("emqx-exporter", 1, func(c mqtt.Client, m mqtt.Message) {
+	if token := c.Subscribe(probe.Topic, probe.QoS, func(c mqtt.Client, m mqtt.Message) {
 		msgChan <- m
 	}); token.Wait() && token.Error() != nil {
 		level.Error(logger).Log("msg", "Failed to subscribe to MQTT topic", "err", token.Error())
@@ -43,10 +44,10 @@ func initMQTTProbe(logger log.Logger) (*MQTTProbe, error) {
 	}, nil
 }
 
-func ProbeMQTT(logger log.Logger) bool {
+func ProbeMQTT(probe config.Probe, logger log.Logger) bool {
 	if mqttProbe == nil {
 		var err error
-		if mqttProbe, err = initMQTTProbe(logger); err != nil {
+		if mqttProbe, err = initMQTTProbe(probe, logger); err != nil {
 			return false
 		}
 	}
@@ -55,7 +56,7 @@ func ProbeMQTT(logger log.Logger) bool {
 		return false
 	}
 
-	if token := mqttProbe.Client.Publish("emqx-exporter", 1, false, "hello world"); token.Wait() && token.Error() != nil {
+	if token := mqttProbe.Client.Publish(probe.Topic, probe.QoS, false, "hello world"); token.Wait() && token.Error() != nil {
 		return false
 	}
 

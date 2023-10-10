@@ -1,0 +1,8 @@
+probes:
+  - target: broker.emqx.io:1883
+    scheme:
+    client_id:
+    username:
+    password:
+    topic:
+    qos:
