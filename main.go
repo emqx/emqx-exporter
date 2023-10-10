@@ -15,7 +15,9 @@ package main
 
 import (
 	"emqx-exporter/client"
+	"emqx-exporter/config"
 	"emqx-exporter/prober"
+
 	"fmt"
 	stdlog "log"
 	"net/http"
@@ -29,6 +31,7 @@ import (
 	promcollectors "github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/common/promlog"
 	"github.com/prometheus/common/promlog/flag"
+	"gopkg.in/yaml.v2"
 
 	"emqx-exporter/collector"
 
@@ -112,6 +115,16 @@ func newHandler(includeExporterMetrics bool, maxRequests int, logger log.Logger)
 	}
 }
 
+var (
+	sc = config.NewSafeConfig(prometheus.DefaultRegisterer)
+
+	configFile = kingpin.Flag("config.file", "EMQX exporter configuration file.").Default("/etc/emqx-exporter/config.yaml").String()
+)
+
+func init() {
+	prometheus.MustRegister(version.NewCollector("emqx_exporter"))
+}
+
 func main() {
 	var (
 		disableExporterMetrics = kingpin.Flag(
@@ -134,10 +147,17 @@ func main() {
 	kingpin.CommandLine.UsageWriter(os.Stdout)
 	kingpin.HelpFlag.Short('h')
 	kingpin.Parse()
-	logger := promlog.New(promlogConfig)
 
+	logger := promlog.New(promlogConfig)
 	level.Info(logger).Log("msg", "Starting emqx-exporter", "version", version.Info())
 	level.Info(logger).Log("msg", "Build context", "build_context", version.BuildContext())
+
+	if err := sc.ReloadConfig(*configFile); err != nil {
+		level.Error(logger).Log("msg", "Error loading config", "err", err)
+		os.Exit(1)
+	}
+	level.Info(logger).Log("msg", "Loaded config file")
+
 	if user, err := user.Current(); err == nil && user.Uid == "0" {
 		level.Warn(logger).Log("msg", "EMQX Exporter is running as root user. This exporter is designed to run as unprivileged user, root is not required.")
 	}
@@ -147,7 +167,23 @@ func main() {
 	http.Handle("/metrics", newHandler(!*disableExporterMetrics, *maxRequests, logger))
 
 	http.HandleFunc("/probe", func(w http.ResponseWriter, r *http.Request) {
-		prober.Handler(w, r, logger)
+		sc.Lock()
+		probes := sc.C.Probes
+		sc.Unlock()
+		prober.Handler(w, r, probes, logger, nil)
+	})
+
+	http.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
+		sc.RLock()
+		c, err := yaml.Marshal(sc.C)
+		sc.RUnlock()
+		if err != nil {
+			level.Warn(logger).Log("msg", "Error marshalling configuration", "err", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "text/plain")
+		w.Write(c)
 	})
 
 	landingConfig := web.LandingConfig{
@@ -162,6 +198,10 @@ func main() {
 			{
 				Address: "/probe",
 				Text:    "Probe",
+			},
+			{
+				Address: "/config",
+				Text:    "Config",
 			},
 		},
 	}

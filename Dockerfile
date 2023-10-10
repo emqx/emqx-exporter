@@ -14,6 +14,7 @@ FROM quay.io/prometheus/busybox:latest
 LABEL maintainer="EMQX"
 
 COPY --from=builder /workspace/emqx-exporter /bin/emqx-exporter
+COPY config/example/config.yaml /etc/emqx-exporter/config.yaml
 
 EXPOSE      8085
 USER        nobody
