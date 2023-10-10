@@ -17,11 +17,6 @@ all::
 ARCH = $(shell go env GOARCH)
 OS = $(shell go env GOOS)
 
-# Needs to be defined before including Makefile.common to auto-generate targets
-DOCKER_ARCHS ?= amd64
-
-DOCKER_IMAGE_NAME       ?= emqx-exporter:latest
-
 .PHONY: build LOCALBIN
 build:
 	CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -o .build/${OS}-${ARCH}/emqx-exporter
@@ -30,8 +25,9 @@ build:
 test:
 	go test -race --cover -covermode=atomic -coverpkg=./... -coverprofile=cover.out ./...
 
+DOCKER_IMAGE_NAME  ?= emqx-exporter
 .PHONY: docker-build
-docker-build: build
+docker-build:
 	docker build -t ${DOCKER_IMAGE_NAME} .
 
 ## Location to install dependencies to
