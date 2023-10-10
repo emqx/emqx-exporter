@@ -220,6 +220,6 @@ EOF
 ```
 
 ## Load Grafana Templates
-Import all [templates](../../config/grafana-template) to your Grafana, then browse the dashboard EMQX and enjoy yourself!
+Import all [templates](../../grafana-dashboard/template) to your Grafana, then browse the dashboard EMQX and enjoy yourself!
 
 The templates of dashboard ares JSON files, about how to upload a dashboard JSON file, you can check out [here](https://grafana.com/docs/grafana/latest/dashboards/manage-dashboards/#import-a-dashboard). 
