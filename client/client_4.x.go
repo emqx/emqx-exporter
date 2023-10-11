@@ -3,19 +3,22 @@ package client
 import (
 	"emqx-exporter/collector"
 	"fmt"
-	jsoniter "github.com/json-iterator/go"
-	"github.com/valyala/fasthttp"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	jsoniter "github.com/json-iterator/go"
+	"github.com/valyala/fasthttp"
 )
 
 var _ client = &cluster4x{}
 
 type cluster4x struct {
-	version string
-	client  *fasthttp.Client
+	username string
+	password string
+	version  string
+	client   *fasthttp.Client
 }
 
 func (n *cluster4x) getVersion() string {
@@ -30,8 +33,7 @@ func (n *cluster4x) getLicense() (lic *collector.LicenseInfo, err error) {
 		}
 		Code int
 	}{}
-
-	data, statusCode, err := callHTTPGet(n.client, "/api/v4/license")
+	data, statusCode, err := callHTTPGet(n.client, "/api/v4/license", n.username, n.password)
 	if statusCode == http.StatusNotFound {
 		// open source version doesn't support license api
 		err = nil
@@ -80,7 +82,7 @@ func (n *cluster4x) getClusterStatus() (cluster collector.ClusterStatus, err err
 		}
 		Code int
 	}{}
-	err = callHTTPGetWithResp(n.client, "/api/v4/nodes", &resp)
+	err = callHTTPGetWithResp(n.client, "/api/v4/nodes", n.username, n.password, &resp)
 	if err != nil {
 		return
 	}
@@ -121,7 +123,7 @@ func (n *cluster4x) getBrokerMetrics() (metrics *collector.Broker, err error) {
 		}
 		Code int
 	}{}
-	data, statusCode, err := callHTTPGet(n.client, "/api/v4/monitor/current_metrics")
+	data, statusCode, err := callHTTPGet(n.client, "/api/v4/monitor/current_metrics", n.username, n.password)
 	if statusCode == http.StatusNotFound {
 		// open source version doesn't support this api
 		err = nil
@@ -153,22 +155,22 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 	resp := struct {
 		Data []struct {
 			Metrics []struct {
-				Node        string `json:"node"`
+				Node        string  `json:"node"`
 				SpeedMax    float64 `json:"speed_max"`
 				SpeedLast5m float64 `json:"speed_last5m"`
 				Speed       float64 `json:"speed"`
-				Matched     int64 `json:"matched"`
-				Passed      int64 `json:"passed"`
-				NoResult    int64 `json:"no_result"`
-				Exception   int64 `json:"exception"`
-				Failed int64 `json:"failed"`
+				Matched     int64   `json:"matched"`
+				Passed      int64   `json:"passed"`
+				NoResult    int64   `json:"no_result"`
+				Exception   int64   `json:"exception"`
+				Failed      int64   `json:"failed"`
 			}
 			Actions []struct {
 				Metrics []struct {
 					Node    string `json:"node"`
-					Taken   int64 `json:"taken"`
-					Success int64 `json:"success"`
-					Failed  int64 `json:"failed"`
+					Taken   int64  `json:"taken"`
+					Success int64  `json:"success"`
+					Failed  int64  `json:"failed"`
 				}
 			}
 			ID      string `json:"id"`
@@ -176,7 +178,7 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 		}
 		Code int
 	}{}
-	err = callHTTPGetWithResp(n.client, "/api/v4/rules?_limit=10000", &resp)
+	err = callHTTPGetWithResp(n.client, "/api/v4/rules?_limit=10000", n.username, n.password, &resp)
 	if err != nil {
 		return
 	}
@@ -226,7 +228,7 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 }
 
 func (n *cluster4x) getDataBridge() (bridges []collector.DataBridge, err error) {
-	bridgesResp := struct {
+	resp := struct {
 		Data []struct {
 			ID     string `json:"id"`
 			Type   string
@@ -234,13 +236,13 @@ func (n *cluster4x) getDataBridge() (bridges []collector.DataBridge, err error) 
 		}
 		Code int
 	}{}
-	err = callHTTPGetWithResp(n.client, "/api/v4/resources", &bridgesResp)
+	err = callHTTPGetWithResp(n.client, "/api/v4/resources", n.username, n.password, &resp)
 	if err != nil {
 		return
 	}
 
-	bridges = make([]collector.DataBridge, len(bridgesResp.Data))
-	for i, data := range bridgesResp.Data {
+	bridges = make([]collector.DataBridge, len(resp.Data))
+	for i, data := range resp.Data {
 		enabled := unhealthy
 		if data.Status {
 			enabled = healthy

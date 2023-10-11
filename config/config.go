@@ -12,7 +12,14 @@ import (
 )
 
 type Config struct {
-	Probes []Probe `yaml:"probes"`
+	Metrics *Metrics `yaml:"metrics,omitempty"`
+	Probes  []Probe  `yaml:"probes,omitempty"`
+}
+
+type Metrics struct {
+	Target    string `yaml:"target"`
+	APIKey    string `yaml:"api_key"`
+	APISecret string `yaml:"api_secret"`
 }
 
 type Probe struct {
@@ -70,7 +77,23 @@ func (sc *SafeConfig) ReloadConfig(confFile string) (err error) {
 		return fmt.Errorf("error parsing config file: %s", err)
 	}
 
+	if c.Metrics != nil {
+		if c.Metrics.Target == "" {
+			return fmt.Errorf("metrics.target is required")
+		}
+		if c.Metrics.APIKey == "" {
+			return fmt.Errorf("metrics.api_key is required")
+		}
+
+		if c.Metrics.APISecret == "" {
+			return fmt.Errorf("metrics.api_secret is required")
+		}
+	}
+
 	for index, probe := range c.Probes {
+		if probe.Target == "" {
+			return fmt.Errorf("probes[%d].target is required", index)
+		}
 		if probe.Scheme == "" {
 			probe.Scheme = "tcp"
 		}
@@ -78,7 +101,7 @@ func (sc *SafeConfig) ReloadConfig(confFile string) (err error) {
 			probe.ClientID = "emqx_exporter_probe"
 		}
 		if probe.Topic == "" {
-			probe.Topic = "emqx_exporter_probe"
+			probe.Topic = "emqx-exporter-probe"
 		}
 		c.Probes[index] = probe
 	}

@@ -3,84 +3,58 @@ package client
 import (
 	"context"
 	"emqx-exporter/collector"
+	"emqx-exporter/config"
 	"fmt"
-	"github.com/alecthomas/kingpin/v2"
-	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
-)
 
-var (
-	emqxNodes    = kingpin.Flag("emqx.nodes", "The list of EMQX cluster node addr").Default("").String()
-	emqxUsername = kingpin.Flag("emqx.auth-username", "The username used for emqx api basic auth").Default("").String()
-	emqxPassword = kingpin.Flag("emqx.auth-password", "The password used for emqx api basic auth").Default("").String()
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 )
 
 type cluster struct {
 	client   client
 	nodeLock sync.RWMutex
-	logger   log.Logger
 }
 
-func NewCluster(logger log.Logger) collector.Cluster {
-	addrs := strings.Split(*emqxNodes, ",")
-	if len(addrs) == 0 {
-		panic(fmt.Sprintf("Invalid emqx node addrs: %s", *emqxNodes))
-	}
-	for _, addr := range addrs {
-		if !strings.ContainsRune(addr, ':') {
-			panic(fmt.Sprintf("Invalid emqx node addr: %s", addr))
+func NewCluster(metrics *config.Metrics, logger log.Logger) collector.Cluster {
+	c := &cluster{}
+
+	go func() {
+		httpClient := getHTTPClient(metrics.Target)
+		for {
+			client4 := &cluster4x{
+				username: metrics.APIKey,
+				password: metrics.APISecret,
+				client:   httpClient,
+			}
+			if _, err := client4.getClusterStatus(); err != nil {
+				c.client = client4
+				return
+			}
+
+			client5 := &cluster5x{
+				username: metrics.APIKey,
+				password: metrics.APISecret,
+				client:   httpClient,
+			}
+			if _, err := client5.getClusterStatus(); err == nil {
+				c.client = client5
+				return
+			}
+
+			level.Error(logger).Log("msg", "Couldn't create cluster client, will retry it after 5 seconds", "err", "no cluster node found")
+			c.client = nil
+
+			select {
+			case <-context.Background().Done():
+				return
+			case <-time.After(5 * time.Second):
+			}
 		}
-	}
-
-	if *emqxUsername == "" {
-		panic("Missing username used for emqx api basic auth")
-	}
-	if *emqxPassword == "" {
-		panic("Missing password used for emqx api basic auth")
-	}
-
-	c := &cluster{
-		logger: logger,
-	}
-	go c.checkNodes()
+	}()
 	return c
-}
-
-func (c *cluster) checkNodes() {
-	httpClient := getHTTPClient(*emqxNodes)
-	var currentVersion string
-	for {
-		var client client
-		var err4, err5 error
-		client = &cluster4x{client: httpClient}
-		_, err4 = client.getClusterStatus()
-		if err4 != nil {
-			client = &cluster5x{client: httpClient}
-			_, err5 = client.getClusterStatus()
-		}
-		if err4 != nil && err5 != nil {
-			_ = level.Warn(c.logger).Log("check nodes", "couldn't get node info", "addr", *emqxNodes,
-				"err4", err4.Error(), "err5", err5.Error())
-			client = nil
-		} else if currentVersion != client.getVersion() {
-			currentVersion = client.getVersion()
-			_ = level.Info(c.logger).Log("ClusterVersion", currentVersion)
-		}
-
-		c.nodeLock.Lock()
-		c.client = client
-		c.nodeLock.Unlock()
-
-		select {
-		case <-context.Background().Done():
-			return
-		case <-time.After(5 * time.Second):
-		}
-	}
 }
 
 func (c *cluster) GetLicense() (lic *collector.LicenseInfo, err error) {
@@ -102,7 +76,6 @@ func (c *cluster) GetLicense() (lic *collector.LicenseInfo, err error) {
 func (c *cluster) GetClusterStatus() (cluster collector.ClusterStatus, err error) {
 	client := c.getNode()
 	if client == nil {
-		cluster.Status = unknown
 		return
 	}
 	cluster, err = client.getClusterStatus()

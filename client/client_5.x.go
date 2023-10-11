@@ -3,17 +3,20 @@ package client
 import (
 	"emqx-exporter/collector"
 	"fmt"
-	"github.com/valyala/fasthttp"
 	"strconv"
 	"time"
+
+	"github.com/valyala/fasthttp"
 )
 
 var _ client = &cluster5x{}
 
 type cluster5x struct {
-	version string
-	edition edition
-	client  *fasthttp.Client
+	username string
+	password string
+	version  string
+	edition  edition
+	client   *fasthttp.Client
 }
 
 func (n *cluster5x) getVersion() string {
@@ -29,7 +32,7 @@ func (n *cluster5x) getLicense() (lic *collector.LicenseInfo, err error) {
 		MaxConnections int64  `json:"max_connections"`
 		ExpiryAt       string `json:"expiry_at"`
 	}{}
-	err = callHTTPGetWithResp(n.client, "/api/v5/license", &resp)
+	err = callHTTPGetWithResp(n.client, "/api/v5/license", n.username, n.password, &resp)
 	if err != nil {
 		return
 	}
@@ -60,7 +63,7 @@ func (n *cluster5x) getClusterStatus() (cluster collector.ClusterStatus, err err
 		Load5       any `json:"load5"`
 		Load15      any `json:"load15"`
 	}{{}}
-	err = callHTTPGetWithResp(n.client, "/api/v5/nodes", &resp)
+	err = callHTTPGetWithResp(n.client, "/api/v5/nodes", n.username, n.password, &resp)
 	if err != nil {
 		return
 	}
@@ -106,7 +109,7 @@ func (n *cluster5x) getBrokerMetrics() (metrics *collector.Broker, err error) {
 		SentMsgRate     int64 `json:"sent_msg_rate"`
 		ReceivedMsgRate int64 `json:"received_msg_rate"`
 	}{}
-	err = callHTTPGetWithResp(n.client, "/api/v5/monitor_current", &resp)
+	err = callHTTPGetWithResp(n.client, "/api/v5/monitor_current", n.username, n.password, &resp)
 	if err != nil {
 		return
 	}
@@ -126,7 +129,7 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 			Enable bool
 		}
 	}{}
-	err = callHTTPGetWithResp(n.client, "/api/v5/rules?limit=10000", &resp)
+	err = callHTTPGetWithResp(n.client, "/api/v5/rules?limit=10000", n.username, n.password, &resp)
 	if err != nil {
 		return
 	}
@@ -140,12 +143,12 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 			NodeMetrics []struct {
 				Node    string
 				Metrics struct {
-					Rate       float64 `json:"matched.rate"`
-					RateLast5m float64 `json:"matched.rate.last5m"`
-					RateMax    float64 `json:"matched.rate.max"`
-					Matched    int64
-					Passed     int64
-					Failed     int64
+					Rate          float64 `json:"matched.rate"`
+					RateLast5m    float64 `json:"matched.rate.last5m"`
+					RateMax       float64 `json:"matched.rate.max"`
+					Matched       int64
+					Passed        int64
+					Failed        int64
 					Exception     int64 `json:"failed.exception"`
 					NoResult      int64 `json:"failed.no_result"`
 					ActionTotal   int64 `json:"actions.total"`
@@ -154,7 +157,7 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 				}
 			} `json:"node_metrics"`
 		}{}
-		err = callHTTPGetWithResp(n.client, fmt.Sprintf("/api/v5/rules/%s/metrics", rule.ID), &metricsResp)
+		err = callHTTPGetWithResp(n.client, fmt.Sprintf("/api/v5/rules/%s/metrics", rule.ID), n.username, n.password, &metricsResp)
 		if err != nil {
 			return
 		}
@@ -187,7 +190,7 @@ func (n *cluster5x) getDataBridge() (bridges []collector.DataBridge, err error) 
 		Type   string
 		Status string
 	}{{}}
-	err = callHTTPGetWithResp(n.client, "/api/v5/bridges", &bridgesResp)
+	err = callHTTPGetWithResp(n.client, "/api/v5/bridges", n.username, n.password, &bridgesResp)
 	if err != nil {
 		return
 	}
@@ -211,7 +214,7 @@ func (n *cluster5x) getDataBridge() (bridges []collector.DataBridge, err error) 
 				Dropped    int64
 			}
 		}{}
-		err = callHTTPGetWithResp(n.client, fmt.Sprintf("/api/v5/bridges/%s:%s/metrics", data.Type, data.Name), &metricsResp)
+		err = callHTTPGetWithResp(n.client, fmt.Sprintf("/api/v5/bridges/%s:%s/metrics", data.Type, data.Name), n.username, n.password, &metricsResp)
 		if err != nil {
 			return
 		}
@@ -230,7 +233,7 @@ func (n *cluster5x) getAuthenticationMetrics() (dataSources []collector.DataSour
 		Backend string
 		Enable  bool
 	}{{}}
-	err = callHTTPGetWithResp(n.client, "/api/v5/authentication", &resp)
+	err = callHTTPGetWithResp(n.client, "/api/v5/authentication", n.username, n.password, &resp)
 	if err != nil {
 		return
 	}
@@ -254,7 +257,7 @@ func (n *cluster5x) getAuthenticationMetrics() (dataSources []collector.DataSour
 			} `json:"node_metrics"`
 			Status string
 		}{}
-		err = callHTTPGetWithResp(n.client, fmt.Sprintf("/api/v5/authentication/%s/status", plugin.ID), &status)
+		err = callHTTPGetWithResp(n.client, fmt.Sprintf("/api/v5/authentication/%s/status", plugin.ID), n.username, n.password, &status)
 		if err != nil {
 			return
 		}
@@ -293,7 +296,7 @@ func (n *cluster5x) getAuthorizationMetrics() (dataSources []collector.DataSourc
 			Enable bool
 		}
 	}{}
-	err = callHTTPGetWithResp(n.client, "/api/v5/authorization/sources", &resp)
+	err = callHTTPGetWithResp(n.client, "/api/v5/authorization/sources", n.username, n.password, &resp)
 	if err != nil {
 		return
 	}
@@ -317,7 +320,7 @@ func (n *cluster5x) getAuthorizationMetrics() (dataSources []collector.DataSourc
 			} `json:"node_metrics"`
 			Status string
 		}{}
-		err = callHTTPGetWithResp(n.client, fmt.Sprintf("/api/v5/authorization/sources/%s/status", plugin.Type), &status)
+		err = callHTTPGetWithResp(n.client, fmt.Sprintf("/api/v5/authorization/sources/%s/status", plugin.Type), n.username, n.password, &status)
 		if err != nil {
 			return
 		}
