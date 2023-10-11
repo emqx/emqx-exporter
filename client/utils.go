@@ -4,19 +4,16 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/alecthomas/kingpin/v2"
-	jsoniter "github.com/json-iterator/go"
-	"github.com/valyala/fasthttp"
 	"net/http"
 	"net/netip"
 	"strings"
 	"time"
+
+	jsoniter "github.com/json-iterator/go"
+	"github.com/valyala/fasthttp"
 )
 
-var (
-	readTimeout     = kingpin.Flag("emqx.readTimeout", "Maximum seconds for full response reading (including body)").Default("5").Int()
-	connWaitTimeout = kingpin.Flag("emqx.connWaitTimeout", "Maximum seconds for waiting for a free connection").Default("5").Int()
-)
+var ()
 
 func cutNodeName(nodeName string) string {
 	slice := strings.Split(nodeName, "@")
@@ -37,9 +34,9 @@ func getHTTPClient(host string) *fasthttp.Client {
 		Name:                "EMQX-Exporter", //User-Agent
 		MaxConnsPerHost:     5,
 		MaxIdleConnDuration: 30 * time.Second,
-		ReadTimeout:         time.Duration(*readTimeout) * time.Second,
+		ReadTimeout:         5 * time.Second,
 		WriteTimeout:        5 * time.Second,
-		MaxConnWaitTimeout:  time.Duration(*connWaitTimeout) * time.Second,
+		MaxConnWaitTimeout:  5 * time.Second,
 		ConfigureClient: func(hc *fasthttp.HostClient) error {
 			hc.Addr = host
 			return nil
@@ -47,14 +44,17 @@ func getHTTPClient(host string) *fasthttp.Client {
 	}
 }
 
-func callHTTPGet(client *fasthttp.Client, uri string) (data []byte, statusCode int, err error) {
+func callHTTPGet(client *fasthttp.Client, uri, username, password string) (data []byte, statusCode int, err error) {
 	req := fasthttp.AcquireRequest()
 	defer fasthttp.ReleaseRequest(req)
 
 	req.SetRequestURI(uri)
-	req.SetHost("localhost")
 	req.Header.SetMethod(http.MethodGet)
-	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(*emqxUsername+":"+*emqxPassword)))
+	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(username+":"+password)))
+	// for fasthttp, must set host, otherwise will panic
+	// but it doesn't matter what value is set
+	// the host will be replaced by the real host in fasthttp.Client.ConfigureClient
+	req.Header.SetHost("foo.bar")
 
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(resp)
@@ -106,13 +106,12 @@ func callHTTPGet(client *fasthttp.Client, uri string) (data []byte, statusCode i
 	return
 }
 
-func callHTTPGetWithResp(client *fasthttp.Client, uri string, respData interface{}) (err error) {
-	data, _, err := callHTTPGet(client, uri)
+func callHTTPGetWithResp(client *fasthttp.Client, uri, username, password string, respData interface{}) (err error) {
+	data, _, err := callHTTPGet(client, uri, username, password)
 	if err != nil {
 		return
 	}
 
-	//fmt.Println("data:", string(data))
 	err = jsoniter.Unmarshal(data, respData)
 	if err != nil {
 		err = fmt.Errorf("unmarshal api resp failed: %s, %s", uri, err.Error())

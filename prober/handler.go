@@ -2,6 +2,7 @@ package prober
 
 import (
 	"emqx-exporter/config"
+
 	"fmt"
 
 	"net/http"
