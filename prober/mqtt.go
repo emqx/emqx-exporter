@@ -1,6 +1,7 @@
 package prober
 
 import (
+	"context"
 	"emqx-exporter/config"
 	"time"
 
@@ -14,7 +15,31 @@ type MQTTProbe struct {
 	MsgChan <-chan mqtt.Message
 }
 
-var mqttProbe *MQTTProbe
+var mqttProbeMap map[string]*MQTTProbe
+
+func init() {
+	mqttProbeMap = make(map[string]*MQTTProbe)
+	go func() {
+		for {
+			for target, probe := range mqttProbeMap {
+				if probe == nil {
+					delete(mqttProbeMap, target)
+					continue
+				}
+				if !probe.Client.IsConnected() {
+					delete(mqttProbeMap, target)
+					continue
+				}
+			}
+
+			select {
+			case <-context.Background().Done():
+				return
+			case <-time.After(5 * time.Second):
+			}
+		}
+	}()
+}
 
 func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
 	opt := mqtt.NewClientOptions().AddBroker(probe.Scheme + "://" + probe.Target).SetClientID(probe.ClientID).SetUsername(probe.Username).SetPassword(probe.Password)
@@ -45,11 +70,13 @@ func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
 }
 
 func ProbeMQTT(probe config.Probe, logger log.Logger) bool {
-	if mqttProbe == nil {
+	mqttProbe, ok := mqttProbeMap[probe.Target]
+	if !ok {
 		var err error
 		if mqttProbe, err = initMQTTProbe(probe, logger); err != nil {
 			return false
 		}
+		mqttProbeMap[probe.Target] = mqttProbe
 	}
 
 	if !mqttProbe.Client.IsConnected() {
