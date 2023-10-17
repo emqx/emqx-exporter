@@ -148,7 +148,7 @@ func runCommandAndTests(cmd *exec.Cmd, address string, fn func(pid int) error) e
 
 	err := <-errc
 	if cmd.Process != nil {
-		cmd.Process.Kill()
+		_ = cmd.Process.Kill()
 	}
 	return err
 }
