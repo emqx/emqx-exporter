@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,4 +27,3 @@ jobs:
       - run: go install github.com/google/go-licenses@latest
       - run: $(go env GOPATH)/bin/go-licenses check . --disallowed_types forbidden,restricted,unknown
       - run: make test
-

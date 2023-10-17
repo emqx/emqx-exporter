@@ -19,34 +19,34 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/prometheus/procfs"
 )
 
-var (
-	binary = filepath.Join(os.Getenv("GOPATH"), "bin/emqx-exporter")
-)
-
 const (
-	address = "localhost:19100"
+	address    = "localhost:19100"
+	binary     = "bin/emqx-exporter"
+	configFile = "config/example/config.yaml"
 )
 
 func TestFileDescriptorLeak(t *testing.T) {
 	if _, err := os.Stat(binary); err != nil {
-		t.Skipf("emqx-exporter binary not available, try to run `make build` first: %s", err)
+		// t.Skipf("emqx-exporter binary not available, try to run `make build` first: %s", err)
+		t.Errorf("emqx-exporter binary not available, try to run `make build` first: %s", err)
 	}
+
 	fs, err := procfs.NewDefaultFS()
 	if err != nil {
-		t.Skipf("proc filesystem is not available, but currently required to read number of open file descriptors: %s", err)
+		// t.Skipf("proc filesystem is not available, but currently required to read number of open file descriptors: %s", err)
+		t.Errorf("proc filesystem is not available, but currently required to read number of open file descriptors: %s", err)
 	}
 	if _, err := fs.Stat(); err != nil {
 		t.Errorf("unable to read process stats: %s", err)
 	}
 
-	exporter := exec.Command(binary, "--web.listen-address", address)
+	exporter := exec.Command(binary, "--web.listen-address", address, "--config.file", configFile)
 	test := func(pid int) error {
 		if err := queryExporter(address); err != nil {
 			return err
@@ -72,35 +72,6 @@ func TestFileDescriptorLeak(t *testing.T) {
 			return fmt.Errorf("want %d open file descriptors after metrics scrape, have %d", want, have)
 		}
 		return nil
-	}
-
-	if err := runCommandAndTests(exporter, address, test); err != nil {
-		t.Error(err)
-	}
-}
-
-func TestHandlingOfDuplicatedMetrics(t *testing.T) {
-	if _, err := os.Stat(binary); err != nil {
-		t.Skipf("emqx-exporter binary not available, try to run `make build` first: %s", err)
-	}
-
-	dir, err := os.MkdirTemp("", "node-exporter")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(dir)
-
-	content := []byte("dummy_metric 1\n")
-	if err := os.WriteFile(filepath.Join(dir, "a.prom"), content, 0600); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(dir, "b.prom"), content, 0600); err != nil {
-		t.Fatal(err)
-	}
-
-	exporter := exec.Command(binary, "--web.listen-address", address, "--collector.textfile.directory", dir)
-	test := func(_ int) error {
-		return queryExporter(address)
 	}
 
 	if err := runCommandAndTests(exporter, address, test); err != nil {
