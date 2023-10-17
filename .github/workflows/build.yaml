@@ -30,6 +30,8 @@ jobs:
         flavor: |
           latest=true
         tags: |
+          type=sha,short=true
+          type=ref,event=pr
           type=ref,event=branch
           type=ref,event=tag
           type=semver,pattern={{version}}

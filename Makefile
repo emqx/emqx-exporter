@@ -11,26 +11,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Ensure that 'all' is the default target otherwise it will be the first target from Makefile.common.
-all::
+all: build
 
-ARCH = $(shell go env GOARCH)
-OS = $(shell go env GOOS)
-
-.PHONY: build LOCALBIN
+.PHONY: build
 build:
-	CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -o .build/${OS}-${ARCH}/emqx-exporter
+	go build -o $(LOCALBIN)/$(PROJECT_NAME)
 
 .PHONY: test
-test:
-	go test -race --cover -covermode=atomic -coverpkg=./... -coverprofile=cover.out ./...
+test: build
+	go test -v -race --cover -covermode=atomic -coverpkg=./... -coverprofile=cover.out ./...
 
-DOCKER_IMAGE_NAME  ?= emqx-exporter
-.PHONY: docker-build
-docker-build:
-	docker build -t ${DOCKER_IMAGE_NAME} .
+.PHONY: docker
+docker:
+	docker build -t $(PROJECT_NAME) .
 
-## Location to install dependencies to
-LOCALBIN ?= $(shell pwd)/.build/${OS}-${ARCH}
+PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
+PROJECT_NAME := emqx-exporter
+LOCALBIN ?= $(PROJECT_DIR)/bin
 $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
