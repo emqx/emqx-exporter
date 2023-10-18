@@ -1,1 +1,0 @@
-OPTIONS="--web.listen-address=:8085 --emqx.nodes="localhost:18083" --emqx.auth-username=your_api_key --emqx.auth-password=your_api_secret"

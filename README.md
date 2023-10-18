@@ -9,64 +9,88 @@ The `emqx-exporter` is designed to expose partial metrics that are not included 
 ## Metrics
 See the documentation [Instruction](grafana-dashboard/template/README.md) for an explanation of the metrics on the dashboard
 
-## Installation and Usage
+## Building and running
 The `emqx-exporter` listens on HTTP port 8085 by default. See the `--help` output for more options.
 
-### Preparation
-EMQX exporter requires access to the EMQX dashboard API with basic auth, so you need to sign in to the dashboard to create an API secret,
-then pass the API key and secret to the startup argument as username and password.
-
+### Required
+EMQX exporter requires access to the EMQX dashboard API with basic auth, so you need to sign in to the dashboard to create an API secret
 Note that it is different to create a secret between EMQX 5 and EMQX 4.4 on the dashboard.
 
-* **EMQX 5** create a new [API KEY](https://www.emqx.io/docs/en/v5.0/dashboard/system.html#api-keys).
-* **EMQX 4.4** create a new `User` instead of `Application`
+* **EMQX 5** 
 
-### Docker
+  * Create a new [API KEY](https://www.emqx.io/docs/en/v5.0/dashboard/system.html#api-keys).
 
-```bash
-docker run -d \
-  -p 8085:8085 \
-  emqx/emqx-exporter:latest \
-  --emqx.nodes="${your_cluster_addr}:18083"  \
-  --emqx.auth-username=${apiKey} \
-  --emqx.auth-password=${secretKey}
-```
+* **EMQX 4.4** 
 
-The arg `emqx.nodes` is a comma-separated list of host, the exporter will choose one to establish connection.  
+  * Create a new `User` instead of `Application`
 
-EMQX Dashboard HTTP service listens on port `18083` by default, you may need to modify it according to the actual configuration.
+  + Make sure the `emqx_prometheus` plugin has been started on all nodes, check it one by one on the dashboard <http://your_cluster_addr:18083/#/plugins>.
 
-For excluding metrics about the exporter itself, add a flag `--web.disable-exporter-metrics`.
+### Build
 
-Refer to the [example](examples/docker) to deploy a complete demo by docker.
+    make build
 
-### Docker-Compose
+### Running
 
-Refer to the [example](examples/docker-compose) to deploy a complete demo by docker-compose.
+    ./bin/emqx-exporter <flags>
+
+### Docker Compose
+
+Refer to the [example](examples/docker-compose) to deploy a complete demo by docker compose.
 
 ### Kubernetes
-Refer to the [example](examples/k8s/README.md) to learn how to deploy `emqx-exporter` on the k8s.
+
+Refer to the [example](examples/kubernetes/README.md) to learn how to deploy `emqx-exporter` on the Kubernetes.
+
+## Configuration 
+
+Sample config file like this
+
+```
+metrics:
+  target: 127.0.0.1:18083
+  api_key: "some_api_key"
+  api_secret: "some_api_secret"
+probes:
+  - target: 127.0.0.1:1883
+```
+
+The `metrics` and the `probes` are not required configuration items, if not set `metrics`, the metrics feature will disable, and if not set `probes`, the probe feature will disable.
 
 ## Prometheus Config
 
-The scrape config below is available for EMQX 5, you can get the config template for EMQX 4.4 from [here](examples/docker/prometheus-emqx4.yaml).
+The scrape config below is available for EMQX 5
 
 ```yaml
 scrape_configs:
-- job_name: 'emqx'
+- job_name: 'emqx-self-metrics'
   metrics_path: /api/v5/prometheus/stats
   scrape_interval: 5s
   honor_labels: true
   static_configs:
     # a list of addresses of all EMQX nodes
-    - targets: [${your_cluster_addr}:18083]
+    - targets: [${your_emqx_addr}:18083]
+      labels:
+        # label the cluster name of where the metrics data from
+        cluster: ${your_emqx_addr}
+        # fix value, don't modify
+        from: emqx
+- job_name: 'exporter-metrics'
+  metrics_path: /metrics
+  scrape_interval: 5s
+  static_configs:
+    - targets: [${your_exporter_addr}:8085]
       labels:
         # label the cluster name of where the metrics data from
         cluster: ${your_cluster_name}
         # fix value, don't modify
-        from: emqx
-- job_name: 'exporter'
-  metrics_path: /metrics
+        from: exporter
+- job_name: 'exporter-probe'
+  metrics_path: /probes
+  params:
+    target:
+      # must equal the `probes[$index].taget` in config file
+      - "127.0.0.1:1883"
   scrape_interval: 5s
   static_configs:
     - targets: [${your_exporter_addr}:8085]
@@ -77,30 +101,10 @@ scrape_configs:
         from: exporter
 ```
 
-For EMQX 4.4 open-source, make sure the `emqx_prometheus` plugin has been started on all nodes, check it one by one on the dashboard <http://your_cluster_addr:18083/#/plugins>.
-
 ## Grafana Dashboard
 Import all [templates](./grafana-dashboard/template) to your Grafana, then browse the dashboard `EMQX` and enjoy yourself!
 
 The templates of dashboard ares JSON files, about how to upload a dashboard JSON file, you can check out [here](https://grafana.com/docs/grafana/latest/dashboards/manage-dashboards/#import-a-dashboard). 
-
-## Development
-
-Prerequisites:
-
-* [Go compiler](https://golang.org/dl/)
-
-Building:
-
-    git clone https://github.com/emqx/emqx-exporter.git
-    cd emqx-exporter
-    make build
-    # cd to output folder `./build/$OS_$ARCH/`
-    ./emqx-exporter <flags>
-
-To see all available configuration flags:
-
-    ./emqx-exporter -h
 
 ## TLS endpoint
 
