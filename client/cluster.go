@@ -29,7 +29,7 @@ func NewCluster(metrics *config.Metrics, logger log.Logger) collector.Cluster {
 				password: metrics.APISecret,
 				client:   httpClient,
 			}
-			if _, err := client4.getClusterStatus(); err != nil {
+			if _, err := client4.getClusterStatus(); err == nil {
 				c.client = client4
 				return
 			}

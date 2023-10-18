@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   emqx:
-    image: emqx/emqx-enterprise:5.3
+    image: emqx:5
     container_name: emqx-demo
     ports:
       - 18083:18083
@@ -10,10 +10,9 @@ services:
       - 8084:8084
       - 8883:8883
     environment:
-      EMQX_DASHBOARD__BOOTSTRAP_USERS_FILE: '"/opt/emqx/data/api_secret"'
-      EMQX_API_KEY__BOOTSTRAP_FILE: '"/opt/emqx/data/api_secret"'
+      EMQX_API_KEY__BOOTSTRAP_FILE: '"/opt/emqx/data/bootstrap-api"'
     volumes:
-      - ./api_secret:/opt/emqx/data/api_secret
+      - ./bootstrap-api:/opt/emqx/data/bootstrap-api
     healthcheck:
       test: ["CMD", "emqx", "ctl", "status"]
       interval: 30s
@@ -26,9 +25,9 @@ services:
     image: emqx-exporter
     container_name: exporter-demo
     # ports:
-      # - 8085:8085
+    #   - 8085:8085
     volumes:
-      - ./emqx-exporter.config.yaml:/etc/emqx-exporter/config.yaml
+      - ./emqx-exporter.config.yaml:/usr/local/emqx-exporter/bin/config.yaml
 
   prometheus:
     image: prom/prometheus
