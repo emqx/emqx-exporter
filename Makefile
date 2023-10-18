@@ -16,6 +16,7 @@ all: build
 .PHONY: build
 build:
 	go build -o $(LOCALBIN)/$(PROJECT_NAME)
+	@cp $(PROJECT_DIR)/config/example/config.yaml $(LOCALBIN)/config.yaml
 
 .PHONY: test
 test: build

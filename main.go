@@ -21,6 +21,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"os"
+	"path/filepath"
 	"runtime"
 
 	"github.com/alecthomas/kingpin/v2"
@@ -37,7 +38,7 @@ import (
 
 func main() {
 	var (
-		configFile             = kingpin.Flag("config.file", "EMQX exporter configuration file.").Default("/etc/emqx-exporter/config.yaml").String()
+		configFile             = kingpin.Flag("config.file", "EMQX exporter configuration file.").Default(filepath.Join(filepath.Dir(os.Args[0]), "config.yaml")).String()
 		maxProcs               = kingpin.Flag("runtime.gomaxprocs", "The target number of CPUs Go will run on (GOMAXPROCS)").Envar("GOMAXPROCS").Default("4").Int()
 		maxRequests            = kingpin.Flag("web.max-requests", "Maximum number of parallel scrape requests. Use 0 to disable.").Default("40").Int()
 		disableExporterMetrics = kingpin.Flag("web.disable-exporter-metrics", "Exclude metrics about the exporter itself (promhttp_*, process_*, go_*).").Bool()

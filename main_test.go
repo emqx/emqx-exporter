@@ -26,9 +26,8 @@ import (
 )
 
 const (
-	address    = "localhost:19100"
-	binary     = "bin/emqx-exporter"
-	configFile = "config/example/config.yaml"
+	address = "localhost:19100"
+	binary  = "bin/emqx-exporter"
 )
 
 func TestFileDescriptorLeak(t *testing.T) {
@@ -46,7 +45,7 @@ func TestFileDescriptorLeak(t *testing.T) {
 		t.Errorf("unable to read process stats: %s", err)
 	}
 
-	exporter := exec.Command(binary, "--web.listen-address", address, "--config.file", configFile)
+	exporter := exec.Command(binary, "--web.listen-address", address)
 	test := func(pid int) error {
 		if err := queryExporter(address); err != nil {
 			return err
