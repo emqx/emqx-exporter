@@ -1,21 +1,18 @@
 # Build the manager binary
 FROM golang:1.20.3 as builder
 
-ARG GOPROXY=https://goproxy.cn,direct
-
 WORKDIR /workspace
 COPY . .
 RUN go work init \
     && go work use . \
     && go mod download \
-    && CGO_ENABLED=0 GOOS=linux go build -o emqx-exporter
+    && CGO_ENABLED=0 GOOS=linux make build
 
 FROM quay.io/prometheus/busybox:latest
-LABEL maintainer="EMQX"
 
-COPY --from=builder /workspace/emqx-exporter /bin/emqx-exporter
-COPY config/example/config.yaml /etc/emqx-exporter/config.yaml
+WORKDIR /usr/local/emqx-exporter/bin
+COPY --from=builder /workspace/bin/. /usr/local/emqx-exporter/bin
 
-EXPOSE      8085
-USER        nobody
-ENTRYPOINT  [ "/bin/emqx-exporter" ]
+USER nobody:nobody
+EXPOSE 8085
+ENTRYPOINT [ "/usr/local/emqx-exporter/bin/emqx-exporter" ]
