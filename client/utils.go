@@ -54,7 +54,7 @@ func callHTTPGet(client *fasthttp.Client, uri, username, password string) (data 
 	// for fasthttp, must set host, otherwise will panic
 	// but it doesn't matter what value is set
 	// the host will be replaced by the real host in fasthttp.Client.ConfigureClient
-	req.Header.SetHost("foo.bar")
+	req.Header.SetHost("emqx-exporter")
 
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(resp)
