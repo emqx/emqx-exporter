@@ -1,0 +1,123 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emqx-exporter
+  labels:
+    app: emqx-exporter
+spec:
+  selector:
+    matchLabels:
+      app: emqx-exporter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: emqx-exporter
+    spec:
+      containers:
+        - name: exporter
+          image: emqx/emqx-exporter:0.2
+          ports:
+            - containerPort: 8085
+              name: metrics
+              protocol: TCP
+          args:
+            - --config.file
+            - /etc/emqx-exporter/config.yaml
+          volumeMounts:
+            - name: config
+              mountPath: /etc/emqx-exporter
+      volumes:
+        - name: config
+          configMap:
+            name: emqx-exporter-config
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: emqx-exporter-config
+  labels:
+    app: emqx-exporter
+data:
+  config.yaml: |
+    metrics:
+      target: emqx-dashboard.default.svc.cluster.local:18083
+      api_key: "some_api_key"
+      api_secret: "some_api_secret"
+    probes:
+      - target: emqx-listeners.default.svc.cluster.local:1883
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: emqx-exporter
+  name: emqx-exporter-service
+spec:
+  ports:
+    - name: metrics
+      port: 8085
+      targetPort: metrics
+  selector:
+    app: emqx-exporter
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: emqx-exporter
+  labels:
+    app: emqx-exporter
+spec:
+  selector:
+    matchLabels:
+      # the label is the same as the label of emqx-exporter svc
+      app: emqx-exporter
+  endpoints:
+    - port: metrics
+      path: /metrics
+      relabelings:
+        - action: replace
+          # user-defined cluster name, requires unique
+          replacement: emqx
+          targetLabel: cluster
+        - action: replace
+          # fix value, don't modify
+          replacement: exporter
+          targetLabel: from
+        - action: replace
+          # fix value, don't modify
+          sourceLabels: ['pod']
+          regex: '(.*)-.*-.*'
+          replacement: $1
+          targetLabel: "instance"
+        - action: labeldrop
+          # fix value, don't modify
+          regex: 'pod'
+    - port: metrics
+      # interval: 5s
+      path: /probe
+      params:
+        target:
+          - "emqx-listeners.default.svc.cluster.local:1883"
+      relabelings:
+        - action: replace
+          # user-defined cluster name, requires unique
+          replacement: emqx
+          targetLabel: cluster
+        - action: replace
+          # fix value, don't modify
+          replacement: exporter
+          targetLabel: from
+        - action: replace
+          # fix value, don't modify
+          sourceLabels: ['pod']
+          regex: '(.*)-.*-.*'
+          replacement: $1
+          targetLabel: "instance"
+        - action: labeldrop
+          # fix value, don't modify
+          regex: 'pod'

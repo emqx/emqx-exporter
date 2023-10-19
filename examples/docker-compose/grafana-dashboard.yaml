@@ -1,0 +1,10 @@
+apiVersion: 1
+
+providers:
+  - name: demo
+    folder: "Default"
+    folderUid: ""
+    options:
+      path: "/grafana-dashboard-definitions"
+    orgI": 1
+    type: "file"

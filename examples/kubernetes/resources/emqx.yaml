@@ -1,0 +1,61 @@
+apiVersion: apps.emqx.io/v2beta1
+kind: EMQX
+metadata:
+  name: emqx
+spec:
+  image: emqx/emqx-enterprise:5.3.0
+  imagePullPolicy: Always
+  bootstrapAPIKeys:
+    - key: some_api_key
+      secret: some_api_secret
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: emqx-exporter-secret
+  labels:
+    app: emqx-exporter
+type: Opaque
+stringData:
+  username: some_api_key
+  password: some_api_secret
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: emqx-metrics
+  labels:
+    app: emqx-metrics
+spec:
+  selector:
+    matchLabels:
+      # the label is the same as the label of emqx pod
+      apps.emqx.io/instance: emqx
+      apps.emqx.io/managed-by: emqx-operator
+  podMetricsEndpoints:
+    # the name of emqx dashboard containerPort
+    - port: dashboard
+      basicAuth:
+        username:
+          name: emqx-exporter-secret
+          key: username
+        password:
+          name: emqx-exporter-secret
+          key: password
+      interval: 5s
+      path: /api/v5/prometheus/stats
+      relabelings:
+        - action: replace
+          # user-defined cluster name, requires unique
+          replacement: emqx
+          targetLabel: cluster
+        - action: replace
+          # fix value, don't modify
+          replacement: emqx
+          targetLabel: from
+        - action: replace
+          # fix value, don't modify
+          sourceLabels: ['pod']
+          targetLabel: "instance"

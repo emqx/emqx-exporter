@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: monitoring
+data:
+  emqx.yaml: |-
+    {
+        "apiVersion": 1,
+        "providers": [
+            {
+                "folder": "EMQX",
+                "name": "emqx-dashboard",
+                "options": {
+                    "path": "/grafana-dashboard-definitions/emqx-dashboard"
+                },
+                "type": "file"
+            }
+        ]
+    }
