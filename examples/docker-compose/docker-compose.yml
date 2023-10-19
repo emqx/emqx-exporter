@@ -44,5 +44,5 @@ services:
       - 3000:3000
     volumes:
       - ../../grafana-dashboard/template/emqx-enterprise-5:/grafana-dashboard-definitions
-      - ../provisioning/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
-      - ../provisioning/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - ./grafana-dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
+      - ./grafana-datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml

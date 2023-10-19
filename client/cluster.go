@@ -31,7 +31,10 @@ func NewCluster(metrics *config.Metrics, logger log.Logger) collector.Cluster {
 			}
 			if _, err := client4.getClusterStatus(); err == nil {
 				c.client = client4
+				level.Info(logger).Log("msg", "cluster4x client created")
 				return
+			} else {
+				level.Debug(logger).Log("msg", "cluster4x client failed", "err", err)
 			}
 
 			client5 := &cluster5x{
@@ -41,7 +44,10 @@ func NewCluster(metrics *config.Metrics, logger log.Logger) collector.Cluster {
 			}
 			if _, err := client5.getClusterStatus(); err == nil {
 				c.client = client5
+				level.Info(logger).Log("msg", "cluster5x client created")
 				return
+			} else {
+				level.Debug(logger).Log("msg", "cluster5x client failed", "err", err)
 			}
 
 			level.Error(logger).Log("msg", "Couldn't create cluster client, will retry it after 5 seconds", "err", "no cluster node found")

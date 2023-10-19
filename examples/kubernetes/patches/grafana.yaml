@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  template:
+    spec:
+      containers:
+      - name: grafana
+        volumeMounts:
+        - mountPath: /grafana-dashboard-definitions/emqx-dashboard/overview
+          name: emqx-grafana-overview
+          readOnly: false
+        - mountPath: /grafana-dashboard-definitions/emqx-dashboard/authentication
+          name: emqx-grafana-authentication
+          readOnly: false
+        - mountPath: /grafana-dashboard-definitions/emqx-dashboard/authorization
+          name: emqx-grafana-authorization
+          readOnly: false
+        - mountPath: /grafana-dashboard-definitions/emqx-dashboard/client-events
+          name: emqx-grafana-client-events
+          readOnly: false 
+        - mountPath: /grafana-dashboard-definitions/emqx-dashboard/messages
+          name: emqx-grafana-messages
+          readOnly: false
+        - mountPath: /grafana-dashboard-definitions/emqx-dashboard/rule-engine
+          name: emqx-grafana-rule-engine
+          readOnly: false
+      volumes:
+      - configMap:
+          name: emqx-grafana-overview
+        name: emqx-grafana-overview
+      - configMap:
+          name: emqx-grafana-authentication
+        name: emqx-grafana-authentication
+      - configMap:
+          name: emqx-grafana-authorization
+        name: emqx-grafana-authorization
+      - configMap:
+          name: emqx-grafana-client-events
+        name: emqx-grafana-client-events
+      - configMap:
+          name: emqx-grafana-messages
+        name: emqx-grafana-messages
+      - configMap:
+          name: emqx-grafana-rule-engine
+        name: emqx-grafana-rule-engine
