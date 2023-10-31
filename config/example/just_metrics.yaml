@@ -1,0 +1,7 @@
+metrics:
+  ## EMQX API
+  target: 127.0.0.1:18083
+  ## EMQX API key
+  api_key: "some_api_key"
+  ## EMQX API secret
+  api_secret: "some_api_secret"
