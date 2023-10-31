@@ -43,6 +43,9 @@ func init() {
 
 func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
 	opt := mqtt.NewClientOptions().AddBroker(probe.Scheme + "://" + probe.Target).SetClientID(probe.ClientID).SetUsername(probe.Username).SetPassword(probe.Password)
+	if probe.SSLConfig != nil {
+		opt.SetTLSConfig(probe.SSLConfig.ToTLSConfig())
+	}
 	opt.SetOnConnectHandler(func(c mqtt.Client) {
 		level.Info(logger).Log("msg", "Connected to MQTT broker")
 	})
@@ -51,7 +54,7 @@ func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
 	})
 	c := mqtt.NewClient(opt)
 	if token := c.Connect(); token.Wait() && token.Error() != nil {
-		level.Error(logger).Log("msg", "Failed to connect to MQTT broker", "err", token.Error())
+		level.Error(logger).Log("msg", "Failed to connect to MQTT broker", "target", probe.Target, "err", token.Error())
 		return nil, token.Error()
 	}
 

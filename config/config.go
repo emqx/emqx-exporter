@@ -1,6 +1,8 @@
 package config
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"os"
 	"sync"
@@ -23,13 +25,36 @@ type Metrics struct {
 }
 
 type Probe struct {
-	Target   string `yaml:"target"`
-	Scheme   string `yaml:"scheme,omitempty"`
-	ClientID string `yaml:"client_id,omitempty"`
-	Username string `yaml:"username,omitempty"`
-	Password string `yaml:"password,omitempty"`
-	Topic    string `yaml:"topic,omitempty"`
-	QoS      byte   `yaml:"qos,omitempty"`
+	Target    string     `yaml:"target"`
+	Scheme    string     `yaml:"scheme,omitempty"`
+	ClientID  string     `yaml:"client_id,omitempty"`
+	Username  string     `yaml:"username,omitempty"`
+	Password  string     `yaml:"password,omitempty"`
+	Topic     string     `yaml:"topic,omitempty"`
+	QoS       byte       `yaml:"qos,omitempty"`
+	SSLConfig *SSLConfig `yaml:"ssl_config,omitempty"`
+}
+
+type SSLConfig struct {
+	// Server should be accessed without verifying the TLS certificate. For testing only.
+	InsecureSkipVerify bool `yaml:"insecure_skip_verify,omitempty"`
+
+	// Server requires TLS client certificate authentication
+	CertFile string `yaml:"cert_file,omitempty"`
+	// Server requires TLS client certificate authentication
+	KeyFile string `yaml:"key_file,omitempty"`
+	// Trusted root certificates for server
+	CAFile string `yaml:"ca_file,omitempty"`
+
+	// CertData holds PEM-encoded bytes (typically read from a client certificate file).
+	// CertData takes precedence over CertFile
+	CertData []byte `yaml:"cert_data,omitempty"`
+	// KeyData holds PEM-encoded bytes (typically read from a client certificate key file).
+	// KeyData takes precedence over KeyFile
+	KeyData []byte `yaml:"key_data,omitempty"`
+	// CAData holds PEM-encoded bytes (typically read from a root certificates bundle).
+	// CAData takes precedence over CAFile
+	CAData []byte `yaml:"ca_data,omitempty"`
 }
 
 type SafeConfig struct {
@@ -94,14 +119,28 @@ func (sc *SafeConfig) ReloadConfig(confFile string) (err error) {
 		if probe.Target == "" {
 			return fmt.Errorf("probes[%d].target is required", index)
 		}
+		if probe.SSLConfig != nil {
+			if probe.Scheme == "" {
+				probe.Scheme = "ssl"
+			}
+			if probe.SSLConfig.CAData, err = dataFromSliceOrFile(probe.SSLConfig.CAData, probe.SSLConfig.CAFile); err != nil {
+				return fmt.Errorf("probes[%d].ssl_config.ca_data: %s", index, err)
+			}
+			if probe.SSLConfig.CertData, err = dataFromSliceOrFile(probe.SSLConfig.CertData, probe.SSLConfig.CertFile); err != nil {
+				return fmt.Errorf("probes[%d].ssl_config.cert_data: %s", index, err)
+			}
+			if probe.SSLConfig.KeyData, err = dataFromSliceOrFile(probe.SSLConfig.KeyData, probe.SSLConfig.KeyFile); err != nil {
+				return fmt.Errorf("probes[%d].ssl_config.key_data: %s", index, err)
+			}
+		}
 		if probe.Scheme == "" {
 			probe.Scheme = "tcp"
 		}
 		if probe.ClientID == "" {
-			probe.ClientID = "emqx_exporter_probe"
+			probe.ClientID = "emqx_exporter_probe_" + fmt.Sprintf("%d", index)
 		}
 		if probe.Topic == "" {
-			probe.Topic = "emqx-exporter-probe"
+			probe.Topic = "emqx-exporter-probe-" + fmt.Sprintf("%d", index)
 		}
 		c.Probes[index] = probe
 	}
@@ -111,4 +150,33 @@ func (sc *SafeConfig) ReloadConfig(confFile string) (err error) {
 	sc.Unlock()
 
 	return nil
+}
+
+func (sslConfig *SSLConfig) ToTLSConfig() *tls.Config {
+	certpool := x509.NewCertPool()
+	certpool.AppendCertsFromPEM(sslConfig.CAData)
+	clientKeyPair, _ := tls.X509KeyPair(sslConfig.CertData, sslConfig.KeyData)
+	return &tls.Config{
+		InsecureSkipVerify: sslConfig.InsecureSkipVerify,
+		RootCAs:            certpool,
+		Certificates:       []tls.Certificate{clientKeyPair},
+		ClientAuth:         tls.NoClientCert,
+		ClientCAs:          nil,
+	}
+}
+
+// dataFromSliceOrFile returns data from the slice (if non-empty), or from the file,
+// or an error if an error occurred reading the file
+func dataFromSliceOrFile(data []byte, file string) ([]byte, error) {
+	if len(data) > 0 {
+		return data, nil
+	}
+	if len(file) > 0 {
+		fileData, err := os.ReadFile(file)
+		if err != nil {
+			return []byte{}, err
+		}
+		return fileData, nil
+	}
+	return nil, nil
 }
