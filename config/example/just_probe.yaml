@@ -1,8 +1,18 @@
 probes:
   - target: 127.0.0.1:1883
+    scheme: tcp ## mqtt, tcp
   - target: 127.0.0.1:8883
-    scheme: ssl
-    ssl_config:
+    scheme: tls ## ssl, tls, mqtts
+    tls_config:
+      insecure_skip_verify: true
+      ca_file: config/example/certs/cacert.pem
+      cert_file: config/example/certs/client-cert.pem
+      key_file: config/example/certs/client-key.pem
+  - target: 127.0.0.1:8083/mqtt
+    scheme: ws
+  - target: 127.0.0.1:8084/mqtt
+    scheme: wss
+    tls_config:
       insecure_skip_verify: true
       ca_file: config/example/certs/cacert.pem
       cert_file: config/example/certs/client-cert.pem

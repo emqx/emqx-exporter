@@ -25,17 +25,17 @@ type Metrics struct {
 }
 
 type Probe struct {
-	Target    string     `yaml:"target"`
-	Scheme    string     `yaml:"scheme,omitempty"`
-	ClientID  string     `yaml:"client_id,omitempty"`
-	Username  string     `yaml:"username,omitempty"`
-	Password  string     `yaml:"password,omitempty"`
-	Topic     string     `yaml:"topic,omitempty"`
-	QoS       byte       `yaml:"qos,omitempty"`
-	SSLConfig *SSLConfig `yaml:"ssl_config,omitempty"`
+	Target          string           `yaml:"target"`
+	Scheme          string           `yaml:"scheme,omitempty"`
+	ClientID        string           `yaml:"client_id,omitempty"`
+	Username        string           `yaml:"username,omitempty"`
+	Password        string           `yaml:"password,omitempty"`
+	Topic           string           `yaml:"topic,omitempty"`
+	QoS             byte             `yaml:"qos,omitempty"`
+	TLSClientConfig *TLSClientConfig `yaml:"tls_config,omitempty"`
 }
 
-type SSLConfig struct {
+type TLSClientConfig struct {
 	// Server should be accessed without verifying the TLS certificate. For testing only.
 	InsecureSkipVerify bool `yaml:"insecure_skip_verify,omitempty"`
 
@@ -119,17 +119,17 @@ func (sc *SafeConfig) ReloadConfig(confFile string) (err error) {
 		if probe.Target == "" {
 			return fmt.Errorf("probes[%d].target is required", index)
 		}
-		if probe.SSLConfig != nil {
+		if probe.TLSClientConfig != nil {
 			if probe.Scheme == "" {
 				probe.Scheme = "ssl"
 			}
-			if probe.SSLConfig.CAData, err = dataFromSliceOrFile(probe.SSLConfig.CAData, probe.SSLConfig.CAFile); err != nil {
+			if probe.TLSClientConfig.CAData, err = dataFromSliceOrFile(probe.TLSClientConfig.CAData, probe.TLSClientConfig.CAFile); err != nil {
 				return fmt.Errorf("probes[%d].ssl_config.ca_data: %s", index, err)
 			}
-			if probe.SSLConfig.CertData, err = dataFromSliceOrFile(probe.SSLConfig.CertData, probe.SSLConfig.CertFile); err != nil {
+			if probe.TLSClientConfig.CertData, err = dataFromSliceOrFile(probe.TLSClientConfig.CertData, probe.TLSClientConfig.CertFile); err != nil {
 				return fmt.Errorf("probes[%d].ssl_config.cert_data: %s", index, err)
 			}
-			if probe.SSLConfig.KeyData, err = dataFromSliceOrFile(probe.SSLConfig.KeyData, probe.SSLConfig.KeyFile); err != nil {
+			if probe.TLSClientConfig.KeyData, err = dataFromSliceOrFile(probe.TLSClientConfig.KeyData, probe.TLSClientConfig.KeyFile); err != nil {
 				return fmt.Errorf("probes[%d].ssl_config.key_data: %s", index, err)
 			}
 		}
@@ -152,12 +152,12 @@ func (sc *SafeConfig) ReloadConfig(confFile string) (err error) {
 	return nil
 }
 
-func (sslConfig *SSLConfig) ToTLSConfig() *tls.Config {
+func (conf *TLSClientConfig) ToTLSConfig() *tls.Config {
 	certpool := x509.NewCertPool()
-	certpool.AppendCertsFromPEM(sslConfig.CAData)
-	clientKeyPair, _ := tls.X509KeyPair(sslConfig.CertData, sslConfig.KeyData)
+	certpool.AppendCertsFromPEM(conf.CAData)
+	clientKeyPair, _ := tls.X509KeyPair(conf.CertData, conf.KeyData)
 	return &tls.Config{
-		InsecureSkipVerify: sslConfig.InsecureSkipVerify,
+		InsecureSkipVerify: conf.InsecureSkipVerify,
 		RootCAs:            certpool,
 		Certificates:       []tls.Certificate{clientKeyPair},
 		ClientAuth:         tls.NoClientCert,

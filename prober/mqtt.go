@@ -43,8 +43,8 @@ func init() {
 
 func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
 	opt := mqtt.NewClientOptions().AddBroker(probe.Scheme + "://" + probe.Target).SetClientID(probe.ClientID).SetUsername(probe.Username).SetPassword(probe.Password)
-	if probe.SSLConfig != nil {
-		opt.SetTLSConfig(probe.SSLConfig.ToTLSConfig())
+	if probe.TLSClientConfig != nil {
+		opt.SetTLSConfig(probe.TLSClientConfig.ToTLSConfig())
 	}
 	opt.SetOnConnectHandler(func(c mqtt.Client) {
 		level.Info(logger).Log("msg", "Connected to MQTT broker")
