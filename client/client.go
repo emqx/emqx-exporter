@@ -27,7 +27,6 @@ func (e edition) String() string {
 }
 
 type client interface {
-	getVersion() string
 	getLicense() (*collector.LicenseInfo, error)
 	getClusterStatus() (collector.ClusterStatus, error)
 	getBrokerMetrics() (*collector.Broker, error)
