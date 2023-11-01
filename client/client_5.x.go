@@ -12,14 +12,9 @@ import (
 var _ client = &cluster5x{}
 
 type cluster5x struct {
-	version string
 	edition edition
 	client  *fasthttp.Client
 	uri     *fasthttp.URI
-}
-
-func (n *cluster5x) getVersion() string {
-	return n.version + "-" + n.edition.String()
 }
 
 func (n *cluster5x) getLicense() (lic *collector.LicenseInfo, err error) {
@@ -98,7 +93,6 @@ func (n *cluster5x) getClusterStatus() (cluster collector.ClusterStatus, err err
 		} else {
 			n.edition = enterprise
 		}
-		n.version = data.Version
 	}
 	return
 }

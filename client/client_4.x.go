@@ -3,28 +3,26 @@ package client
 import (
 	"emqx-exporter/collector"
 	"fmt"
-	"net/http"
 	"strconv"
 	"strings"
 	"time"
 
-	jsoniter "github.com/json-iterator/go"
 	"github.com/valyala/fasthttp"
 )
 
 var _ client = &cluster4x{}
 
 type cluster4x struct {
-	version string
+	edition edition
 	client  *fasthttp.Client
 	uri     *fasthttp.URI
 }
 
-func (n *cluster4x) getVersion() string {
-	return n.version
-}
-
 func (n *cluster4x) getLicense() (lic *collector.LicenseInfo, err error) {
+	if n.edition == openSource {
+		return
+	}
+
 	resp := struct {
 		Data struct {
 			MaxConnections int64  `json:"max_connections"`
@@ -32,24 +30,8 @@ func (n *cluster4x) getLicense() (lic *collector.LicenseInfo, err error) {
 		}
 		Code int
 	}{}
-	data, statusCode, err := callHTTPGet(n.client, n.uri, "/api/v4/license")
-	if statusCode == http.StatusNotFound {
-		// open source version doesn't support license api
-		err = nil
-		return
-	}
+	err = callHTTPGetWithResp(n.client, n.uri, "/api/v4/license", &resp)
 	if err != nil {
-		return
-	}
-
-	err = jsoniter.Unmarshal(data, &resp)
-	if err != nil {
-		err = fmt.Errorf("unmarshal license failed: /api/v4/license")
-		return
-	}
-
-	if resp.Code != 0 {
-		err = fmt.Errorf("get err from license api: %d", resp.Code)
 		return
 	}
 
@@ -108,8 +90,6 @@ func (n *cluster4x) getClusterStatus() (cluster collector.ClusterStatus, err err
 		load.Load5, _ = strconv.ParseFloat(data.Load5, 64)
 		load.Load15, _ = strconv.ParseFloat(data.Load15, 64)
 		cluster.CPULoads[nodeName] = load
-
-		n.version = data.Version
 	}
 	return
 }
@@ -117,29 +97,13 @@ func (n *cluster4x) getClusterStatus() (cluster collector.ClusterStatus, err err
 func (n *cluster4x) getBrokerMetrics() (metrics *collector.Broker, err error) {
 	resp := struct {
 		Data struct {
-			Sent     int64
-			Received int64
+			Sent     int64 `json:"sent"`
+			Received int64 `json:"received"`
 		}
 		Code int
 	}{}
-	data, statusCode, err := callHTTPGet(n.client, n.uri, "/api/v4/monitor/current_metrics")
-	if statusCode == http.StatusNotFound {
-		// open source version doesn't support this api
-		err = nil
-		return
-	}
+	err = callHTTPGetWithResp(n.client, n.uri, "/api/v4/monitor/current_metrics", &resp)
 	if err != nil {
-		return
-	}
-
-	err = jsoniter.Unmarshal(data, &resp)
-	if err != nil {
-		err = fmt.Errorf("unmarshal license failed: /api/v4/monitor/current_metrics")
-		return
-	}
-
-	if resp.Code != 0 {
-		err = fmt.Errorf("get err from monitor api: %d", resp.Code)
 		return
 	}
 
