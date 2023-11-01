@@ -19,9 +19,11 @@ type Config struct {
 }
 
 type Metrics struct {
-	Target    string `yaml:"target"`
-	APIKey    string `yaml:"api_key"`
-	APISecret string `yaml:"api_secret"`
+	APIKey          string           `yaml:"api_key"`
+	APISecret       string           `yaml:"api_secret"`
+	Target          string           `yaml:"target"`
+	Scheme          string           `yaml:"scheme,omitempty"`
+	TLSClientConfig *TLSClientConfig `yaml:"tls_config,omitempty"`
 }
 
 type Probe struct {
@@ -103,15 +105,31 @@ func (sc *SafeConfig) ReloadConfig(confFile string) (err error) {
 	}
 
 	if c.Metrics != nil {
-		if c.Metrics.Target == "" {
-			return fmt.Errorf("metrics.target is required")
-		}
 		if c.Metrics.APIKey == "" {
 			return fmt.Errorf("metrics.api_key is required")
 		}
-
 		if c.Metrics.APISecret == "" {
 			return fmt.Errorf("metrics.api_secret is required")
+		}
+		if c.Metrics.Target == "" {
+			return fmt.Errorf("metrics.target is required")
+		}
+		if c.Metrics.TLSClientConfig != nil {
+			if c.Metrics.Scheme == "" {
+				c.Metrics.Scheme = "https"
+			}
+			if c.Metrics.TLSClientConfig.CAData, err = dataFromSliceOrFile(c.Metrics.TLSClientConfig.CAData, c.Metrics.TLSClientConfig.CAFile); err != nil {
+				return fmt.Errorf("metrics.ssl_config.ca_data: %s", err)
+			}
+			if c.Metrics.TLSClientConfig.CertData, err = dataFromSliceOrFile(c.Metrics.TLSClientConfig.CertData, c.Metrics.TLSClientConfig.CertFile); err != nil {
+				return fmt.Errorf("metrics.ssl_config.cert_data: %s", err)
+			}
+			if c.Metrics.TLSClientConfig.KeyData, err = dataFromSliceOrFile(c.Metrics.TLSClientConfig.KeyData, c.Metrics.TLSClientConfig.KeyFile); err != nil {
+				return fmt.Errorf("metrics.ssl_config.key_data: %s", err)
+			}
+		}
+		if c.Metrics.Scheme == "" {
+			c.Metrics.Scheme = "http"
 		}
 	}
 
@@ -153,6 +171,9 @@ func (sc *SafeConfig) ReloadConfig(confFile string) (err error) {
 }
 
 func (conf *TLSClientConfig) ToTLSConfig() *tls.Config {
+	if conf == nil {
+		return nil
+	}
 	certpool := x509.NewCertPool()
 	certpool.AppendCertsFromPEM(conf.CAData)
 	clientKeyPair, _ := tls.X509KeyPair(conf.CertData, conf.KeyData)

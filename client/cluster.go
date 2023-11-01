@@ -22,12 +22,12 @@ func NewCluster(metrics *config.Metrics, logger log.Logger) collector.Cluster {
 	c := &cluster{}
 
 	go func() {
-		httpClient := getHTTPClient(metrics.Target)
+		httpClient := getHTTPClient(metrics)
+		uri := getURI(metrics)
 		for {
 			client4 := &cluster4x{
-				username: metrics.APIKey,
-				password: metrics.APISecret,
-				client:   httpClient,
+				client: httpClient,
+				uri:    uri,
 			}
 			if _, err := client4.getClusterStatus(); err == nil {
 				c.client = client4
@@ -38,9 +38,8 @@ func NewCluster(metrics *config.Metrics, logger log.Logger) collector.Cluster {
 			}
 
 			client5 := &cluster5x{
-				username: metrics.APIKey,
-				password: metrics.APISecret,
-				client:   httpClient,
+				client: httpClient,
+				uri:    uri,
 			}
 			if _, err := client5.getClusterStatus(); err == nil {
 				c.client = client5

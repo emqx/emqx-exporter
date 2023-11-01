@@ -1,13 +1,10 @@
 metrics:
-  ## EMQX API
+  api_key: "some_api_key"  ## EMQX API key
+  api_secret: "some_api_secret" ## EMQX API secret
   target: 127.0.0.1:18083
-  ## EMQX API key
-  api_key: "some_api_key"
-  ## EMQX API secret
-  api_secret: "some_api_secret"
 probes:
   - target: 127.0.0.1:1883 ## MQTT broker address
-    scheme: ## tcp, default is tcp
+    scheme: ## mqtt | tcp | mqtts | ssl | tls | ws | wss, default is tcp
     client_id:
     username:
     password:

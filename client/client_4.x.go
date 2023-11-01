@@ -15,10 +15,9 @@ import (
 var _ client = &cluster4x{}
 
 type cluster4x struct {
-	username string
-	password string
-	version  string
-	client   *fasthttp.Client
+	version string
+	client  *fasthttp.Client
+	uri     *fasthttp.URI
 }
 
 func (n *cluster4x) getVersion() string {
@@ -33,7 +32,7 @@ func (n *cluster4x) getLicense() (lic *collector.LicenseInfo, err error) {
 		}
 		Code int
 	}{}
-	data, statusCode, err := callHTTPGet(n.client, "/api/v4/license", n.username, n.password)
+	data, statusCode, err := callHTTPGet(n.client, n.uri, "/api/v4/license")
 	if statusCode == http.StatusNotFound {
 		// open source version doesn't support license api
 		err = nil
@@ -82,7 +81,7 @@ func (n *cluster4x) getClusterStatus() (cluster collector.ClusterStatus, err err
 		}
 		Code int
 	}{}
-	err = callHTTPGetWithResp(n.client, "/api/v4/nodes", n.username, n.password, &resp)
+	err = callHTTPGetWithResp(n.client, n.uri, "/api/v4/nodes", &resp)
 	if err != nil {
 		return
 	}
@@ -123,7 +122,7 @@ func (n *cluster4x) getBrokerMetrics() (metrics *collector.Broker, err error) {
 		}
 		Code int
 	}{}
-	data, statusCode, err := callHTTPGet(n.client, "/api/v4/monitor/current_metrics", n.username, n.password)
+	data, statusCode, err := callHTTPGet(n.client, n.uri, "/api/v4/monitor/current_metrics")
 	if statusCode == http.StatusNotFound {
 		// open source version doesn't support this api
 		err = nil
@@ -178,7 +177,7 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 		}
 		Code int
 	}{}
-	err = callHTTPGetWithResp(n.client, "/api/v4/rules?_limit=10000", n.username, n.password, &resp)
+	err = callHTTPGetWithResp(n.client, n.uri, "/api/v4/rules?_limit=10000", &resp)
 	if err != nil {
 		return
 	}
@@ -236,7 +235,7 @@ func (n *cluster4x) getDataBridge() (bridges []collector.DataBridge, err error) 
 		}
 		Code int
 	}{}
-	err = callHTTPGetWithResp(n.client, "/api/v4/resources", n.username, n.password, &resp)
+	err = callHTTPGetWithResp(n.client, n.uri, "/api/v4/resources", &resp)
 	if err != nil {
 		return
 	}

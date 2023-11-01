@@ -1,0 +1,10 @@
+metrics:
+  api_key: "some_api_key"
+  api_secret: "some_api_secret"
+  target: 127.0.0.1:18084
+  scheme: https
+  tls_config:
+    insecure_skip_verify: true
+    ca_file: config/example/certs/cacert.pem
+    cert_file: config/example/certs/client-cert.pem
+    key_file: config/example/certs/client-key.pem
