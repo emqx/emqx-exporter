@@ -1,7 +1,7 @@
 package client
 
 import (
-	"encoding/base64"
+	"emqx-exporter/config"
 	"errors"
 	"fmt"
 	"net/http"
@@ -29,7 +29,16 @@ func cutNodeName(nodeName string) string {
 	return slice[1]
 }
 
-func getHTTPClient(host string) *fasthttp.Client {
+func getURI(metrics *config.Metrics) *fasthttp.URI {
+	uri := &fasthttp.URI{}
+	uri.SetUsername(metrics.APIKey)
+	uri.SetPassword(metrics.APISecret)
+	uri.SetScheme(metrics.Scheme)
+	uri.SetHost(metrics.Target)
+	return uri
+}
+
+func getHTTPClient(metrics *config.Metrics) *fasthttp.Client {
 	return &fasthttp.Client{
 		Name:                "EMQX-Exporter", //User-Agent
 		MaxConnsPerHost:     5,
@@ -37,44 +46,37 @@ func getHTTPClient(host string) *fasthttp.Client {
 		ReadTimeout:         5 * time.Second,
 		WriteTimeout:        5 * time.Second,
 		MaxConnWaitTimeout:  5 * time.Second,
-		ConfigureClient: func(hc *fasthttp.HostClient) error {
-			hc.Addr = host
-			return nil
-		},
+		TLSConfig:           metrics.TLSClientConfig.ToTLSConfig(),
 	}
 }
 
-func callHTTPGet(client *fasthttp.Client, uri, username, password string) (data []byte, statusCode int, err error) {
+func callHTTPGet(client *fasthttp.Client, uri *fasthttp.URI, requestURI string) (data []byte, statusCode int, err error) {
 	req := fasthttp.AcquireRequest()
 	defer fasthttp.ReleaseRequest(req)
 
-	req.SetRequestURI(uri)
+	req.SetURI(uri)
+	req.URI().SetPath(requestURI)
 	req.Header.SetMethod(http.MethodGet)
-	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(username+":"+password)))
-	// for fasthttp, must set host, otherwise will panic
-	// but it doesn't matter what value is set
-	// the host will be replaced by the real host in fasthttp.Client.ConfigureClient
-	req.Header.SetHost("emqx-exporter")
 
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(resp)
 
 	err = client.Do(req, resp)
 	if err != nil {
-		err = fmt.Errorf("request %s failed. %w", uri, err)
+		err = fmt.Errorf("request %s failed. %w", req.URI().String(), err)
 		return
 	}
 
 	statusCode = resp.StatusCode()
 
 	if resp.StatusCode() != http.StatusOK {
-		err = fmt.Errorf("%s: %s", uri, http.StatusText(resp.StatusCode()))
+		err = fmt.Errorf("%s: %s", req.URI().String(), http.StatusText(resp.StatusCode()))
 		return
 	}
 
 	data = resp.Body()
 	if len(data) == 0 {
-		err = fmt.Errorf("get nothing from api %s", uri)
+		err = fmt.Errorf("get nothing from api %s", req.URI().String())
 		return
 	}
 	if !jsoniter.Valid(data) {
@@ -87,12 +89,12 @@ func callHTTPGet(client *fasthttp.Client, uri, username, password string) (data 
 	if code.ValueType() == jsoniter.NumberValue {
 		// for emqx 4.4, it will return integer type code if occurred error
 		if code.ToInt() != 0 {
-			errMsg = fmt.Sprintf("%s: %d", uri, code.ToInt())
+			errMsg = fmt.Sprintf("%s: %d", req.URI().String(), code.ToInt())
 		}
 	} else if code.ValueType() == jsoniter.StringValue {
 		// for emqx 5, it will return string type code if occurred error
 		if code.ToString() != "" {
-			errMsg = fmt.Sprintf("%s: %s", uri, code.ToString())
+			errMsg = fmt.Sprintf("%s: %s", req.URI().String(), code.ToString())
 		}
 	}
 
@@ -106,15 +108,15 @@ func callHTTPGet(client *fasthttp.Client, uri, username, password string) (data 
 	return
 }
 
-func callHTTPGetWithResp(client *fasthttp.Client, uri, username, password string, respData interface{}) (err error) {
-	data, _, err := callHTTPGet(client, uri, username, password)
+func callHTTPGetWithResp(client *fasthttp.Client, uri *fasthttp.URI, requestURI string, respData interface{}) (err error) {
+	data, _, err := callHTTPGet(client, uri, requestURI)
 	if err != nil {
 		return
 	}
 
 	err = jsoniter.Unmarshal(data, respData)
 	if err != nil {
-		err = fmt.Errorf("unmarshal api resp failed: %s, %s", uri, err.Error())
+		err = fmt.Errorf("unmarshal api resp failed: %s, %s", requestURI, err.Error())
 		return
 	}
 	return
