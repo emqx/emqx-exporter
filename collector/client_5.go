@@ -1,20 +1,19 @@
-package client
+package collector
 
 import (
-	"emqx-exporter/collector"
 	"fmt"
 	"strconv"
 	"time"
 )
 
-var _ client = &cluster5x{}
+var _ emqxClientInterface = &client5x{}
 
-type cluster5x struct {
+type client5x struct {
 	edition   edition
 	requester *requester
 }
 
-func (n *cluster5x) getLicense() (lic *collector.LicenseInfo, err error) {
+func (n *client5x) getLicense() (lic *LicenseInfo, err error) {
 	if n.edition == openSource {
 		return
 	}
@@ -34,14 +33,14 @@ func (n *cluster5x) getLicense() (lic *collector.LicenseInfo, err error) {
 		return
 	}
 
-	lic = &collector.LicenseInfo{
+	lic = &LicenseInfo{
 		MaxClientLimit: resp.MaxConnections,
 		Expiration:     expiryAt.UnixMilli(),
 	}
 	return
 }
 
-func (n *cluster5x) getClusterStatus() (cluster collector.ClusterStatus, err error) {
+func (n *client5x) getClusterStatus() (cluster ClusterStatus, err error) {
 	resp := []struct {
 		Version     string
 		Uptime      int64
@@ -62,7 +61,7 @@ func (n *cluster5x) getClusterStatus() (cluster collector.ClusterStatus, err err
 	cluster.Status = unhealthy
 	cluster.NodeUptime = make(map[string]int64)
 	cluster.NodeMaxFDs = make(map[string]int)
-	cluster.CPULoads = make(map[string]collector.CPULoad)
+	cluster.CPULoads = make(map[string]CPULoad)
 
 	for _, data := range resp {
 		if data.NodeStatus == "running" {
@@ -72,7 +71,7 @@ func (n *cluster5x) getClusterStatus() (cluster collector.ClusterStatus, err err
 		cluster.NodeUptime[nodeName] = data.Uptime / 1000
 		cluster.NodeMaxFDs[nodeName] = data.MaxFds
 
-		cpuLoad := collector.CPULoad{}
+		cpuLoad := CPULoad{}
 		// the cpu load value may be string or float64
 		if value, ok := data.Load1.(float64); ok {
 			cpuLoad.Load1 = value
@@ -94,7 +93,7 @@ func (n *cluster5x) getClusterStatus() (cluster collector.ClusterStatus, err err
 	return
 }
 
-func (n *cluster5x) getBrokerMetrics() (metrics *collector.Broker, err error) {
+func (n *client5x) getBrokerMetrics() (metrics *Broker, err error) {
 	resp := struct {
 		SentMsgRate     int64 `json:"sent_msg_rate"`
 		ReceivedMsgRate int64 `json:"received_msg_rate"`
@@ -104,14 +103,14 @@ func (n *cluster5x) getBrokerMetrics() (metrics *collector.Broker, err error) {
 		return
 	}
 
-	metrics = &collector.Broker{
+	metrics = &Broker{
 		MsgInputPeriodSec:  resp.ReceivedMsgRate,
 		MsgOutputPeriodSec: resp.SentMsgRate,
 	}
 	return
 }
 
-func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err error) {
+func (n *client5x) getRuleEngineMetrics() (metrics []RuleEngine, err error) {
 	resp := struct {
 		Data []struct {
 			ID     string `json:"id"`
@@ -153,7 +152,7 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 		}
 
 		for _, node := range metricsResp.NodeMetrics {
-			metrics = append(metrics, collector.RuleEngine{
+			metrics = append(metrics, RuleEngine{
 				NodeName:           cutNodeName(node.Node),
 				RuleID:             rule.ID,
 				TopicHitCount:      node.Metrics.Matched,
@@ -174,7 +173,7 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 	return
 }
 
-func (n *cluster5x) getDataBridge() (bridges []collector.DataBridge, err error) {
+func (n *client5x) getDataBridge() (bridges []DataBridge, err error) {
 	bridgesResp := []struct {
 		Name   string
 		Type   string
@@ -185,7 +184,7 @@ func (n *cluster5x) getDataBridge() (bridges []collector.DataBridge, err error) 
 		return
 	}
 
-	bridges = make([]collector.DataBridge, len(bridgesResp))
+	bridges = make([]DataBridge, len(bridgesResp))
 	for i, data := range bridgesResp {
 		enabled := unhealthy
 		if data.Status == "connected" {
@@ -217,7 +216,7 @@ func (n *cluster5x) getDataBridge() (bridges []collector.DataBridge, err error) 
 	return
 }
 
-func (n *cluster5x) getAuthenticationMetrics() (dataSources []collector.DataSource, metrics []collector.Authentication, err error) {
+func (n *client5x) getAuthenticationMetrics() (dataSources []DataSource, metrics []Authentication, err error) {
 	resp := []struct {
 		ID      string `json:"id"`
 		Backend string
@@ -252,7 +251,7 @@ func (n *cluster5x) getAuthenticationMetrics() (dataSources []collector.DataSour
 			return
 		}
 
-		ds := collector.DataSource{
+		ds := DataSource{
 			ResType: plugin.Backend,
 			Status:  unhealthy,
 		}
@@ -262,7 +261,7 @@ func (n *cluster5x) getAuthenticationMetrics() (dataSources []collector.DataSour
 		dataSources = append(dataSources, ds)
 
 		for _, node := range status.NodeMetrics {
-			m := collector.Authentication{
+			m := Authentication{
 				NodeName:       cutNodeName(node.Node),
 				ResType:        plugin.Backend,
 				Total:          node.Metrics.Total,
@@ -279,7 +278,7 @@ func (n *cluster5x) getAuthenticationMetrics() (dataSources []collector.DataSour
 	return
 }
 
-func (n *cluster5x) getAuthorizationMetrics() (dataSources []collector.DataSource, metrics []collector.Authorization, err error) {
+func (n *client5x) getAuthorizationMetrics() (dataSources []DataSource, metrics []Authorization, err error) {
 	resp := struct {
 		Sources []struct {
 			Type   string
@@ -315,7 +314,7 @@ func (n *cluster5x) getAuthorizationMetrics() (dataSources []collector.DataSourc
 			return
 		}
 
-		ds := collector.DataSource{
+		ds := DataSource{
 			ResType: plugin.Type,
 			Status:  unhealthy,
 		}
@@ -325,7 +324,7 @@ func (n *cluster5x) getAuthorizationMetrics() (dataSources []collector.DataSourc
 		dataSources = append(dataSources, ds)
 
 		for _, node := range status.NodeMetrics {
-			m := collector.Authorization{
+			m := Authorization{
 				NodeName:       cutNodeName(node.Node),
 				ResType:        plugin.Type,
 				Total:          node.Metrics.Total,

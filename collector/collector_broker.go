@@ -14,7 +14,8 @@
 package collector
 
 import (
-	"github.com/go-kit/log"
+	"fmt"
+
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -33,17 +34,15 @@ func init() {
 }
 
 type brokerCollector struct {
-	desc    map[string]*prometheus.Desc
-	logger  log.Logger
-	scraper ScraperInterface
+	desc   map[string]*prometheus.Desc
+	client *client
 }
 
 // NewBrokerCollector returns a new broker msg collector
-func NewBrokerCollector(scraper ScraperInterface, logger log.Logger) (Collector, error) {
+func NewBrokerCollector(client *client) (Collector, error) {
 	collector := &brokerCollector{
-		desc:    make(map[string]*prometheus.Desc),
-		logger:  logger,
-		scraper: scraper,
+		desc:   make(map[string]*prometheus.Desc),
+		client: client,
 	}
 
 	metrics := []struct {
@@ -81,7 +80,7 @@ func NewBrokerCollector(scraper ScraperInterface, logger log.Logger) (Collector,
 
 // Update implements the Collector interface and will collect license info.
 func (c *brokerCollector) Update(ch chan<- prometheus.Metric) error {
-	metrics, err := c.scraper.GetBrokerMetrics()
+	metrics, err := doGetBrokerMetrics(c.client)
 	if err != nil {
 		return err
 	}
@@ -108,4 +107,23 @@ func (c *brokerCollector) Update(ch chan<- prometheus.Metric) error {
 		prometheus.GaugeValue, float64(metrics.MsgOutputPeriodSec),
 	)
 	return nil
+}
+
+type Broker struct {
+	MsgConsumeTimeCosts map[string]uint64
+	MsgInputPeriodSec   int64
+	MsgOutputPeriodSec  int64
+}
+
+func doGetBrokerMetrics(c *client) (brokers *Broker, err error) {
+	client := c.getClient()
+	if client == nil {
+		return
+	}
+	brokers, err = client.getBrokerMetrics()
+	if err != nil {
+		err = fmt.Errorf("collect broker metrics failed. %w", err)
+		return
+	}
+	return
 }

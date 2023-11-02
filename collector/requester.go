@@ -1,4 +1,4 @@
-package client
+package collector
 
 import (
 	"emqx-exporter/config"

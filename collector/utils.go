@@ -1,4 +1,4 @@
-package client
+package collector
 
 import (
 	"net/netip"

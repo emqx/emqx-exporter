@@ -14,7 +14,8 @@
 package collector
 
 import (
-	"github.com/go-kit/log"
+	"fmt"
+
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -38,17 +39,15 @@ func init() {
 }
 
 type AuthorizationCollector struct {
-	desc    map[string]*prometheus.Desc
-	logger  log.Logger
-	scraper ScraperInterface
+	desc   map[string]*prometheus.Desc
+	client *client
 }
 
 // NewAuthorizationCollector returns a new authorization collector
-func NewAuthorizationCollector(scraper ScraperInterface, logger log.Logger) (Collector, error) {
+func NewAuthorizationCollector(client *client) (Collector, error) {
 	collector := &AuthorizationCollector{
-		desc:    make(map[string]*prometheus.Desc),
-		logger:  logger,
-		scraper: scraper,
+		desc:   make(map[string]*prometheus.Desc),
+		client: client,
 	}
 
 	metrics := []struct {
@@ -115,7 +114,7 @@ func NewAuthorizationCollector(scraper ScraperInterface, logger log.Logger) (Col
 
 // Update implements the Collector interface and will collect authorization metrics.
 func (c *AuthorizationCollector) Update(ch chan<- prometheus.Metric) error {
-	dataSources, metrics, err := c.scraper.GetAuthorizationMetrics()
+	dataSources, metrics, err := doGetAuthorizationMetrics(c.client)
 	if err != nil {
 		return err
 	}
@@ -167,4 +166,30 @@ func (c *AuthorizationCollector) Update(ch chan<- prometheus.Metric) error {
 
 	}
 	return nil
+}
+
+type Authorization struct {
+	// NodeName the name of emqx node
+	NodeName       string
+	ResType        string
+	Total          int64
+	AllowCount     int64
+	DenyCount      int64
+	ExecRate       float64
+	ExecLast5mRate float64
+	ExecMaxRate    float64
+	ExecTimeCost   map[string]uint64
+}
+
+func doGetAuthorizationMetrics(c *client) (dataSources []DataSource, auths []Authorization, err error) {
+	client := c.getClient()
+	if client == nil {
+		return
+	}
+	dataSources, auths, err = client.getAuthorizationMetrics()
+	if err != nil {
+		err = fmt.Errorf("collect authorization metrics failed. %w", err)
+		return
+	}
+	return
 }

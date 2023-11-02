@@ -14,7 +14,8 @@
 package collector
 
 import (
-	"github.com/go-kit/log"
+	"fmt"
+
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -49,17 +50,15 @@ func init() {
 }
 
 type ruleEngineCollector struct {
-	desc    map[string]*prometheus.Desc
-	logger  log.Logger
-	scraper ScraperInterface
+	desc   map[string]*prometheus.Desc
+	client *client
 }
 
 // NewRuleEngineCollector returns a new rule engine collector
-func NewRuleEngineCollector(scraper ScraperInterface, logger log.Logger) (Collector, error) {
+func NewRuleEngineCollector(client *client) (Collector, error) {
 	collector := &ruleEngineCollector{
-		desc:    make(map[string]*prometheus.Desc),
-		logger:  logger,
-		scraper: scraper,
+		desc:   make(map[string]*prometheus.Desc),
+		client: client,
 	}
 
 	metrics := []struct {
@@ -176,7 +175,7 @@ func NewRuleEngineCollector(scraper ScraperInterface, logger log.Logger) (Collec
 
 // Update implements the Collector interface and will collect rule engine metrics.
 func (c *ruleEngineCollector) Update(ch chan<- prometheus.Metric) error {
-	bridges, metrics, err := c.scraper.GetRuleEngineMetrics()
+	bridges, metrics, err := doGetRuleEngineMetrics(c.client)
 	if err != nil {
 		return err
 	}
@@ -266,4 +265,55 @@ func (c *ruleEngineCollector) Update(ch chan<- prometheus.Metric) error {
 		)
 	}
 	return nil
+}
+
+type DataBridge struct {
+	Type string
+	Name string
+	// Status define the status of the third-party resource. It's ok if the value is 2, else is not ready
+	Status int
+
+	// bridge Metrics
+	Queuing    int64
+	RateLast5m float64
+	RateMax    float64
+	Failed     int64
+	Dropped    int64
+}
+
+type RuleEngine struct {
+	// NodeName the name of emqx node
+	NodeName string
+	RuleID   string
+	// TopicHitCount
+	TopicHitCount      int64
+	ExecPassCount      int64
+	ExecFailureCount   int64
+	ExecExceptionCount int64
+	NoResultCount      int64
+	ExecRate           float64
+	ExecLast5mRate     float64
+	ExecMaxRate        float64
+	ActionTotal        int64
+	ActionSuccess      int64
+	ActionFailed       int64
+	ActionExecTimeCost map[string]uint64
+}
+
+func doGetRuleEngineMetrics(c *client) (bridges []DataBridge, res []RuleEngine, err error) {
+	client := c.getClient()
+	if client == nil {
+		return
+	}
+	bridges, err = client.getDataBridge()
+	if err != nil {
+		err = fmt.Errorf("collect rule engine data bridge failed. %w", err)
+		return
+	}
+	res, err = client.getRuleEngineMetrics()
+	if err != nil {
+		err = fmt.Errorf("collect rule engine metrics failed. %w", err)
+		return
+	}
+	return
 }

@@ -1,21 +1,20 @@
-package client
+package collector
 
 import (
-	"emqx-exporter/collector"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 )
 
-var _ client = &cluster4x{}
+var _ emqxClientInterface = &client4x{}
 
-type cluster4x struct {
+type client4x struct {
 	edition   edition
 	requester *requester
 }
 
-func (n *cluster4x) getLicense() (lic *collector.LicenseInfo, err error) {
+func (n *client4x) getLicense() (lic *LicenseInfo, err error) {
 	if n.edition == openSource {
 		return
 	}
@@ -38,14 +37,14 @@ func (n *cluster4x) getLicense() (lic *collector.LicenseInfo, err error) {
 		return
 	}
 
-	lic = &collector.LicenseInfo{
+	lic = &LicenseInfo{
 		MaxClientLimit: resp.Data.MaxConnections,
 		Expiration:     expiryAt.UnixMilli(),
 	}
 	return
 }
 
-func (n *cluster4x) getClusterStatus() (cluster collector.ClusterStatus, err error) {
+func (n *client4x) getClusterStatus() (cluster ClusterStatus, err error) {
 	resp := struct {
 		Data []struct {
 			Version     string
@@ -72,7 +71,7 @@ func (n *cluster4x) getClusterStatus() (cluster collector.ClusterStatus, err err
 	cluster.Status = unhealthy
 	cluster.NodeUptime = make(map[string]int64)
 	cluster.NodeMaxFDs = make(map[string]int)
-	cluster.CPULoads = make(map[string]collector.CPULoad)
+	cluster.CPULoads = make(map[string]CPULoad)
 
 	for _, data := range resp.Data {
 		if data.NodeStatus == "Running" {
@@ -82,7 +81,7 @@ func (n *cluster4x) getClusterStatus() (cluster collector.ClusterStatus, err err
 		cluster.NodeUptime[nodeName] = parseUptimeFor4x(data.Uptime)
 		cluster.NodeMaxFDs[nodeName] = data.MaxFds
 
-		load := collector.CPULoad{}
+		load := CPULoad{}
 		load.Load1, _ = strconv.ParseFloat(data.Load1, 64)
 		load.Load5, _ = strconv.ParseFloat(data.Load5, 64)
 		load.Load15, _ = strconv.ParseFloat(data.Load15, 64)
@@ -91,7 +90,7 @@ func (n *cluster4x) getClusterStatus() (cluster collector.ClusterStatus, err err
 	return
 }
 
-func (n *cluster4x) getBrokerMetrics() (metrics *collector.Broker, err error) {
+func (n *client4x) getBrokerMetrics() (metrics *Broker, err error) {
 	resp := struct {
 		Data struct {
 			Sent     int64 `json:"sent"`
@@ -104,14 +103,14 @@ func (n *cluster4x) getBrokerMetrics() (metrics *collector.Broker, err error) {
 		return
 	}
 
-	metrics = &collector.Broker{
+	metrics = &Broker{
 		MsgInputPeriodSec:  resp.Data.Received,
 		MsgOutputPeriodSec: resp.Data.Sent,
 	}
 	return
 }
 
-func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err error) {
+func (n *client4x) getRuleEngineMetrics() (metrics []RuleEngine, err error) {
 	resp := struct {
 		Data []struct {
 			Metrics []struct {
@@ -152,7 +151,7 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 			continue
 		}
 
-		fillActionMetrics := func(node string, m *collector.RuleEngine) {
+		fillActionMetrics := func(node string, m *RuleEngine) {
 			for i := range rule.Actions {
 				for j := range rule.Actions[i].Metrics {
 					am := rule.Actions[i].Metrics[j]
@@ -166,7 +165,7 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 			}
 		}
 		for _, m := range rule.Metrics {
-			re := collector.RuleEngine{
+			re := RuleEngine{
 				NodeName: cutNodeName(m.Node),
 				RuleID:   rule.ID,
 				//ResStatus:           unknown,
@@ -187,7 +186,7 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 	return
 }
 
-func (n *cluster4x) getDataBridge() (bridges []collector.DataBridge, err error) {
+func (n *client4x) getDataBridge() (bridges []DataBridge, err error) {
 	resp := struct {
 		Data []struct {
 			ID     string `json:"id"`
@@ -201,7 +200,7 @@ func (n *cluster4x) getDataBridge() (bridges []collector.DataBridge, err error) 
 		return
 	}
 
-	bridges = make([]collector.DataBridge, len(resp.Data))
+	bridges = make([]DataBridge, len(resp.Data))
 	for i, data := range resp.Data {
 		enabled := unhealthy
 		if data.Status {
@@ -214,11 +213,11 @@ func (n *cluster4x) getDataBridge() (bridges []collector.DataBridge, err error) 
 	return
 }
 
-func (n *cluster4x) getAuthenticationMetrics() ([]collector.DataSource, []collector.Authentication, error) {
+func (n *client4x) getAuthenticationMetrics() ([]DataSource, []Authentication, error) {
 	return nil, nil, nil
 }
 
-func (n *cluster4x) getAuthorizationMetrics() ([]collector.DataSource, []collector.Authorization, error) {
+func (n *client4x) getAuthorizationMetrics() ([]DataSource, []Authorization, error) {
 	return nil, nil, nil
 }
 

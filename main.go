@@ -14,7 +14,7 @@
 package main
 
 import (
-	"emqx-exporter/client"
+	"emqx-exporter/collector"
 	"emqx-exporter/config"
 	"emqx-exporter/prober"
 
@@ -67,7 +67,7 @@ func main() {
 	}
 	level.Info(logger).Log("msg", "Loaded config file")
 
-	http.Handle("/metrics", client.NewHandler(*disableExporterMetrics, *maxRequests, sc.C.Metrics, logger))
+	http.Handle("/metrics", collector.NewHandler(*disableExporterMetrics, *maxRequests, sc.C.Metrics, logger))
 
 	http.HandleFunc("/probe", func(w http.ResponseWriter, r *http.Request) {
 		sc.Lock()
