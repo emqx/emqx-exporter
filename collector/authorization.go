@@ -40,15 +40,15 @@ func init() {
 type AuthorizationCollector struct {
 	desc    map[string]*prometheus.Desc
 	logger  log.Logger
-	cluster Cluster
+	scraper ScraperInterface
 }
 
 // NewAuthorizationCollector returns a new authorization collector
-func NewAuthorizationCollector(cluster Cluster, logger log.Logger) (Collector, error) {
+func NewAuthorizationCollector(scraper ScraperInterface, logger log.Logger) (Collector, error) {
 	collector := &AuthorizationCollector{
 		desc:    make(map[string]*prometheus.Desc),
 		logger:  logger,
-		cluster: cluster,
+		scraper: scraper,
 	}
 
 	metrics := []struct {
@@ -115,7 +115,7 @@ func NewAuthorizationCollector(cluster Cluster, logger log.Logger) (Collector, e
 
 // Update implements the Collector interface and will collect authorization metrics.
 func (c *AuthorizationCollector) Update(ch chan<- prometheus.Metric) error {
-	dataSources, metrics, err := c.cluster.GetAuthorizationMetrics()
+	dataSources, metrics, err := c.scraper.GetAuthorizationMetrics()
 	if err != nil {
 		return err
 	}

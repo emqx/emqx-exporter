@@ -89,7 +89,7 @@ type DataSource struct {
 	Status  int
 }
 
-type Cluster interface {
+type ScraperInterface interface {
 	GetLicense() (*LicenseInfo, error)
 	GetClusterStatus() (ClusterStatus, error)
 	GetBrokerMetrics() (*Broker, error)

@@ -30,18 +30,18 @@ const (
 	bridgeFailed     = "bridge_failed"
 	bridgeDropped    = "bridge_dropped"
 
-	ruleTopicHitCount    = "topic_hit_count"
-	ruleExecPassCount    = "exec_pass_count"
-	ruleExecFailureCount = "exec_failure_count"
-	ruleNoResultCount    = "exec_no_result_count"
-	ruleExecExceptionCount   = "exec_exception_count"
-	ruleExecRate         = "exec_rate"
-	ruleExecLast5mRate   = "exec_last5m_rate"
-	ruleExecMaxRate      = "exec_max_rate"
-	ruleActionTotal      = "action_total"
-	ruleActionSuccess    = "action_success"
-	ruleActionFailed     = "action_failed"
-	ruleExecTimeCost     = "exec_time_cost"
+	ruleTopicHitCount      = "topic_hit_count"
+	ruleExecPassCount      = "exec_pass_count"
+	ruleExecFailureCount   = "exec_failure_count"
+	ruleNoResultCount      = "exec_no_result_count"
+	ruleExecExceptionCount = "exec_exception_count"
+	ruleExecRate           = "exec_rate"
+	ruleExecLast5mRate     = "exec_last5m_rate"
+	ruleExecMaxRate        = "exec_max_rate"
+	ruleActionTotal        = "action_total"
+	ruleActionSuccess      = "action_success"
+	ruleActionFailed       = "action_failed"
+	ruleExecTimeCost       = "exec_time_cost"
 )
 
 func init() {
@@ -49,17 +49,17 @@ func init() {
 }
 
 type ruleEngineCollector struct {
-	desc   map[string]*prometheus.Desc
-	logger log.Logger
-	client Cluster
+	desc    map[string]*prometheus.Desc
+	logger  log.Logger
+	scraper ScraperInterface
 }
 
 // NewRuleEngineCollector returns a new rule engine collector
-func NewRuleEngineCollector(client Cluster, logger log.Logger) (Collector, error) {
+func NewRuleEngineCollector(scraper ScraperInterface, logger log.Logger) (Collector, error) {
 	collector := &ruleEngineCollector{
-		desc:   make(map[string]*prometheus.Desc),
-		logger: logger,
-		client: client,
+		desc:    make(map[string]*prometheus.Desc),
+		logger:  logger,
+		scraper: scraper,
 	}
 
 	metrics := []struct {
@@ -176,7 +176,7 @@ func NewRuleEngineCollector(client Cluster, logger log.Logger) (Collector, error
 
 // Update implements the Collector interface and will collect rule engine metrics.
 func (c *ruleEngineCollector) Update(ch chan<- prometheus.Metric) error {
-	bridges, metrics, err := c.client.GetRuleEngineMetrics()
+	bridges, metrics, err := c.scraper.GetRuleEngineMetrics()
 	if err != nil {
 		return err
 	}

@@ -36,15 +36,15 @@ func init() {
 type clusterStatusCollector struct {
 	desc    map[string]*prometheus.Desc
 	logger  log.Logger
-	cluster Cluster
+	scraper ScraperInterface
 }
 
 // NewClusterStatusCollector returns a new cluster status collector
-func NewClusterStatusCollector(cluster Cluster, logger log.Logger) (Collector, error) {
+func NewClusterStatusCollector(scraper ScraperInterface, logger log.Logger) (Collector, error) {
 	collector := &clusterStatusCollector{
 		desc:    map[string]*prometheus.Desc{},
 		logger:  logger,
-		cluster: cluster,
+		scraper: scraper,
 	}
 
 	metrics := []struct {
@@ -90,7 +90,7 @@ func NewClusterStatusCollector(cluster Cluster, logger log.Logger) (Collector, e
 
 // Update implements the Collector interface and will collect cluster status.
 func (c *clusterStatusCollector) Update(ch chan<- prometheus.Metric) error {
-	status, err := c.cluster.GetClusterStatus()
+	status, err := c.scraper.GetClusterStatus()
 	if err != nil {
 		return err
 	}

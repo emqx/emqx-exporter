@@ -35,15 +35,15 @@ func init() {
 type brokerCollector struct {
 	desc    map[string]*prometheus.Desc
 	logger  log.Logger
-	cluster Cluster
+	scraper ScraperInterface
 }
 
 // NewBrokerCollector returns a new broker msg collector
-func NewBrokerCollector(cluster Cluster, logger log.Logger) (Collector, error) {
+func NewBrokerCollector(scraper ScraperInterface, logger log.Logger) (Collector, error) {
 	collector := &brokerCollector{
 		desc:    make(map[string]*prometheus.Desc),
 		logger:  logger,
-		cluster: cluster,
+		scraper: scraper,
 	}
 
 	metrics := []struct {
@@ -81,7 +81,7 @@ func NewBrokerCollector(cluster Cluster, logger log.Logger) (Collector, error) {
 
 // Update implements the Collector interface and will collect license info.
 func (c *brokerCollector) Update(ch chan<- prometheus.Metric) error {
-	metrics, err := c.cluster.GetBrokerMetrics()
+	metrics, err := c.scraper.GetBrokerMetrics()
 	if err != nil {
 		return err
 	}

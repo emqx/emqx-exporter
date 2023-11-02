@@ -35,15 +35,15 @@ func init() {
 type licenseCollector struct {
 	desc    map[string]*prometheus.Desc
 	logger  log.Logger
-	cluster Cluster
+	scraper ScraperInterface
 }
 
 // NewLicenseCollector returns a new license based collector
-func NewLicenseCollector(cluster Cluster, logger log.Logger) (Collector, error) {
+func NewLicenseCollector(scraper ScraperInterface, logger log.Logger) (Collector, error) {
 	collector := &licenseCollector{
 		desc:    make(map[string]*prometheus.Desc),
 		logger:  logger,
-		cluster: cluster,
+		scraper: scraper,
 	}
 
 	metrics := []struct {
@@ -81,7 +81,7 @@ func NewLicenseCollector(cluster Cluster, logger log.Logger) (Collector, error) 
 
 // Update implements the Collector interface and will collect license info.
 func (c *licenseCollector) Update(ch chan<- prometheus.Metric) error {
-	lic, err := c.cluster.GetLicense()
+	lic, err := c.scraper.GetLicense()
 	if err != nil {
 		return err
 	}

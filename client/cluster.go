@@ -18,16 +18,14 @@ type cluster struct {
 	nodeLock sync.RWMutex
 }
 
-func NewCluster(metrics *config.Metrics, logger log.Logger) collector.Cluster {
+func NewCluster(metrics *config.Metrics, logger log.Logger) collector.ScraperInterface {
 	c := &cluster{}
 
 	go func() {
-		httpClient := getHTTPClient(metrics)
-		uri := getURI(metrics)
+		requester := newRequester(metrics)
 		for {
 			client4 := &cluster4x{
-				client: httpClient,
-				uri:    uri,
+				requester: requester,
 			}
 			if _, err := client4.getClusterStatus(); err == nil {
 				c.client = client4
@@ -38,8 +36,7 @@ func NewCluster(metrics *config.Metrics, logger log.Logger) collector.Cluster {
 			}
 
 			client5 := &cluster5x{
-				client: httpClient,
-				uri:    uri,
+				requester: requester,
 			}
 			if _, err := client5.getClusterStatus(); err == nil {
 				c.client = client5

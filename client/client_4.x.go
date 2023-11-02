@@ -6,16 +6,13 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/valyala/fasthttp"
 )
 
 var _ client = &cluster4x{}
 
 type cluster4x struct {
-	edition edition
-	client  *fasthttp.Client
-	uri     *fasthttp.URI
+	edition   edition
+	requester *requester
 }
 
 func (n *cluster4x) getLicense() (lic *collector.LicenseInfo, err error) {
@@ -30,7 +27,7 @@ func (n *cluster4x) getLicense() (lic *collector.LicenseInfo, err error) {
 		}
 		Code int
 	}{}
-	err = callHTTPGetWithResp(n.client, n.uri, "/api/v4/license", &resp)
+	err = n.requester.callHTTPGetWithResp("/api/v4/license", &resp)
 	if err != nil {
 		return
 	}
@@ -63,7 +60,7 @@ func (n *cluster4x) getClusterStatus() (cluster collector.ClusterStatus, err err
 		}
 		Code int
 	}{}
-	err = callHTTPGetWithResp(n.client, n.uri, "/api/v4/nodes", &resp)
+	err = n.requester.callHTTPGetWithResp("/api/v4/nodes", &resp)
 	if err != nil {
 		return
 	}
@@ -102,7 +99,7 @@ func (n *cluster4x) getBrokerMetrics() (metrics *collector.Broker, err error) {
 		}
 		Code int
 	}{}
-	err = callHTTPGetWithResp(n.client, n.uri, "/api/v4/monitor/current_metrics", &resp)
+	err = n.requester.callHTTPGetWithResp("/api/v4/monitor/current_metrics", &resp)
 	if err != nil {
 		return
 	}
@@ -141,7 +138,7 @@ func (n *cluster4x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 		}
 		Code int
 	}{}
-	err = callHTTPGetWithResp(n.client, n.uri, "/api/v4/rules?_limit=10000", &resp)
+	err = n.requester.callHTTPGetWithResp("/api/v4/rules?_limit=10000", &resp)
 	if err != nil {
 		return
 	}
@@ -199,7 +196,7 @@ func (n *cluster4x) getDataBridge() (bridges []collector.DataBridge, err error) 
 		}
 		Code int
 	}{}
-	err = callHTTPGetWithResp(n.client, n.uri, "/api/v4/resources", &resp)
+	err = n.requester.callHTTPGetWithResp("/api/v4/resources", &resp)
 	if err != nil {
 		return
 	}
