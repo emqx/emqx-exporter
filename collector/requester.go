@@ -1,67 +1,54 @@
-package client
+package collector
 
 import (
 	"emqx-exporter/config"
 	"errors"
 	"fmt"
 	"net/http"
-	"net/netip"
-	"strings"
 	"time"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/valyala/fasthttp"
 )
 
-var ()
-
-func cutNodeName(nodeName string) string {
-	slice := strings.Split(nodeName, "@")
-	if len(slice) != 2 {
-		return nodeName
-	}
-
-	if ip, err := netip.ParseAddr(slice[1]); err == nil {
-		return ip.String()
-	} else if pos := strings.IndexRune(slice[1], '.'); pos != 0 {
-		return slice[1][:pos]
-	}
-	return slice[1]
+type requester struct {
+	client *fasthttp.Client
+	uri    *fasthttp.URI
 }
 
-func getURI(metrics *config.Metrics) *fasthttp.URI {
+func newRequester(metrics *config.Metrics) *requester {
 	uri := &fasthttp.URI{}
 	uri.SetUsername(metrics.APIKey)
 	uri.SetPassword(metrics.APISecret)
 	uri.SetScheme(metrics.Scheme)
 	uri.SetHost(metrics.Target)
-	return uri
-}
 
-func getHTTPClient(metrics *config.Metrics) *fasthttp.Client {
-	return &fasthttp.Client{
-		Name:                "EMQX-Exporter", //User-Agent
-		MaxConnsPerHost:     5,
-		MaxIdleConnDuration: 30 * time.Second,
-		ReadTimeout:         5 * time.Second,
-		WriteTimeout:        5 * time.Second,
-		MaxConnWaitTimeout:  5 * time.Second,
-		TLSConfig:           metrics.TLSClientConfig.ToTLSConfig(),
+	return &requester{
+		uri: uri,
+		client: &fasthttp.Client{
+			Name:                "EMQX-Exporter", //User-Agent
+			MaxConnsPerHost:     5,
+			MaxIdleConnDuration: 30 * time.Second,
+			ReadTimeout:         5 * time.Second,
+			WriteTimeout:        5 * time.Second,
+			MaxConnWaitTimeout:  5 * time.Second,
+			TLSConfig:           metrics.TLSClientConfig.ToTLSConfig(),
+		},
 	}
 }
 
-func callHTTPGet(client *fasthttp.Client, uri *fasthttp.URI, requestURI string) (data []byte, statusCode int, err error) {
+func (r *requester) callHTTPGet(requestURI string) (data []byte, statusCode int, err error) {
 	req := fasthttp.AcquireRequest()
 	defer fasthttp.ReleaseRequest(req)
 
-	req.SetURI(uri)
+	req.SetURI(r.uri)
 	req.URI().SetPath(requestURI)
 	req.Header.SetMethod(http.MethodGet)
 
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(resp)
 
-	err = client.Do(req, resp)
+	err = r.client.Do(req, resp)
 	if err != nil {
 		err = fmt.Errorf("request %s failed. %w", req.URI().String(), err)
 		return
@@ -108,8 +95,8 @@ func callHTTPGet(client *fasthttp.Client, uri *fasthttp.URI, requestURI string) 
 	return
 }
 
-func callHTTPGetWithResp(client *fasthttp.Client, uri *fasthttp.URI, requestURI string, respData interface{}) (err error) {
-	data, _, err := callHTTPGet(client, uri, requestURI)
+func (r *requester) callHTTPGetWithResp(requestURI string, respData interface{}) (err error) {
+	data, _, err := r.callHTTPGet(requestURI)
 	if err != nil {
 		return
 	}

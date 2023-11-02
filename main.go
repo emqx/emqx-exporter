@@ -14,7 +14,7 @@
 package main
 
 import (
-	"emqx-exporter/client"
+	"emqx-exporter/collector"
 	"emqx-exporter/config"
 	"emqx-exporter/prober"
 
@@ -74,7 +74,7 @@ func run(app *kingpin.Application, args []string, srv *http.Server) (exitCode in
 	level.Info(logger).Log("msg", "Loaded config file")
 
 	mux := http.NewServeMux()
-	mux.Handle("/metrics", client.NewHandler(*disableExporterMetrics, *maxRequests, sc.C.Metrics, logger))
+	mux.Handle("/metrics", collector.NewHandler(*disableExporterMetrics, *maxRequests, sc.C.Metrics, logger))
 
 	mux.HandleFunc("/probe", func(w http.ResponseWriter, r *http.Request) {
 		sc.Lock()

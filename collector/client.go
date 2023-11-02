@@ -1,99 +1,77 @@
 package collector
 
-type LicenseInfo struct {
-	MaxClientLimit int64
-	Expiration     int64
-	RemainingDays  float64
+import (
+	"context"
+	"emqx-exporter/config"
+	"sync"
+	"time"
+
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
+)
+
+const (
+	unknown = iota
+	unhealthy
+	healthy
+)
+
+type edition int
+
+const (
+	openSource edition = iota
+	enterprise
+)
+
+type emqxClientInterface interface {
+	getLicense() (*LicenseInfo, error)
+	getClusterStatus() (ClusterStatus, error)
+	getBrokerMetrics() (*Broker, error)
+	getDataBridge() ([]DataBridge, error)
+	getRuleEngineMetrics() ([]RuleEngine, error)
+	getAuthenticationMetrics() ([]DataSource, []Authentication, error)
+	getAuthorizationMetrics() ([]DataSource, []Authorization, error)
 }
 
-type ClusterStatus struct {
-	Status     int
-	NodeUptime map[string]int64
-	NodeMaxFDs map[string]int
-	CPULoads   map[string]CPULoad
+type client struct {
+	sync.RWMutex
+	emqxClient emqxClientInterface
 }
 
-type CPULoad struct {
-	Load1  float64
-	Load5  float64
-	Load15 float64
-}
+func newClient(metrics *config.Metrics, logger log.Logger) *client {
+	c := &client{emqxClient: nil}
 
-type Broker struct {
-	MsgConsumeTimeCosts map[string]uint64
-	MsgInputPeriodSec   int64
-	MsgOutputPeriodSec  int64
-}
+	go func() {
+		requester := newRequester(metrics)
+		for {
+			client4 := &client4x{
+				requester: requester,
+			}
+			if _, err := client4.getClusterStatus(); err == nil {
+				c.emqxClient = client4
+				level.Info(logger).Log("msg", "client4x client created")
+				return
+			} else {
+				level.Debug(logger).Log("msg", "client4x client failed", "err", err)
+			}
 
-type RuleEngine struct {
-	// NodeName the name of emqx node
-	NodeName string
-	RuleID   string
-	// TopicHitCount
-	TopicHitCount      int64
-	ExecPassCount      int64
-	ExecFailureCount   int64
-	ExecExceptionCount int64
-	NoResultCount      int64
-	ExecRate           float64
-	ExecLast5mRate     float64
-	ExecMaxRate        float64
-	ActionTotal        int64
-	ActionSuccess      int64
-	ActionFailed       int64
-	ActionExecTimeCost map[string]uint64
-}
+			client5 := &client5x{
+				requester: requester,
+			}
+			if _, err := client5.getClusterStatus(); err == nil {
+				c.emqxClient = client5
+				level.Info(logger).Log("msg", "client5x client created")
+				return
+			} else {
+				level.Debug(logger).Log("msg", "client5x client failed", "err", err)
+			}
 
-type DataBridge struct {
-	Type string
-	Name string
-	// Status define the status of the third-party resource. It's ok if the value is 2, else is not ready
-	Status int
-
-	// bridge Metrics
-	Queuing    int64
-	RateLast5m float64
-	RateMax    float64
-	Failed     int64
-	Dropped    int64
-}
-
-type Authentication struct {
-	// NodeName the name of emqx node
-	NodeName       string
-	ResType        string
-	Total          int64
-	AllowCount     int64
-	DenyCount      int64
-	ExecRate       float64
-	ExecLast5mRate float64
-	ExecMaxRate    float64
-	ExecTimeCost   map[string]uint64
-}
-
-type Authorization struct {
-	// NodeName the name of emqx node
-	NodeName       string
-	ResType        string
-	Total          int64
-	AllowCount     int64
-	DenyCount      int64
-	ExecRate       float64
-	ExecLast5mRate float64
-	ExecMaxRate    float64
-	ExecTimeCost   map[string]uint64
-}
-
-type DataSource struct {
-	ResType string
-	Status  int
-}
-
-type Cluster interface {
-	GetLicense() (*LicenseInfo, error)
-	GetClusterStatus() (ClusterStatus, error)
-	GetBrokerMetrics() (*Broker, error)
-	GetRuleEngineMetrics() ([]DataBridge, []RuleEngine, error)
-	GetAuthenticationMetrics() ([]DataSource, []Authentication, error)
-	GetAuthorizationMetrics() ([]DataSource, []Authorization, error)
+			level.Error(logger).Log("msg", "Couldn't create scraper client, will retry it after 5 seconds", "err", "no scraper node found")
+			select {
+			case <-context.Background().Done():
+			case <-time.After(5 * time.Second):
+			}
+		}
+	}()
+	return c
 }

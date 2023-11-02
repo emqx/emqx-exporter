@@ -14,7 +14,10 @@
 package collector
 
 import (
-	"github.com/go-kit/log"
+	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -33,17 +36,15 @@ func init() {
 }
 
 type licenseCollector struct {
-	desc    map[string]*prometheus.Desc
-	logger  log.Logger
-	cluster Cluster
+	desc   map[string]*prometheus.Desc
+	client *client
 }
 
 // NewLicenseCollector returns a new license based collector
-func NewLicenseCollector(cluster Cluster, logger log.Logger) (Collector, error) {
+func NewLicenseCollector(client *client) (Collector, error) {
 	collector := &licenseCollector{
-		desc:    make(map[string]*prometheus.Desc),
-		logger:  logger,
-		cluster: cluster,
+		desc:   make(map[string]*prometheus.Desc),
+		client: client,
 	}
 
 	metrics := []struct {
@@ -81,7 +82,7 @@ func NewLicenseCollector(cluster Cluster, logger log.Logger) (Collector, error) 
 
 // Update implements the Collector interface and will collect license info.
 func (c *licenseCollector) Update(ch chan<- prometheus.Metric) error {
-	lic, err := c.cluster.GetLicense()
+	lic, err := doGetLicense(c.client)
 	if err != nil {
 		return err
 	}
@@ -104,4 +105,27 @@ func (c *licenseCollector) Update(ch chan<- prometheus.Metric) error {
 	)
 
 	return nil
+}
+
+type LicenseInfo struct {
+	MaxClientLimit int64
+	Expiration     int64
+	RemainingDays  float64
+}
+
+func doGetLicense(c *client) (lic *LicenseInfo, err error) {
+	c.Lock()
+	defer c.Unlock()
+	client := c.emqxClient
+	if client == nil {
+		return
+	}
+	lic, err = client.getLicense()
+	if err != nil || lic == nil {
+		return
+	}
+
+	lic.RemainingDays = time.Until(time.UnixMilli(lic.Expiration)).Hours() / 24
+	lic.RemainingDays, _ = strconv.ParseFloat(fmt.Sprintf("%.1f", lic.RemainingDays), 64)
+	return
 }
