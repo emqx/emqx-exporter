@@ -1,7 +1,6 @@
-package client
+package collector
 
 import (
-	"emqx-exporter/collector"
 	"emqx-exporter/config"
 
 	stdlog "log"
@@ -23,8 +22,8 @@ func NewHandler(disableExporterMetrics bool, maxRequests int, metrics *config.Me
 	if metrics == nil {
 		level.Info(logger).Log("msg", "No metrics configured, skipping cluster metrics")
 	} else {
-		emqxCluster := NewCluster(metrics, logger)
-		nc, err := collector.NewEMQXCollector(emqxCluster, logger)
+		emqxCluster := newClient(metrics, logger)
+		nc, err := NewEMQXCollector(emqxCluster, logger)
 		if err != nil {
 			level.Debug(logger).Log("msg", "Couldn't create collector", "err", err)
 			panic("Couldn't create collector")

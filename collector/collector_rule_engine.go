@@ -14,7 +14,8 @@
 package collector
 
 import (
-	"github.com/go-kit/log"
+	"fmt"
+
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -30,18 +31,18 @@ const (
 	bridgeFailed     = "bridge_failed"
 	bridgeDropped    = "bridge_dropped"
 
-	ruleTopicHitCount    = "topic_hit_count"
-	ruleExecPassCount    = "exec_pass_count"
-	ruleExecFailureCount = "exec_failure_count"
-	ruleNoResultCount    = "exec_no_result_count"
-	ruleExecExceptionCount   = "exec_exception_count"
-	ruleExecRate         = "exec_rate"
-	ruleExecLast5mRate   = "exec_last5m_rate"
-	ruleExecMaxRate      = "exec_max_rate"
-	ruleActionTotal      = "action_total"
-	ruleActionSuccess    = "action_success"
-	ruleActionFailed     = "action_failed"
-	ruleExecTimeCost     = "exec_time_cost"
+	ruleTopicHitCount      = "topic_hit_count"
+	ruleExecPassCount      = "exec_pass_count"
+	ruleExecFailureCount   = "exec_failure_count"
+	ruleNoResultCount      = "exec_no_result_count"
+	ruleExecExceptionCount = "exec_exception_count"
+	ruleExecRate           = "exec_rate"
+	ruleExecLast5mRate     = "exec_last5m_rate"
+	ruleExecMaxRate        = "exec_max_rate"
+	ruleActionTotal        = "action_total"
+	ruleActionSuccess      = "action_success"
+	ruleActionFailed       = "action_failed"
+	ruleExecTimeCost       = "exec_time_cost"
 )
 
 func init() {
@@ -50,15 +51,13 @@ func init() {
 
 type ruleEngineCollector struct {
 	desc   map[string]*prometheus.Desc
-	logger log.Logger
-	client Cluster
+	client *client
 }
 
 // NewRuleEngineCollector returns a new rule engine collector
-func NewRuleEngineCollector(client Cluster, logger log.Logger) (Collector, error) {
+func NewRuleEngineCollector(client *client) (Collector, error) {
 	collector := &ruleEngineCollector{
 		desc:   make(map[string]*prometheus.Desc),
-		logger: logger,
 		client: client,
 	}
 
@@ -176,7 +175,7 @@ func NewRuleEngineCollector(client Cluster, logger log.Logger) (Collector, error
 
 // Update implements the Collector interface and will collect rule engine metrics.
 func (c *ruleEngineCollector) Update(ch chan<- prometheus.Metric) error {
-	bridges, metrics, err := c.client.GetRuleEngineMetrics()
+	bridges, metrics, err := doGetRuleEngineMetrics(c.client)
 	if err != nil {
 		return err
 	}
@@ -266,4 +265,57 @@ func (c *ruleEngineCollector) Update(ch chan<- prometheus.Metric) error {
 		)
 	}
 	return nil
+}
+
+type DataBridge struct {
+	Type string
+	Name string
+	// Status define the status of the third-party resource. It's ok if the value is 2, else is not ready
+	Status int
+
+	// bridge Metrics
+	Queuing    int64
+	RateLast5m float64
+	RateMax    float64
+	Failed     int64
+	Dropped    int64
+}
+
+type RuleEngine struct {
+	// NodeName the name of emqx node
+	NodeName string
+	RuleID   string
+	// TopicHitCount
+	TopicHitCount      int64
+	ExecPassCount      int64
+	ExecFailureCount   int64
+	ExecExceptionCount int64
+	NoResultCount      int64
+	ExecRate           float64
+	ExecLast5mRate     float64
+	ExecMaxRate        float64
+	ActionTotal        int64
+	ActionSuccess      int64
+	ActionFailed       int64
+	ActionExecTimeCost map[string]uint64
+}
+
+func doGetRuleEngineMetrics(c *client) (bridges []DataBridge, res []RuleEngine, err error) {
+	c.Lock()
+	defer c.Unlock()
+	client := c.emqxClient
+	if client == nil {
+		return
+	}
+	bridges, err = client.getDataBridge()
+	if err != nil {
+		err = fmt.Errorf("collect rule engine data bridge failed. %w", err)
+		return
+	}
+	res, err = client.getRuleEngineMetrics()
+	if err != nil {
+		err = fmt.Errorf("collect rule engine metrics failed. %w", err)
+		return
+	}
+	return
 }

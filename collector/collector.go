@@ -43,10 +43,10 @@ var (
 )
 
 var (
-	factories = make(map[string]func(client Cluster, logger log.Logger) (Collector, error))
+	factories = make(map[string]func(client *client) (Collector, error))
 )
 
-func registerCollector(collector string, factory func(client Cluster, logger log.Logger) (Collector, error)) {
+func registerCollector(collector string, factory func(client *client) (Collector, error)) {
 	factories[collector] = factory
 }
 
@@ -57,10 +57,10 @@ type EMQXCollector struct {
 }
 
 // NewEMQXCollector creates a new EMQXCollector.
-func NewEMQXCollector(cluster Cluster, logger log.Logger) (*EMQXCollector, error) {
+func NewEMQXCollector(client *client, logger log.Logger) (*EMQXCollector, error) {
 	collectors := make(map[string]Collector)
 	for key, factory := range factories {
-		collector, err := factory(cluster, log.With(logger, "collector", key))
+		collector, err := factory(client)
 		if err != nil {
 			return nil, err
 		}

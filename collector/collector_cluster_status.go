@@ -14,7 +14,8 @@
 package collector
 
 import (
-	"github.com/go-kit/log"
+	"fmt"
+
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -34,17 +35,15 @@ func init() {
 }
 
 type clusterStatusCollector struct {
-	desc    map[string]*prometheus.Desc
-	logger  log.Logger
-	cluster Cluster
+	desc   map[string]*prometheus.Desc
+	client *client
 }
 
 // NewClusterStatusCollector returns a new cluster status collector
-func NewClusterStatusCollector(cluster Cluster, logger log.Logger) (Collector, error) {
+func NewClusterStatusCollector(client *client) (Collector, error) {
 	collector := &clusterStatusCollector{
-		desc:    map[string]*prometheus.Desc{},
-		logger:  logger,
-		cluster: cluster,
+		desc:   map[string]*prometheus.Desc{},
+		client: client,
 	}
 
 	metrics := []struct {
@@ -90,7 +89,7 @@ func NewClusterStatusCollector(cluster Cluster, logger log.Logger) (Collector, e
 
 // Update implements the Collector interface and will collect cluster status.
 func (c *clusterStatusCollector) Update(ch chan<- prometheus.Metric) error {
-	status, err := c.cluster.GetClusterStatus()
+	status, err := doGetClusterStatus(c.client)
 	if err != nil {
 		return err
 	}
@@ -126,4 +125,32 @@ func (c *clusterStatusCollector) Update(ch chan<- prometheus.Metric) error {
 		)
 	}
 	return nil
+}
+
+type ClusterStatus struct {
+	Status     int
+	NodeUptime map[string]int64
+	NodeMaxFDs map[string]int
+	CPULoads   map[string]CPULoad
+}
+
+type CPULoad struct {
+	Load1  float64
+	Load5  float64
+	Load15 float64
+}
+
+func doGetClusterStatus(c *client) (status ClusterStatus, err error) {
+	c.Lock()
+	defer c.Unlock()
+	client := c.emqxClient
+	if client == nil {
+		return
+	}
+	status, err = client.getClusterStatus()
+	if err != nil {
+		err = fmt.Errorf("collect cluster status failed. %w", err)
+		return
+	}
+	return
 }

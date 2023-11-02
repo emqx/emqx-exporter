@@ -14,7 +14,8 @@
 package collector
 
 import (
-	"github.com/go-kit/log"
+	"fmt"
+
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -38,17 +39,15 @@ func init() {
 }
 
 type authenticationCollector struct {
-	desc    map[string]*prometheus.Desc
-	logger  log.Logger
-	cluster Cluster
+	desc   map[string]*prometheus.Desc
+	client *client
 }
 
 // NewAuthenticationCollector returns a new authentication collector
-func NewAuthenticationCollector(client Cluster, logger log.Logger) (Collector, error) {
+func NewAuthenticationCollector(client *client) (Collector, error) {
 	collector := &authenticationCollector{
-		desc:    make(map[string]*prometheus.Desc),
-		logger:  logger,
-		cluster: client,
+		desc:   make(map[string]*prometheus.Desc),
+		client: client,
 	}
 
 	metrics := []struct {
@@ -115,7 +114,7 @@ func NewAuthenticationCollector(client Cluster, logger log.Logger) (Collector, e
 
 // Update implements the Collector interface and will collect authentication metrics.
 func (c *authenticationCollector) Update(ch chan<- prometheus.Metric) error {
-	dataSources, metrics, err := c.cluster.GetAuthenticationMetrics()
+	dataSources, metrics, err := doGetAuthenticationMetrics(c.client)
 	if err != nil {
 		return err
 	}
@@ -167,4 +166,38 @@ func (c *authenticationCollector) Update(ch chan<- prometheus.Metric) error {
 
 	}
 	return nil
+}
+
+type Authentication struct {
+	// NodeName the name of emqx node
+	NodeName       string
+	ResType        string
+	Total          int64
+	AllowCount     int64
+	DenyCount      int64
+	ExecRate       float64
+	ExecLast5mRate float64
+	ExecMaxRate    float64
+	ExecTimeCost   map[string]uint64
+}
+
+type DataSource struct {
+	ResType string
+	Status  int
+}
+
+func doGetAuthenticationMetrics(c *client) (dataSources []DataSource, auths []Authentication, err error) {
+	c.Lock()
+	defer c.Unlock()
+
+	client := c.emqxClient
+	if client == nil {
+		return
+	}
+	dataSources, auths, err = client.getAuthenticationMetrics()
+	if err != nil {
+		err = fmt.Errorf("collect authentication metrics failed. %w", err)
+		return
+	}
+	return
 }
