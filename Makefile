@@ -19,8 +19,9 @@ build:
 	@cp $(PROJECT_DIR)/config/example/config.yaml $(LOCALBIN)/config.yaml
 
 .PHONY: test
-test: build
+test:
 	go test -v -race --cover -covermode=atomic -coverpkg=./... -coverprofile=cover.out ./...
+	go tool cover -html=cover.out -o=cover.html
 
 .PHONY: docker
 docker:

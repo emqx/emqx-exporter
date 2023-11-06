@@ -25,6 +25,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/alecthomas/kingpin/v2"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/mount"
@@ -63,9 +64,10 @@ var emqxContainer = testContainer{
 }
 
 type testExporter struct {
-	binDir string
-	bin    string
-	port   int
+	httpServer *http.Server
+	binDir     string
+	bin        string
+	port       int
 }
 
 var emqxExporter = &testExporter{
@@ -96,16 +98,6 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	emqxExporter.bin = emqxExporter.binDir + "/" + binName
 
-	cmd := exec.Command(
-		"go",
-		"build",
-		"-o",
-		emqxExporter.bin,
-	)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	Expect(cmd.Run()).NotTo(HaveOccurred())
-
 	createEMQXContainer()
 })
 
@@ -115,13 +107,12 @@ var _ = AfterSuite(func() {
 })
 
 var _ = Describe("Check EMQX Exporter Metrics", Label("metics"), func() {
-	Context("check http", func() {
-		var cmd *exec.Cmd
 
+	Context("check http", func() {
 		BeforeEach(func() {
 			exporterConfig := config.Config{
 				Metrics: &config.Metrics{
-					Target:    "127.0.0.1:28083/",
+					Target:    "127.0.0.1:28083",
 					APIKey:    "some_api_key",
 					APISecret: "some_api_secret",
 				},
@@ -131,32 +122,32 @@ var _ = Describe("Check EMQX Exporter Metrics", Label("metics"), func() {
 			configFilePath := emqxExporter.binDir + "/config.yml"
 			Expect(os.WriteFile(configFilePath, configFile, 0644)).ToNot(HaveOccurred())
 
-			cmd = exec.CommandContext(ctx, emqxExporter.bin,
-				"--config.file", configFilePath,
-				"--web.listen-address", fmt.Sprintf(":%d", emqxExporter.port),
-			)
-			Expect(cmd.Start()).ToNot(HaveOccurred())
-
 			emqxExporterRunningPort = emqxExporter.port
 			emqxExporter.port--
+			emqxExporter.httpServer = new(http.Server)
+
+			go func() {
+				app := kingpin.New("emqx-exporter", "EMQX Exporter")
+				_ = run(app, []string{
+					"--config.file", configFilePath,
+					"--web.listen-address", fmt.Sprintf(":%d", emqxExporterRunningPort),
+				}, emqxExporter.httpServer)
+			}()
+
+			Eventually(func() (err error) {
+				_, err = callExporterAPI("http://127.0.0.1:" + strconv.Itoa(emqxExporterRunningPort) + "/metrics")
+				return err
+			}).WithTimeout(30 * time.Second).WithPolling(500 * time.Millisecond).ShouldNot(HaveOccurred())
 		})
 
 		AfterEach(func() {
+			Expect(emqxExporter.httpServer.Shutdown(ctx)).NotTo(HaveOccurred())
 			Expect(os.Remove(emqxExporter.binDir + "/config.yml")).NotTo(HaveOccurred())
-			Expect(cmd.Process.Kill()).NotTo(HaveOccurred())
 		})
 
 		It("should return metrics", func() {
-			uri := &fasthttp.URI{}
-			uri.SetScheme("http")
-			uri.SetHost("127.0.0.1:" + strconv.Itoa(emqxExporterRunningPort))
-			uri.SetPath("/metrics")
-
-			var mf map[string]*dto.MetricFamily
-			Eventually(func() (err error) {
-				mf, err = callExporterAPI(uri.String())
-				return err
-			}).WithTimeout(10 * time.Second).WithPolling(500 * time.Millisecond).ShouldNot(HaveOccurred())
+			mf, err := callExporterAPI("http://127.0.0.1:" + strconv.Itoa(emqxExporterRunningPort) + "/metrics")
+			Expect(err).NotTo(HaveOccurred())
 
 			Expect(mf).Should(And(
 				HaveKeyWithValue("emqx_scrape_collector_success", And(
@@ -191,13 +182,12 @@ var _ = Describe("Check EMQX Exporter Metrics", Label("metics"), func() {
 })
 
 var _ = Describe("Check EMQX Exporter Probe", func() {
-	var cmd *exec.Cmd
-
+	var exporterConfig config.Config
 	BeforeEach(func() {
 		copyCert := exec.Command("cp", "-r", "config/example/certs", emqxExporter.binDir+"/certs")
 		Expect(copyCert.Run()).NotTo(HaveOccurred())
 
-		exporterConfig := config.Config{
+		exporterConfig = config.Config{
 			Probes: []config.Probe{
 				{Target: "127.0.0.1:31883", Scheme: "tcp"},
 				{Target: "127.0.0.1:38883", Scheme: "ssl",
@@ -224,19 +214,27 @@ var _ = Describe("Check EMQX Exporter Probe", func() {
 		configFilePath := emqxExporter.binDir + "/config.yml"
 		Expect(os.WriteFile(configFilePath, configFile, 0644)).ToNot(HaveOccurred())
 
-		cmd = exec.CommandContext(ctx, emqxExporter.bin,
-			"--web.listen-address", fmt.Sprintf(":%d", emqxExporter.port),
-			"--config.file", configFilePath,
-		)
-		Expect(cmd.Start()).ToNot(HaveOccurred())
-
 		emqxExporterRunningPort = emqxExporter.port
 		emqxExporter.port--
+		emqxExporter.httpServer = new(http.Server)
+
+		go func() {
+			app := kingpin.New("emqx-exporter-test", "EMQX Exporter")
+			_ = run(app, []string{
+				"--config.file", configFilePath,
+				"--web.listen-address", fmt.Sprintf(":%d", emqxExporterRunningPort),
+			}, emqxExporter.httpServer)
+		}()
+
+		Eventually(func() (err error) {
+			_, err = callExporterAPI("http://127.0.0.1:" + strconv.Itoa(emqxExporterRunningPort) + "/metrics")
+			return err
+		}).WithTimeout(30 * time.Second).WithPolling(500 * time.Millisecond).ShouldNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
+		Expect(emqxExporter.httpServer.Shutdown(ctx)).NotTo(HaveOccurred())
 		Expect(os.Remove(emqxExporter.binDir + "/config.yml")).NotTo(HaveOccurred())
-		Expect(cmd.Process.Kill()).NotTo(HaveOccurred())
 	})
 
 	Context("when the exporter is running", func() {
@@ -352,7 +350,7 @@ func createEMQXContainer() {
 		},
 		ExposedPorts: nat.PortSet{},
 		Healthcheck: &container.HealthConfig{
-			Test: []string{"CMD", "curl", "-f", "http://localhost:28083/status"},
+			Test: []string{"CMD", "emqx", "ping"},
 		},
 	}
 	containerHostConf := &container.HostConfig{
@@ -381,21 +379,8 @@ func createEMQXContainer() {
 	}
 	emqxContainer.id = resp.ID
 
-	var i int = 0
-	var max int = 60
-	for i <= max {
-		cont, err := cli.ContainerInspect(ctx, resp.ID)
-		if err != nil {
-			panic(err)
-		}
-		if cont.State.Health.Status == "healthy" {
-			break
-		}
-		time.Sleep(1 * time.Second)
-		i++
-	}
-
-	if i == max {
-		panic("EMQX container is not healthy")
-	}
+	Eventually(func() string {
+		c, _ := cli.ContainerInspect(ctx, resp.ID)
+		return c.State.Health.Status
+	}).WithTimeout(60 * time.Second).WithPolling(1 * time.Second).Should(Equal("healthy"))
 }

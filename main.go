@@ -36,21 +36,28 @@ import (
 	"github.com/prometheus/exporter-toolkit/web/kingpinflag"
 )
 
+var sc = config.NewSafeConfig(prometheus.DefaultRegisterer)
+
 func main() {
+	os.Exit(run(kingpin.CommandLine, os.Args[1:], &http.Server{}))
+}
+
+func run(app *kingpin.Application, args []string, srv *http.Server) (exitCode int) {
 	var (
-		configFile             = kingpin.Flag("config.file", "EMQX exporter configuration file.").Default(filepath.Join(filepath.Dir(os.Args[0]), "config.yaml")).String()
-		maxProcs               = kingpin.Flag("runtime.gomaxprocs", "The target number of CPUs Go will run on (GOMAXPROCS)").Envar("GOMAXPROCS").Default("4").Int()
-		maxRequests            = kingpin.Flag("web.max-requests", "Maximum number of parallel scrape requests. Use 0 to disable.").Default("40").Int()
-		disableExporterMetrics = kingpin.Flag("web.disable-exporter-metrics", "Exclude metrics about the exporter itself (promhttp_*, process_*, go_*).").Bool()
-		toolkitFlags           = kingpinflag.AddFlags(kingpin.CommandLine, ":8085")
+		configFile             = app.Flag("config.file", "EMQX exporter configuration file.").Default(filepath.Join(filepath.Dir(os.Args[0]), "config.yaml")).String()
+		maxProcs               = app.Flag("runtime.gomaxprocs", "The target number of CPUs Go will run on (GOMAXPROCS)").Envar("GOMAXPROCS").Default("4").Int()
+		maxRequests            = app.Flag("web.max-requests", "Maximum number of parallel scrape requests. Use 0 to disable.").Default("40").Int()
+		disableExporterMetrics = app.Flag("web.disable-exporter-metrics", "Exclude metrics about the exporter itself (promhttp_*, process_*, go_*).").Bool()
+		toolkitFlags           = kingpinflag.AddFlags(app, ":8085")
 	)
+	app.Version(version.Print("emqx-exporter"))
+	app.UsageWriter(os.Stdout)
+	app.HelpFlag.Short('h')
 
 	promlogConfig := &promlog.Config{}
-	flag.AddFlags(kingpin.CommandLine, promlogConfig)
-	kingpin.Version(version.Print("emqx-exporter"))
-	kingpin.CommandLine.UsageWriter(os.Stdout)
-	kingpin.HelpFlag.Short('h')
-	kingpin.Parse()
+	flag.AddFlags(app, promlogConfig)
+
+	kingpin.MustParse(app.Parse(args))
 
 	logger := promlog.New(promlogConfig)
 	level.Info(logger).Log("msg", "Starting emqx-exporter", "version", version.Info())
@@ -60,23 +67,23 @@ func main() {
 	runtime.GOMAXPROCS(*maxProcs)
 	level.Debug(logger).Log("msg", "Go MAXPROCS", "procs", runtime.GOMAXPROCS(0))
 
-	sc := config.NewSafeConfig(prometheus.DefaultRegisterer)
 	if err := sc.ReloadConfig(*configFile); err != nil {
 		level.Error(logger).Log("msg", "Error loading config", "err", err)
-		os.Exit(1)
+		return 1
 	}
 	level.Info(logger).Log("msg", "Loaded config file")
 
-	http.Handle("/metrics", client.NewHandler(*disableExporterMetrics, *maxRequests, sc.C.Metrics, logger))
+	mux := http.NewServeMux()
+	mux.Handle("/metrics", client.NewHandler(*disableExporterMetrics, *maxRequests, sc.C.Metrics, logger))
 
-	http.HandleFunc("/probe", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/probe", func(w http.ResponseWriter, r *http.Request) {
 		sc.Lock()
 		probes := sc.C.Probes
 		sc.Unlock()
 		prober.Handler(w, r, probes, logger, nil)
 	})
 
-	http.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
 		sc.RLock()
 		c, err := yaml.Marshal(sc.C)
 		sc.RUnlock()
@@ -111,13 +118,15 @@ func main() {
 	landingPage, err := web.NewLandingPage(landingConfig)
 	if err != nil {
 		level.Error(logger).Log("err", err)
-		os.Exit(1)
+		return 1
 	}
-	http.Handle("/", landingPage)
+	mux.Handle("/", landingPage)
 
-	srv := &http.Server{}
+	srv.Handler = mux
 	if err := web.ListenAndServe(srv, toolkitFlags, logger); err != nil {
 		level.Error(logger).Log("msg", "Error starting HTTP server", "err", err)
-		os.Exit(1)
+		return 1
 	}
+
+	return 0
 }
