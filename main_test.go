@@ -27,6 +27,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/mount"
 	dockerClient "github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
 	. "github.com/onsi/ginkgo/v2"
@@ -52,12 +53,12 @@ var emqxContainer = testContainer{
 	name:  "emqx-for-emqx-exporter-test",
 	image: "docker.io/emqx/emqx-enterprise:5.3",
 	hostPortMap: map[nat.Port]string{
-		"18084/tcp": "18084",
-		"18083/tcp": "18083",
-		"1883/tcp":  "1883",
-		"8883/tcp":  "8883",
-		"8083/tcp":  "8083",
-		"8084/tcp":  "38084", // Github Action will use 8084, so we use 38084
+		"18083/tcp": "28083",
+		"18084/tcp": "28084",
+		"1883/tcp":  "31883",
+		"8883/tcp":  "38883",
+		"8083/tcp":  "38083",
+		"8084/tcp":  "38084",
 	},
 }
 
@@ -70,6 +71,8 @@ type testExporter struct {
 var emqxExporter = &testExporter{
 	port: 65534,
 }
+
+var emqxExporterRunningPort int
 
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -86,8 +89,6 @@ func TestAPIs(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-	createEMQXContainer()
-
 	var err error
 	binName := "emqx-exporter"
 
@@ -105,6 +106,7 @@ var _ = BeforeSuite(func() {
 	cmd.Stderr = os.Stderr
 	Expect(cmd.Run()).NotTo(HaveOccurred())
 
+	createEMQXContainer()
 })
 
 var _ = AfterSuite(func() {
@@ -112,19 +114,93 @@ var _ = AfterSuite(func() {
 	deleteEMQXContainer()
 })
 
-var _ = Describe("EMQX Exporter", func() {
+var _ = Describe("Check EMQX Exporter Metrics", Label("metics"), func() {
+	Context("check http", func() {
+		var cmd *exec.Cmd
+
+		BeforeEach(func() {
+			exporterConfig := config.Config{
+				Metrics: &config.Metrics{
+					Target:    "127.0.0.1:28083/",
+					APIKey:    "some_api_key",
+					APISecret: "some_api_secret",
+				},
+			}
+
+			configFile, _ := yaml.Marshal(exporterConfig)
+			configFilePath := emqxExporter.binDir + "/config.yml"
+			Expect(os.WriteFile(configFilePath, configFile, 0644)).ToNot(HaveOccurred())
+
+			cmd = exec.CommandContext(ctx, emqxExporter.bin,
+				"--config.file", configFilePath,
+				"--web.listen-address", fmt.Sprintf(":%d", emqxExporter.port),
+			)
+			Expect(cmd.Start()).ToNot(HaveOccurred())
+
+			emqxExporterRunningPort = emqxExporter.port
+			emqxExporter.port--
+		})
+
+		AfterEach(func() {
+			Expect(os.Remove(emqxExporter.binDir + "/config.yml")).NotTo(HaveOccurred())
+			Expect(cmd.Process.Kill()).NotTo(HaveOccurred())
+		})
+
+		It("should return metrics", func() {
+			uri := &fasthttp.URI{}
+			uri.SetScheme("http")
+			uri.SetHost("127.0.0.1:" + strconv.Itoa(emqxExporterRunningPort))
+			uri.SetPath("/metrics")
+
+			var mf map[string]*dto.MetricFamily
+			Eventually(func() (err error) {
+				mf, err = callExporterAPI(uri.String())
+				return err
+			}).WithTimeout(10 * time.Second).WithPolling(500 * time.Millisecond).ShouldNot(HaveOccurred())
+
+			Expect(mf).Should(And(
+				HaveKeyWithValue("emqx_scrape_collector_success", And(
+					WithTransform(func(m *dto.MetricFamily) string {
+						return m.GetName()
+					}, Equal("emqx_scrape_collector_success")),
+					WithTransform(func(m *dto.MetricFamily) dto.MetricType {
+						return m.GetType()
+					}, Equal(dto.MetricType_GAUGE)),
+					WithTransform(func(m *dto.MetricFamily) []*dto.Metric {
+						return m.GetMetric()
+					}, Not(BeNil())),
+				)),
+				HaveKeyWithValue("emqx_scrape_collector_duration_seconds", And(
+					WithTransform(func(m *dto.MetricFamily) string {
+						return m.GetName()
+					}, Equal("emqx_scrape_collector_duration_seconds")),
+					WithTransform(func(m *dto.MetricFamily) dto.MetricType {
+						return m.GetType()
+					}, Equal(dto.MetricType_GAUGE)),
+					WithTransform(func(m *dto.MetricFamily) []*dto.Metric {
+						return m.GetMetric()
+					}, Not(BeNil())),
+				)),
+			))
+
+			for key, value := range mf {
+				fmt.Printf("key: %s, value: %v\n", key, value)
+			}
+		})
+	})
+})
+
+var _ = Describe("Check EMQX Exporter Probe", func() {
 	var cmd *exec.Cmd
-	var runningPort int
-	var exporterConfig = config.Config{}
 
 	BeforeEach(func() {
 		copyCert := exec.Command("cp", "-r", "config/example/certs", emqxExporter.binDir+"/certs")
 		Expect(copyCert.Run()).NotTo(HaveOccurred())
 
-		exporterConfig = config.Config{
+		exporterConfig := config.Config{
 			Probes: []config.Probe{
-				{Target: "127.0.0.1:1883", Scheme: "tcp"},
-				{Target: "127.0.0.1:8883", Scheme: "ssl",
+				{Target: "127.0.0.1:31883", Scheme: "tcp"},
+				{Target: "127.0.0.1:38883", Scheme: "ssl",
 					TLSClientConfig: &config.TLSClientConfig{
 						InsecureSkipVerify: true,
 						CAFile:             emqxExporter.binDir + "/certs/cacert.pem",
@@ -132,7 +208,7 @@ var _ = Describe("EMQX Exporter", func() {
 						KeyFile:            emqxExporter.binDir + "/certs/client-key.pem",
 					},
 				},
-				{Target: "127.0.0.1:8083/mqtt", Scheme: "ws"},
+				{Target: "127.0.0.1:38083/mqtt", Scheme: "ws"},
 				{Target: "127.0.0.1:38084/mqtt", Scheme: "wss",
 					TLSClientConfig: &config.TLSClientConfig{
 						InsecureSkipVerify: true,
@@ -154,7 +230,7 @@ var _ = Describe("EMQX Exporter", func() {
 		)
 		Expect(cmd.Start()).ToNot(HaveOccurred())
 
-		runningPort = emqxExporter.port
+		emqxExporterRunningPort = emqxExporter.port
 		emqxExporter.port--
 	})
 
@@ -164,11 +240,11 @@ var _ = Describe("EMQX Exporter", func() {
 	})
 
 	Context("when the exporter is running", func() {
-		DescribeTable("check probe",
+		DescribeTable("should return probe success",
 			func(target string) {
 				uri := &fasthttp.URI{}
 				uri.SetScheme("http")
-				uri.SetHost("127.0.0.1:" + strconv.Itoa(runningPort))
+				uri.SetHost("127.0.0.1:" + strconv.Itoa(emqxExporterRunningPort))
 				uri.SetPath("/probe")
 				uri.SetQueryString("target=" + target)
 
@@ -194,9 +270,9 @@ var _ = Describe("EMQX Exporter", func() {
 						WithTransform(func(m *dto.MetricFamily) string {
 							return m.GetName()
 						}, Equal("emqx_mqtt_probe_success")),
-						WithTransform(func(m *dto.MetricFamily) string {
-							return m.GetType().String()
-						}, Equal("GAUGE")),
+						WithTransform(func(m *dto.MetricFamily) dto.MetricType {
+							return m.GetType()
+						}, Equal(dto.MetricType_GAUGE)),
 						WithTransform(func(m *dto.MetricFamily) int {
 							return int(*m.Metric[0].Gauge.Value)
 						}, Equal(1)),
@@ -204,9 +280,9 @@ var _ = Describe("EMQX Exporter", func() {
 				))
 
 			},
-			Entry("mqtt", "127.0.0.1:1883"),
-			Entry("ssl", "127.0.0.1:8883"),
-			Entry("ws", "127.0.0.1:8083/mqtt"),
+			Entry("mqtt", "127.0.0.1:31883"),
+			Entry("ssl", "127.0.0.1:38883"),
+			Entry("ws", "127.0.0.1:38083/mqtt"),
 			Entry("wss", "127.0.0.1:38084/mqtt"),
 		)
 	})
@@ -247,6 +323,13 @@ func deleteEMQXContainer() {
 }
 
 func createEMQXContainer() {
+	bootstrapAPI := "some_api_key:some_api_secret"
+	bootstrapAPIFilePath := emqxExporter.binDir + "/bootstrap_api"
+	err := os.WriteFile(bootstrapAPIFilePath, []byte(bootstrapAPI), 0644)
+	if err != nil {
+		panic(err)
+	}
+
 	cli, err := dockerClient.NewClientWithOpts(
 		dockerClient.FromEnv,
 		dockerClient.WithAPIVersionNegotiation(),
@@ -263,13 +346,23 @@ func createEMQXContainer() {
 	_, _ = io.Copy(io.Discard, reader)
 
 	containerConf := &container.Config{
-		Image:        emqxContainer.image,
+		Image: emqxContainer.image,
+		Env: []string{
+			"EMQX_API_KEY__BOOTSTRAP_FILE=/opt/emqx/data/bootstrap-api",
+		},
 		ExposedPorts: nat.PortSet{},
 		Healthcheck: &container.HealthConfig{
-			Test: []string{"CMD", "curl", "-f", "http://localhost:18083/status"},
+			Test: []string{"CMD", "curl", "-f", "http://localhost:28083/status"},
 		},
 	}
 	containerHostConf := &container.HostConfig{
+		Mounts: []mount.Mount{
+			{
+				Type:   mount.TypeBind,
+				Source: bootstrapAPIFilePath,
+				Target: "/opt/emqx/data/bootstrap-api",
+			},
+		},
 		PortBindings: nat.PortMap{},
 	}
 
