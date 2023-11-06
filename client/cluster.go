@@ -63,6 +63,8 @@ func NewCluster(metrics *config.Metrics, logger log.Logger) collector.Cluster {
 }
 
 func (c *cluster) GetLicense() (lic *collector.LicenseInfo, err error) {
+	c.nodeLock.Lock()
+	defer c.nodeLock.Unlock()
 	client := c.getNode()
 	if client == nil {
 		return
@@ -79,6 +81,8 @@ func (c *cluster) GetLicense() (lic *collector.LicenseInfo, err error) {
 }
 
 func (c *cluster) GetClusterStatus() (cluster collector.ClusterStatus, err error) {
+	c.nodeLock.Lock()
+	defer c.nodeLock.Unlock()
 	client := c.getNode()
 	if client == nil {
 		return
@@ -92,6 +96,8 @@ func (c *cluster) GetClusterStatus() (cluster collector.ClusterStatus, err error
 }
 
 func (c *cluster) GetBrokerMetrics() (brokers *collector.Broker, err error) {
+	c.nodeLock.Lock()
+	defer c.nodeLock.Unlock()
 	client := c.getNode()
 	if client == nil {
 		return
@@ -105,6 +111,8 @@ func (c *cluster) GetBrokerMetrics() (brokers *collector.Broker, err error) {
 }
 
 func (c *cluster) GetRuleEngineMetrics() (bridges []collector.DataBridge, res []collector.RuleEngine, err error) {
+	c.nodeLock.Lock()
+	defer c.nodeLock.Unlock()
 	client := c.getNode()
 	if client == nil {
 		return
@@ -123,6 +131,8 @@ func (c *cluster) GetRuleEngineMetrics() (bridges []collector.DataBridge, res []
 }
 
 func (c *cluster) GetAuthenticationMetrics() (dataSources []collector.DataSource, auths []collector.Authentication, err error) {
+	c.nodeLock.Lock()
+	defer c.nodeLock.Unlock()
 	client := c.getNode()
 	if client == nil {
 		return
@@ -136,6 +146,8 @@ func (c *cluster) GetAuthenticationMetrics() (dataSources []collector.DataSource
 }
 
 func (c *cluster) GetAuthorizationMetrics() (dataSources []collector.DataSource, auths []collector.Authorization, err error) {
+	c.nodeLock.Lock()
+	defer c.nodeLock.Unlock()
 	client := c.getNode()
 	if client == nil {
 		return
@@ -149,8 +161,6 @@ func (c *cluster) GetAuthorizationMetrics() (dataSources []collector.DataSource,
 }
 
 func (c *cluster) getNode() client {
-	c.nodeLock.RLock()
 	client := c.client
-	c.nodeLock.RUnlock()
 	return client
 }

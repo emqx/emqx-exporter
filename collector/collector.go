@@ -78,14 +78,14 @@ func (n EMQXCollector) Describe(ch chan<- *prometheus.Desc) {
 // Collect implements the prometheus.Collector interface.
 func (n EMQXCollector) Collect(ch chan<- prometheus.Metric) {
 	wg := sync.WaitGroup{}
-	wg.Add(len(n.Collectors))
+	defer wg.Wait()
 	for name, c := range n.Collectors {
+		wg.Add(1)
 		go func(name string, c Collector) {
+			defer wg.Done()
 			execute(name, c, ch, n.logger)
-			wg.Done()
 		}(name, c)
 	}
-	wg.Wait()
 }
 
 func execute(name string, c Collector, ch chan<- prometheus.Metric, logger log.Logger) {

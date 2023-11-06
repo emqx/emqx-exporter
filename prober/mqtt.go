@@ -3,6 +3,7 @@ package prober
 import (
 	"context"
 	"emqx-exporter/config"
+	"sync"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -15,22 +16,32 @@ type MQTTProbe struct {
 	MsgChan <-chan mqtt.Message
 }
 
-var mqttProbeMap map[string]*MQTTProbe
+type mqttProbeManager struct {
+	probes map[string]*MQTTProbe
+	sync.RWMutex
+}
+
+var manager mqttProbeManager
 
 func init() {
-	mqttProbeMap = make(map[string]*MQTTProbe)
+	manager = mqttProbeManager{
+		probes: make(map[string]*MQTTProbe),
+	}
 	go func() {
 		for {
-			for target, probe := range mqttProbeMap {
+			manager.Lock()
+			defer manager.Unlock()
+			for target, probe := range manager.probes {
 				if probe == nil {
-					delete(mqttProbeMap, target)
+					delete(manager.probes, target)
 					continue
 				}
 				if !probe.Client.IsConnected() {
-					delete(mqttProbeMap, target)
+					delete(manager.probes, target)
 					continue
 				}
 			}
+			manager.Unlock()
 
 			select {
 			case <-context.Background().Done():
@@ -73,13 +84,15 @@ func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
 }
 
 func ProbeMQTT(probe config.Probe, logger log.Logger) bool {
-	mqttProbe, ok := mqttProbeMap[probe.Target]
+	mqttProbe, ok := manager.probes[probe.Target]
 	if !ok {
 		var err error
 		if mqttProbe, err = initMQTTProbe(probe, logger); err != nil {
 			return false
 		}
-		mqttProbeMap[probe.Target] = mqttProbe
+		manager.Lock()
+		defer manager.Unlock()
+		manager.probes[probe.Target] = mqttProbe
 	}
 
 	if !mqttProbe.Client.IsConnected() {
