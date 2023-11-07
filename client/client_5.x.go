@@ -122,7 +122,7 @@ func (n *cluster5x) getRuleEngineMetrics() (metrics []collector.RuleEngine, err 
 			Enable bool
 		}
 	}{}
-	err = callHTTPGetWithResp(n.client, n.uri, "/api/v5/rules?limit=10000", &resp)
+	err = callHTTPGetWithResp(n.client, n.uri, "/api/v5/rules", &resp)
 	if err != nil {
 		return
 	}
