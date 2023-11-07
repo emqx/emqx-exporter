@@ -43,14 +43,14 @@ import (
 
 var ctx = context.Background()
 
-type testContainer struct {
+type testServerContainer struct {
 	id          string
 	name        string
 	image       string
 	hostPortMap map[nat.Port]string
 }
 
-var emqxContainer = testContainer{
+var emqxContainer = testServerContainer{
 	name:  "emqx-for-emqx-exporter-test",
 	image: "docker.io/emqx/emqx-enterprise:5.3",
 	hostPortMap: map[nat.Port]string{
@@ -61,6 +61,16 @@ var emqxContainer = testContainer{
 		"8083/tcp":  "38083",
 		"8084/tcp":  "38084",
 	},
+}
+
+type testClientContainer struct {
+	image string
+	pubID string
+	subID string
+}
+
+var mqttxContainer = testClientContainer{
+	image: "docker.io/emqx/mqttx-cli:latest",
 }
 
 type testExporter struct {
@@ -98,6 +108,8 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	emqxExporter.bin = emqxExporter.binDir + "/" + binName
 
+	copyCert := exec.Command("cp", "-r", "config/example/certs", emqxExporter.binDir+"/certs")
+	Expect(copyCert.Run()).NotTo(HaveOccurred())
 	createEMQXContainer()
 })
 
@@ -107,14 +119,20 @@ var _ = AfterSuite(func() {
 })
 
 var _ = Describe("Check EMQX Exporter Metrics", Label("metics"), func() {
-
-	Context("check http", func() {
+	Context("check https", func() {
 		BeforeEach(func() {
 			exporterConfig := config.Config{
 				Metrics: &config.Metrics{
-					Target:    "127.0.0.1:28083",
 					APIKey:    "some_api_key",
 					APISecret: "some_api_secret",
+					Target:    "127.0.0.1:28084",
+					Scheme:    "https",
+					TLSClientConfig: &config.TLSClientConfig{
+						InsecureSkipVerify: true,
+						CAFile:             emqxExporter.binDir + "/certs/cacert.pem",
+						CertFile:           emqxExporter.binDir + "/certs/client-cert.pem",
+						KeyFile:            emqxExporter.binDir + "/certs/client-key.pem",
+					},
 				},
 			}
 
@@ -146,47 +164,119 @@ var _ = Describe("Check EMQX Exporter Metrics", Label("metics"), func() {
 		})
 
 		It("should return metrics", func() {
-			mf, err := callExporterAPI("http://127.0.0.1:" + strconv.Itoa(emqxExporterRunningPort) + "/metrics")
-			Expect(err).NotTo(HaveOccurred())
+			uri := &fasthttp.URI{}
+			uri.SetScheme("http")
+			uri.SetHost("127.0.0.1:" + strconv.Itoa(emqxExporterRunningPort))
+			uri.SetPath("/metrics")
 
-			Expect(mf).Should(And(
-				HaveKeyWithValue("emqx_scrape_collector_success", And(
-					WithTransform(func(m *dto.MetricFamily) string {
-						return m.GetName()
-					}, Equal("emqx_scrape_collector_success")),
-					WithTransform(func(m *dto.MetricFamily) dto.MetricType {
-						return m.GetType()
-					}, Equal(dto.MetricType_GAUGE)),
-					WithTransform(func(m *dto.MetricFamily) []*dto.Metric {
-						return m.GetMetric()
-					}, Not(BeNil())),
-				)),
-				HaveKeyWithValue("emqx_scrape_collector_duration_seconds", And(
-					WithTransform(func(m *dto.MetricFamily) string {
-						return m.GetName()
-					}, Equal("emqx_scrape_collector_duration_seconds")),
-					WithTransform(func(m *dto.MetricFamily) dto.MetricType {
-						return m.GetType()
-					}, Equal(dto.MetricType_GAUGE)),
-					WithTransform(func(m *dto.MetricFamily) []*dto.Metric {
-						return m.GetMetric()
-					}, Not(BeNil())),
-				)),
+			By("check emqx_scrape_collector")
+			Eventually(func() map[string]*dto.MetricFamily {
+				mf, _ := callExporterAPI(uri.String())
+				return mf
+			}).WithTimeout(30 * time.Second).WithPolling(500 * time.Millisecond).Should(And(
+				HaveKey(MatchRegexp(`^go_.*`)),
+				HaveKey(MatchRegexp(`^promhttp_.*`)),
+				HaveKey("emqx_scrape_collector_success"),
+				HaveKey("emqx_scrape_collector_duration_seconds"),
 			))
 
-			for key, value := range mf {
-				fmt.Printf("key: %s, value: %v\n", key, value)
-			}
+			// By("check emqx_authentication")
+			// Eventually(func() map[string]*dto.MetricFamily {
+			// 	mf, _ := callExporterAPI(uri.String())
+			// 	return mf
+			// }).WithTimeout(30 * time.Second).WithPolling(500 * time.Millisecond).Should(And(
+			// 	HaveKey("emqx_authentication_resource_status"),
+			// 	HaveKey("emqx_authentication_total"),
+			// 	HaveKey("emqx_authentication_allow_count"),
+			// 	HaveKey("emqx_authentication_deny_count"),
+			// 	HaveKey("emqx_authentication_exec_rate"),
+			// 	HaveKey("emqx_authentication_exec_last5m_rate"),
+			// 	HaveKey("emqx_authentication_exec_max_rate"),
+			// 	HaveKey("emqx_authentication_exec_time_cost"),
+			// ))
+
+			By("check emqx_authorization")
+			Eventually(func() map[string]*dto.MetricFamily {
+				mf, _ := callExporterAPI(uri.String())
+				return mf
+			}).WithTimeout(30 * time.Second).WithPolling(500 * time.Millisecond).Should(And(
+				HaveKey("emqx_authorization_resource_status"),
+				HaveKey("emqx_authorization_total"),
+				HaveKey("emqx_authorization_allow_count"),
+				HaveKey("emqx_authorization_deny_count"),
+				HaveKey("emqx_authorization_exec_rate"),
+				HaveKey("emqx_authorization_exec_last5m_rate"),
+				HaveKey("emqx_authorization_exec_max_rate"),
+				HaveKey("emqx_authorization_exec_time_cost"),
+			))
+
+			By("check emqx_broker")
+			Eventually(func() map[string]*dto.MetricFamily {
+				mf, _ := callExporterAPI(uri.String())
+				return mf
+			}).WithTimeout(30 * time.Second).WithPolling(500 * time.Millisecond).Should(And(
+				HaveKey("emqx_messages_consume_time_cost"),
+				HaveKey("emqx_messages_input_period_second"),
+				HaveKey("emqx_messages_output_period_second"),
+			))
+
+			By("check emqx_cluster_status")
+			Eventually(func() map[string]*dto.MetricFamily {
+				mf, _ := callExporterAPI(uri.String())
+				return mf
+			}).WithTimeout(30 * time.Second).WithPolling(500 * time.Millisecond).Should(And(
+				HaveKey("emqx_cluster_status"),
+				HaveKeyWithValue("emqx_cluster_status", WithTransform(func(m *dto.MetricFamily) int {
+					return int(*m.Metric[0].Gauge.Value)
+				}, Equal(2)),
+				),
+				HaveKey("emqx_cluster_node_uptime"),
+				HaveKey("emqx_cluster_node_max_fds"),
+				HaveKey("emqx_cluster_cpu_load"),
+			))
+
+			By("check emqx_license")
+			Eventually(func() map[string]*dto.MetricFamily {
+				mf, _ := callExporterAPI(uri.String())
+				return mf
+			}).WithTimeout(30 * time.Second).WithPolling(500 * time.Millisecond).Should(And(
+				HaveKey("emqx_license_max_client_limit"),
+				HaveKey("emqx_license_expiration_time"),
+				HaveKey("emqx_license_remaining_days"),
+			))
+
+			By("check emqx_rule_engine")
+			Eventually(func() map[string]*dto.MetricFamily {
+				mf, _ := callExporterAPI(uri.String())
+				return mf
+			}).WithTimeout(30 * time.Second).WithPolling(500 * time.Millisecond).Should(And(
+				HaveKey("emqx_rule_bridge_status"),
+				HaveKey("emqx_rule_bridge_queuing"),
+				HaveKey("emqx_rule_bridge_last5m_rate"),
+				HaveKey("emqx_rule_bridge_max_rate"),
+				HaveKey("emqx_rule_bridge_failed"),
+				HaveKey("emqx_rule_bridge_dropped"),
+
+				HaveKey("emqx_rule_topic_hit_count"),
+				HaveKey("emqx_rule_exec_pass_count"),
+				HaveKey("emqx_rule_exec_failure_count"),
+				HaveKey("emqx_rule_exec_no_result_count"),
+				HaveKey("emqx_rule_exec_exception_count"),
+				HaveKey("emqx_rule_exec_rate"),
+				HaveKey("emqx_rule_exec_last5m_rate"),
+				HaveKey("emqx_rule_exec_max_rate"),
+				HaveKey("emqx_rule_exec_time_cost"),
+				HaveKey("emqx_rule_action_total"),
+				HaveKey("emqx_rule_action_success"),
+				HaveKey("emqx_rule_action_failed"),
+			))
 		})
 	})
 })
 
-var _ = Describe("Check EMQX Exporter Probe", func() {
+var _ = Describe("Check EMQX Exporter Probe", Label("probes"), func() {
 	var exporterConfig config.Config
 	BeforeEach(func() {
-		copyCert := exec.Command("cp", "-r", "config/example/certs", emqxExporter.binDir+"/certs")
-		Expect(copyCert.Run()).NotTo(HaveOccurred())
-
 		exporterConfig = config.Config{
 			Probes: []config.Probe{
 				{Target: "127.0.0.1:31883", Scheme: "tcp"},
@@ -312,6 +402,20 @@ func deleteEMQXContainer() {
 		panic(err)
 	}
 
+	if err := cli.ContainerStop(ctx, mqttxContainer.pubID, container.StopOptions{}); err != nil {
+		panic(err)
+	}
+	if err := cli.ContainerRemove(ctx, mqttxContainer.pubID, types.ContainerRemoveOptions{}); err != nil {
+		panic(err)
+	}
+
+	if err := cli.ContainerStop(ctx, mqttxContainer.subID, container.StopOptions{}); err != nil {
+		panic(err)
+	}
+	if err := cli.ContainerRemove(ctx, mqttxContainer.subID, types.ContainerRemoveOptions{}); err != nil {
+		panic(err)
+	}
+
 	if err := cli.ContainerStop(ctx, emqxContainer.id, container.StopOptions{}); err != nil {
 		panic(err)
 	}
@@ -323,8 +427,90 @@ func deleteEMQXContainer() {
 func createEMQXContainer() {
 	bootstrapAPI := "some_api_key:some_api_secret"
 	bootstrapAPIFilePath := emqxExporter.binDir + "/bootstrap_api"
-	err := os.WriteFile(bootstrapAPIFilePath, []byte(bootstrapAPI), 0644)
-	if err != nil {
+	if err := os.WriteFile(bootstrapAPIFilePath, []byte(bootstrapAPI), 0644); err != nil {
+		panic(err)
+	}
+
+	emqxConfig := `
+node {
+	name = "emqx@127.0.0.1"
+	cookie = "emqxsecretcookie"
+	data_dir = "data"
+}
+cluster {
+	name = emqxcl
+	discovery_strategy = manual
+}
+dashboard {
+	listeners.http {
+		bind = 18083
+	}
+	listeners.https {
+		bind = 18084
+		ssl_options {
+			cacertfile  = "/opt/emqx/etc/certs/cacert.pem"
+			certfile = "/opt/emqx/etc/certs/cert.pem"
+			keyfile = "/opt/emqx/etc/certs/key.pem"
+			verify = verify_peer
+		}
+	}
+}
+listeners {
+	tcp.fake{
+		bind = 11883
+		authentication = [
+			{
+				mechanism = password_based
+				backend	= built_in_database
+			}
+		]
+	}
+	tcp.default {
+		bind = 1883
+	}
+	ssl.default {
+		bind = 8883
+		ssl_options {
+			verify = verify_peer
+		}
+	}
+	ws.default {
+		bind = 8083
+	}
+	wss.default {
+		bind = 8084
+		ssl_options {
+			verify = verify_peer
+		}
+	}
+}
+bridges {
+	mqtt {
+		public_broker {
+			enable = true
+			server = broker.emqx.io
+			egress {
+				remote {
+					payload = "${payload}"
+					qos = 1
+					retain = false
+					topic = test
+				}
+			}
+		}
+	}
+}
+rule_engine {
+	rules {
+		test {
+			actions = ["mqtt:public_broker"]
+			sql = "SELECT * FROM \"#\""
+		}
+	}
+}
+	`
+	emqxConfigPath := emqxExporter.binDir + "/emqx.conf"
+	if err := os.WriteFile(emqxConfigPath, []byte(emqxConfig), 0644); err != nil {
 		panic(err)
 	}
 
@@ -360,6 +546,11 @@ func createEMQXContainer() {
 				Source: bootstrapAPIFilePath,
 				Target: "/opt/emqx/data/bootstrap-api",
 			},
+			{
+				Type:   mount.TypeBind,
+				Source: emqxConfigPath,
+				Target: "/opt/emqx/etc/emqx.conf",
+			},
 		},
 		PortBindings: nat.PortMap{},
 	}
@@ -368,19 +559,51 @@ func createEMQXContainer() {
 		containerConf.ExposedPorts[containerPort] = struct{}{}
 		containerHostConf.PortBindings[containerPort] = []nat.PortBinding{{HostIP: "127.0.0.1", HostPort: hostPort}}
 	}
-	resp, err := cli.ContainerCreate(ctx, containerConf, containerHostConf, nil, nil, emqxContainer.name)
-
+	emqxResp, err := cli.ContainerCreate(ctx, containerConf, containerHostConf, nil, nil, emqxContainer.name)
 	if err != nil {
 		panic(err)
 	}
 
-	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
+	if err := cli.ContainerStart(ctx, emqxResp.ID, types.ContainerStartOptions{}); err != nil {
 		panic(err)
 	}
-	emqxContainer.id = resp.ID
+	emqxContainer.id = emqxResp.ID
 
+	var emqxInfo types.ContainerJSON
 	Eventually(func() string {
-		c, _ := cli.ContainerInspect(ctx, resp.ID)
-		return c.State.Health.Status
+		emqxInfo, _ = cli.ContainerInspect(ctx, emqxResp.ID)
+		return emqxInfo.State.Health.Status
 	}).WithTimeout(60 * time.Second).WithPolling(1 * time.Second).Should(Equal("healthy"))
+
+	// mqttx client
+	reader, err = cli.ImagePull(ctx, "emqx/mqttx-cli", types.ImagePullOptions{})
+	if err != nil {
+		panic(err)
+	}
+	defer reader.Close()
+	_, _ = io.Copy(io.Discard, reader)
+
+	mqttxSubResp, err := cli.ContainerCreate(ctx, &container.Config{
+		Image: mqttxContainer.image,
+		Cmd:   []string{"mqttx", "bench", "sub", "-t", "test", "-h", emqxInfo.NetworkSettings.IPAddress},
+	}, nil, nil, nil, "mqttx-sub")
+	if err != nil {
+		panic(err)
+	}
+	if err := cli.ContainerStart(ctx, mqttxSubResp.ID, types.ContainerStartOptions{}); err != nil {
+		panic(err)
+	}
+	mqttxContainer.subID = mqttxSubResp.ID
+
+	mqttxPubResp, err := cli.ContainerCreate(ctx, &container.Config{
+		Image: mqttxContainer.image,
+		Cmd:   []string{"mqttx", "bench", "pub", "-c", "1", "-t", "test", "-h", emqxInfo.NetworkSettings.IPAddress},
+	}, nil, nil, nil, "mqttx-pub")
+	if err != nil {
+		panic(err)
+	}
+	if err := cli.ContainerStart(ctx, mqttxPubResp.ID, types.ContainerStartOptions{}); err != nil {
+		panic(err)
+	}
+	mqttxContainer.pubID = mqttxPubResp.ID
 }
