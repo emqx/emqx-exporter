@@ -1,3 +1,3 @@
 # Release Note 🍻
 
-EMQX Exporter is released.
+EMQX Exporter has been released.

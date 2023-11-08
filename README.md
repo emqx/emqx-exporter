@@ -1,5 +1,17 @@
-# EMQX Exporter 
-The `emqx-exporter` is designed to expose partial metrics that are not included in the EMQX Prometheus API. It is compatible with EMQX 4.4 and EMQX 5, both open-source and enterprise.
+<h1 align="center" style="border-bottom: none">
+    EMQX Exporter
+</h1>
+
+<div align="center">
+
+[![GitHub Release](https://img.shields.io/github/release/emqx/emqx-exporter?color=brightgreen)](https://github.com/emqx/emqx-exporter/releases)
+[![Docker Pulls](https://img.shields.io/docker/pulls/emqx/emqx-exporter)](https://hub.docker.com/r/emqx/emqx-exporter)
+[![codecov](https://codecov.io/gh/emqx/emqx-exporter/graph/badge.svg?token=XXXYUFHOQR)](https://codecov.io/gh/emqx/emqx-exporter)
+
+</div>
+
+<p align="center">The `emqx-exporter` is designed to expose partial metrics that are not included in the EMQX Prometheus API.</p>
+<p align="center">It is compatible with EMQX 4.4 and EMQX 5, both open-source and enterprise.</p>
 
 ![Dashboard](https://assets.emqx.com/images/d0529c5355782a6d027de58cce0de69d.png)
 
@@ -16,11 +28,11 @@ The `emqx-exporter` listens on HTTP port 8085 by default. See the `--help` outpu
 EMQX exporter requires access to the EMQX dashboard API with basic auth, so you need to sign in to the dashboard to create an API secret
 Note that it is different to create a secret between EMQX 5 and EMQX 4.4 on the dashboard.
 
-* **EMQX 5** 
+* **EMQX 5**
 
   * Create a new [API KEY](https://www.emqx.io/docs/en/v5.0/dashboard/system.html#api-keys).
 
-* **EMQX 4.4** 
+* **EMQX 4.4**
 
   * Create a new `User` instead of `Application`
 
@@ -42,7 +54,7 @@ Refer to the [example](examples/docker-compose) to deploy a complete demo by doc
 
 Refer to the [example](examples/kubernetes/README.md) to learn how to deploy `emqx-exporter` on the Kubernetes.
 
-## Configuration 
+## Configuration
 
 Sample config file like this
 
@@ -104,11 +116,11 @@ scrape_configs:
 ## Grafana Dashboard
 Import all [templates](./grafana-dashboard/template) to your Grafana, then browse the dashboard `EMQX` and enjoy yourself!
 
-The templates of dashboard ares JSON files, about how to upload a dashboard JSON file, you can check out [here](https://grafana.com/docs/grafana/latest/dashboards/manage-dashboards/#import-a-dashboard). 
+The templates of dashboard ares JSON files, about how to upload a dashboard JSON file, you can check out [here](https://grafana.com/docs/grafana/latest/dashboards/manage-dashboards/#import-a-dashboard).
 
 ## TLS endpoint
 
-** EXPERIMENTAL **
+**EXPERIMENTAL**
 
 The exporter supports TLS via a new web configuration file.
 
