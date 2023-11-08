@@ -58,10 +58,10 @@ func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
 		opt.SetTLSConfig(probe.TLSClientConfig.ToTLSConfig())
 	}
 	opt.SetOnConnectHandler(func(c mqtt.Client) {
-		level.Info(logger).Log("msg", "Connected to MQTT broker")
+		level.Info(logger).Log("msg", "Connected to MQTT broker", "target", probe.Target)
 	})
 	opt.SetConnectionLostHandler(func(c mqtt.Client, err error) {
-		level.Error(logger).Log("msg", "Lost connection to MQTT broker", "err", err)
+		level.Error(logger).Log("msg", "Lost connection to MQTT broker", "target", probe.Target, "err", err)
 	})
 	c := mqtt.NewClient(opt)
 	if token := c.Connect(); token.Wait() && token.Error() != nil {
