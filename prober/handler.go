@@ -38,12 +38,18 @@ func Handler(w http.ResponseWriter, r *http.Request, probes []config.Probe, logg
 		Subsystem: "mqtt",
 		Name:      "probe_success",
 		Help:      "Displays whether or not the probe was a success",
+		ConstLabels: prometheus.Labels{
+			"target": probe.Target,
+		},
 	})
 	probeDurationGauge := prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace: "emqx",
 		Subsystem: "mqtt",
 		Name:      "probe_duration_seconds",
 		Help:      "Returns how long the probe took to complete in seconds",
+		ConstLabels: prometheus.Labels{
+			"target": probe.Target,
+		},
 	})
 
 	registry := prometheus.NewRegistry()

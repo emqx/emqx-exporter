@@ -361,9 +361,14 @@ var _ = Describe("Check EMQX Exporter Probe", Label("probes"), func() {
 						WithTransform(func(m *dto.MetricFamily) dto.MetricType {
 							return m.GetType()
 						}, Equal(dto.MetricType_GAUGE)),
-						WithTransform(func(m *dto.MetricFamily) int {
-							return int(*m.Metric[0].Gauge.Value)
-						}, Equal(1)),
+						WithTransform(func(m *dto.MetricFamily) float64 {
+							return *m.GetMetric()[0].Gauge.Value
+						}, BeNumerically("==", 1)),
+						WithTransform(func(m *dto.MetricFamily) map[string]string {
+							return map[string]string{
+								m.GetMetric()[0].Label[0].GetName(): m.GetMetric()[0].Label[0].GetValue(),
+							}
+						}, HaveKeyWithValue("target", target)),
 					)),
 				))
 
