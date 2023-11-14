@@ -25,4 +25,5 @@ bin
 __pycache__
 env/
 
+*.tgz
 cover.*

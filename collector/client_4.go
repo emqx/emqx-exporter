@@ -10,15 +10,10 @@ import (
 var _ emqxClientInterface = &client4x{}
 
 type client4x struct {
-	edition   edition
 	requester *requester
 }
 
 func (n *client4x) getLicense() (lic *LicenseInfo, err error) {
-	if n.edition == openSource {
-		return
-	}
-
 	resp := struct {
 		Data struct {
 			MaxConnections int64  `json:"max_connections"`
@@ -137,7 +132,7 @@ func (n *client4x) getRuleEngineMetrics() (metrics []RuleEngine, err error) {
 		}
 		Code int
 	}{}
-	err = n.requester.callHTTPGetWithResp("/api/v4/rules?_limit=10000", &resp)
+	err = n.requester.callHTTPGetWithResp("/api/v4/rules", &resp)
 	if err != nil {
 		return
 	}

@@ -11,12 +11,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+VSN := $(shell git describe --tags --always)
+OS ?= $(shell go env OS)
+
 all: build
 
 .PHONY: build
 build:
-	go build -o $(LOCALBIN)/$(PROJECT_NAME)
+	GOOS=$(OS) go build -o $(LOCALBIN)/$(PROJECT_NAME)
 	@cp $(PROJECT_DIR)/config/example/config.yaml $(LOCALBIN)/config.yaml
+	@tar -zcvf emqx-exporter-$(OS)-$(VSN).tgz bin
 
 .PHONY: test
 test:
