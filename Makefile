@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VSN := $(shell git describe --tags --always)
+VSN ?= $(shell git describe --tags --always)
 OS ?= $(shell go env OS)
 
 all: build
