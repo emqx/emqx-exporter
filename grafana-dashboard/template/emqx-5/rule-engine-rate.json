@@ -20,127 +20,73 @@
       "panels": [
         {
           "cacheTimeout": null,
-          "color": {
-            "mode": "thresholds"
-          },
-          "columns": [],
           "datasource": "prometheus",
           "description": null,
           "editable": true,
           "error": false,
           "fieldConfig": {
             "defaults": {
-              "custom": {
-                "align": "auto",
-                "displayMode": "auto",
-                "filterable": true
+              "color": {
+                "mode": "palette-classic"
               },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "log": 2,
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {},
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
               "thresholds": {
                 "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
+                "steps": []
+              },
+              "unit": "short"
             },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #max_rate"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Max Rate"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #total"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Total"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #allow"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Allow"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value #deny_last_15m"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Deny last 15m"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "green",
-                          "value": null
-                        },
-                        {
-                          "color": "red",
-                          "value": 1
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "gradient",
-                      "type": "color-background"
-                    }
-                  }
-                ]
-              }
-            ]
+            "overrides": []
           },
-          "fontSize": "100%",
           "gridPos": {
-            "h": 6,
-            "w": 10,
+            "h": 8,
+            "w": 6,
             "x": 0,
-            "y": 42
+            "y": 14
           },
           "height": null,
           "hideTimeOverride": false,
           "id": 1,
           "interval": null,
           "links": [],
-          "mappings": [],
           "maxDataPoints": 100,
           "maxPerRow": null,
           "minSpan": null,
           "options": {
-            "showHeader": true
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
           },
           "repeat": null,
           "repeatDirection": null,
@@ -148,91 +94,26 @@
           "targets": [
             {
               "datasource": null,
-              "expr": "max by(node, resource) (emqx_authentication_exec_max_rate{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
-              "format": "table",
+              "expr": "sum by(node, rule) (emqx_rule_exec_rate{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"})",
+              "format": "timeseries",
               "hide": false,
-              "instant": true,
+              "instant": false,
               "interval": "",
               "intervalFactor": 1,
-              "legendFormat": "Max Rate",
+              "legendFormat": "{{ node }} {{ rule }}",
               "metric": "",
-              "query": "max by(node, resource) (emqx_authentication_exec_max_rate{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
-              "refId": "max_rate",
-              "step": 10,
-              "target": ""
-            },
-            {
-              "datasource": null,
-              "expr": "sum by(node, resource) (emqx_authentication_total{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "Total",
-              "metric": "",
-              "query": "sum by(node, resource) (emqx_authentication_total{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
-              "refId": "total",
-              "step": 10,
-              "target": ""
-            },
-            {
-              "datasource": null,
-              "expr": "sum by(node, resource) (emqx_authentication_allow_count{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "Allow",
-              "metric": "",
-              "query": "sum by(node, resource) (emqx_authentication_allow_count{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
-              "refId": "allow",
-              "step": 10,
-              "target": ""
-            },
-            {
-              "datasource": null,
-              "expr": "sum by(node, resource) (irate(emqx_authentication_deny_count{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"}[15m]))",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "Deny last 15m",
-              "metric": "",
-              "query": "sum by(node, resource) (irate(emqx_authentication_deny_count{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"}[15m]))",
-              "refId": "deny_last_15m",
+              "query": "sum by(node, rule) (emqx_rule_exec_rate{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"})",
+              "refId": "{{_node_}}_{{_rule_}}",
               "step": 10,
               "target": ""
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Authenticate Count",
-          "transformations": [
-            {
-              "id": "merge",
-              "options": {}
-            },
-            {
-              "id": "filterFieldsByName",
-              "options": {
-                "include": {
-                  "names": [
-                    "node",
-                    "resource",
-                    "Value #max_rate",
-                    "Value #total",
-                    "Value #allow",
-                    "Value #deny_last_15m"
-                  ]
-                }
-              }
-            }
-          ],
+          "title": "Rule Engine Current Exec Rate",
+          "transformations": [],
           "transparent": false,
-          "type": "table"
+          "type": "timeseries"
         },
         {
           "cacheTimeout": null,
@@ -306,124 +187,27 @@
           },
           "repeat": null,
           "repeatDirection": null,
-          "span": 4,
+          "span": 6,
           "targets": [
             {
               "datasource": null,
-              "expr": "sum by(node, resource) (emqx_authentication_exec_rate{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
+              "expr": "sum by(node, rule) (emqx_rule_exec_last5m_rate{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"})",
               "format": "timeseries",
               "hide": false,
               "instant": false,
               "interval": "",
               "intervalFactor": 1,
-              "legendFormat": "{{node}} {{resource}}",
+              "legendFormat": "{{ node }}:{{ rule }}",
               "metric": "",
-              "query": "sum by(node, resource) (emqx_authentication_exec_rate{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
-              "refId": "{{node}}_{{resource}}",
+              "query": "sum by(node, rule) (emqx_rule_exec_last5m_rate{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"})",
+              "refId": "{{_node_}}:{{_rule_}}",
               "step": 10,
               "target": ""
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Authenticate Current Exec Rate",
-          "transformations": [],
-          "transparent": false,
-          "type": "timeseries"
-        },
-        {
-          "cacheTimeout": null,
-          "datasource": "prometheus",
-          "description": null,
-          "editable": true,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "opacity",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "log": 2,
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": false,
-                "stacking": {},
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              },
-              "unit": "short"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 6,
-            "x": 0,
-            "y": 14
-          },
-          "height": null,
-          "hideTimeOverride": false,
-          "id": 3,
-          "interval": null,
-          "links": [],
-          "maxDataPoints": 100,
-          "maxPerRow": null,
-          "minSpan": null,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "multi"
-            }
-          },
-          "repeat": null,
-          "repeatDirection": null,
-          "span": 4,
-          "targets": [
-            {
-              "datasource": null,
-              "expr": "sum by(node, resource) (emqx_authentication_exec_last5m_rate{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
-              "format": "timeseries",
-              "hide": false,
-              "instant": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{node}} {{resource}}",
-              "metric": "",
-              "query": "sum by(node, resource) (emqx_authentication_exec_last5m_rate{cluster=\"$cluster\", node=~\"$node\", resource=~\"$resource\"})",
-              "refId": "{{node}}_{{resource}}",
-              "step": 10,
-              "target": ""
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Authenticate Last 5m Exec Rate",
+          "title": "Rule Engine Last 5m Exec Rate",
           "transformations": [],
           "transparent": false,
           "type": "timeseries"
@@ -431,7 +215,7 @@
       ],
       "repeat": null,
       "showTitle": true,
-      "title": "Connect Auth Subchart"
+      "title": "Rule Engine Rate Subchart"
     }
   ],
   "schemaVersion": 12,
@@ -602,8 +386,8 @@
     ]
   },
   "timezone": "utc",
-  "title": "Connect Auth Subchart",
-  "uid": "authentication",
+  "title": "Rule Engine Rate Subchart",
+  "uid": "rule-engine-rate",
   "version": 0
 }
 
