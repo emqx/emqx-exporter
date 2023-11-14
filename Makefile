@@ -12,7 +12,7 @@
 # limitations under the License.
 
 VSN ?= $(shell git describe --tags --always)
-OS ?= $(shell go env OS)
+OS ?= $(shell go env GOOS)
 
 all: build
 
