@@ -1,10 +1,8 @@
 # grafanalib-emqx
 
-
 ## Setup
 
 Usage of Python 3 is required. It can be installed [on Python.org](https://www.python.org/downloads/)
-
 
 - Install Pipenv
 
@@ -26,26 +24,32 @@ pipenv shell
 
 ## Generate Dashboard JSON
 
-- Install EMQX 5.x Enterprise Dashboard
+- Generate EMQX 5.x Enterprise Dashboard
 
 ```shell
-./emqx.py -e ee -v 5 > emqx5-ee.json
+make
 ```
 
-- Install EMQX 5.x Community Edition Dashboard
-
-```
-./emqx.py -e ce -v 5 > emqx5-ce.json
-```
-
-- Install EMQX 4.x Enterprise Dashboard
+- Generate EMQX 5.x Community Edition Dashboard
 
 ```shell
-./emqx.py -e ee -v 4 > emqx4-ee.json
+make E_ARG=ce V_ARG=5
 ```
 
-- Install EMQX 4.x Community Edition Dashboard
+- Generate EMQX 4.x Enterprise Dashboard
 
+```shell
+make E_ARG=ee V_ARG=4
 ```
-./emqx.py -e ce -v 4 > emqx4-ce.json
+
+- Generate EMQX 4.x Community Edition Dashboard
+
+```shell
+make E_ARG=ce V_ARG=4
+```
+
+## Remove Dashboard JSON
+
+```shell
+make clean
 ```
