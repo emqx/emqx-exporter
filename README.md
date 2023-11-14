@@ -98,7 +98,7 @@ scrape_configs:
         # fix value, don't modify
         from: exporter
 - job_name: 'exporter-probe'
-  metrics_path: /probes
+  metrics_path: /probe
   params:
     target:
       # must equal the `probes[$index].taget` in config file

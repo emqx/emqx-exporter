@@ -1,6 +1,24 @@
 metrics:
-  target: emqx-demo:18083
   api_key: some_api_key
   api_secret: some_api_secret
+  target: emqx-demo:18084
+  scheme: https
+  tls_config:
+    insecure_skip_verify: true
 probes:
   - target: emqx-demo:1883
+  - target: emqx-demo:8883
+    scheme: tls
+    client_id: my_demo
+    username: my_demo
+    password: my_demo
+    topic: my_demo
+    qos: 1
+    tls_config:
+      insecure_skip_verify: true
+  - target: emqx-demo:8083/mqtt
+    scheme: ws
+  - target: emqx-demo:8084/mqtt
+    scheme: wss
+    tls_config:
+      insecure_skip_verify: true

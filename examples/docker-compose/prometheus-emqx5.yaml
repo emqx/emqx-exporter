@@ -42,3 +42,42 @@ scrape_configs:
           cluster: test
           # fix value, don't modify
           from: probe
+  - job_name: 'mqtts-probe'
+    metrics_path: '/probe'
+    params:
+      target:
+        - "emqx-demo:8883"
+    scrape_interval: 5s
+    static_configs:
+      - targets: [exporter-demo:8085]
+        labels:
+          # label the cluster name of where the metrics data from
+          cluster: test
+          # fix value, don't modify
+          from: probe
+  - job_name: 'ws-probe'
+    metrics_path: '/probe'
+    params:
+      target:
+        - "emqx-demo:8083/mqtt"
+    scrape_interval: 5s
+    static_configs:
+      - targets: [exporter-demo:8085]
+        labels:
+          # label the cluster name of where the metrics data from
+          cluster: test
+          # fix value, don't modify
+          from: probe
+  - job_name: 'wss-probe'
+    metrics_path: '/probe'
+    params:
+      target:
+        - "emqx-demo:8084/mqtt"
+    scrape_interval: 5s
+    static_configs:
+      - targets: [exporter-demo:8085]
+        labels:
+          # label the cluster name of where the metrics data from
+          cluster: test
+          # fix value, don't modify
+          from: probe
