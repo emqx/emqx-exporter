@@ -4,6 +4,7 @@ services:
     image: emqx:5
     container_name: emqx-demo
     ports:
+      - 18084:18084
       - 18083:18083
       - 1883:1883
       - 8083:8083
@@ -11,10 +12,11 @@ services:
       - 8883:8883
     environment:
       EMQX_API_KEY__BOOTSTRAP_FILE: '"/opt/emqx/data/bootstrap-api"'
+      EMQX_DASHBOARD__LISTENERS__HTTPS__BIND: 18084
     volumes:
       - ./bootstrap-api:/opt/emqx/data/bootstrap-api
     healthcheck:
-      test: ["CMD", "emqx", "ctl", "status"]
+      test: ["CMD", "emqx", "ping"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -22,10 +24,10 @@ services:
   emqx-exporter:
     depends_on:
       - emqx
-    image: emqx-exporter
+    image: emqx/emqx-exporter:0.2.3
     container_name: exporter-demo
-    # ports:
-    #   - 8085:8085
+    ports:
+      - 8085:8085
     volumes:
       - ./emqx-exporter.config.yaml:/usr/local/emqx-exporter/bin/config.yaml
 
