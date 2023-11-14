@@ -1,0 +1,34 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "4877e1ddb8d627ce5088f2fd2dfe2a2a8eaf75fa2b6a29c6749aa1be31494607"
+        },
+        "pipfile-spec": 6,
+        "requires": {},
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "attrs": {
+            "hashes": [
+                "sha256:1f28b4522cdc2fb4256ac1a020c78acf9cba2c6b461ccd2c126f3aa8e8335d04",
+                "sha256:6279836d581513a26f1bf235f9acd333bc9115683f14f7e8fae46c98fc50e015"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==23.1.0"
+        },
+        "grafanalib": {
+            "hashes": [
+                "sha256:8ae9fc62ee3c28e924ecb0d89ffbb5d18b1193bb1401cde59e01b3e184db9b42",
+                "sha256:b479e9c72e39705aef114b2d73b4328c16b81bfa3e1c423a85a13d4c912b57b5"
+            ],
+            "version": "==0.7.0"
+        }
+    },
+    "develop": {}
+}
