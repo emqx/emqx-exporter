@@ -84,9 +84,7 @@ func (n *client5x) getClusterStatus() (cluster ClusterStatus, err error) {
 		}
 		cluster.CPULoads[nodeName] = cpuLoad
 
-		if data.Edition == "Opensource" {
-			n.edition = openSource
-		} else {
+		if data.Edition == "Enterprise" {
 			n.edition = enterprise
 		}
 	}
