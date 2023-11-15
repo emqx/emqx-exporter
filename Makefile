@@ -18,7 +18,7 @@ all: build
 
 .PHONY: build
 build:
-	GOOS=$(OS) go build -o $(LOCALBIN)/$(PROJECT_NAME)
+	GOOS=$(OS) CGO_ENABLED=0 go build -o $(LOCALBIN)/$(PROJECT_NAME)
 	@cp $(PROJECT_DIR)/config/example/config.yaml $(LOCALBIN)/config.yaml
 	@tar -zcvf emqx-exporter-$(OS)-$(VSN).tgz bin
 
