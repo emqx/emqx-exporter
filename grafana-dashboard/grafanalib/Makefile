@@ -22,7 +22,7 @@ $(JSON_DIR):
 
 # Rule for generating overview.json with customizable arguments
 overview.json:
-	./overview.py -e $(EDITION_ARG) -v $(VERSION_ARG) > $(JSON_DIR)/overview-$(EDITION_ARG)-$(VERSION_ARG).json
+	./overview.py -e $(EDITION_ARG) -v $(VERSION_ARG) > $(JSON_DIR)/overview.json
 
 authentication.json:
 	./authentication.py > $(JSON_DIR)/authentication.json
@@ -31,7 +31,7 @@ authorization.json:
 	./authorization.py > $(JSON_DIR)/authorization.json
 
 client-events.json:
-	./client-events.py -v $(VERSION_ARG) > $(JSON_DIR)/client-events-$(VERSION_ARG).json
+	./client-events.py -v $(VERSION_ARG) > $(JSON_DIR)/client-events.json
 
 messages.json:
 	./messages.py > $(JSON_DIR)/messages.json
