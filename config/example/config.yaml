@@ -10,3 +10,4 @@ probes:
     password:
     topic:
     qos:
+    keep_alive:
