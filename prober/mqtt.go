@@ -46,14 +46,18 @@ func init() {
 			select {
 			case <-context.Background().Done():
 				return
-			case <-time.After(5 * time.Second):
+			case <-time.After(60 * time.Second):
 			}
 		}
 	}()
 }
 
 func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
-	opt := mqtt.NewClientOptions().AddBroker(probe.Scheme + "://" + probe.Target).SetClientID(probe.ClientID).SetUsername(probe.Username).SetPassword(probe.Password)
+	opt := mqtt.NewClientOptions().AddBroker(probe.Scheme + "://" + probe.Target)
+	opt.SetClientID(probe.ClientID)
+	opt.SetUsername(probe.Username)
+	opt.SetPassword(probe.Password)
+	opt.SetKeepAlive(time.Duration(probe.KeepAlive) * time.Second)
 	if probe.TLSClientConfig != nil {
 		opt.SetTLSConfig(probe.TLSClientConfig.ToTLSConfig())
 	}
@@ -108,7 +112,7 @@ func ProbeMQTT(probe config.Probe, logger log.Logger) bool {
 		if msg == nil {
 			return false
 		}
-	case <-time.After(5 * time.Second):
+	case <-time.After(time.Duration(probe.KeepAlive) * time.Second):
 		return false
 	}
 

@@ -27,13 +27,28 @@ type Metrics struct {
 }
 
 type Probe struct {
-	Target          string           `yaml:"target"`
-	Scheme          string           `yaml:"scheme,omitempty"`
-	ClientID        string           `yaml:"client_id,omitempty"`
-	Username        string           `yaml:"username,omitempty"`
-	Password        string           `yaml:"password,omitempty"`
-	Topic           string           `yaml:"topic,omitempty"`
-	QoS             byte             `yaml:"qos,omitempty"`
+	// Target is the address of the EMQX node to probe. Required.
+	Target string `yaml:"target"`
+	// Scheme is the protocol scheme of the EMQX node to probe.
+	// Enum: [mqtt | tcp | mqtts | ssl | tls | ws | wss]
+	// Default: tcp
+	Scheme string `yaml:"scheme,omitempty"`
+	// ClientID is the MQTT client ID to use when probing.
+	// Default: emqx_exporter_probe_<index>
+	ClientID string `yaml:"client_id,omitempty"`
+	// Username is the MQTT username to use when probing.
+	Username string `yaml:"username,omitempty"`
+	// Password is the MQTT password to use when probing.
+	Password string `yaml:"password,omitempty"`
+	// Topic is the MQTT topic to use when probing.
+	// Default: emqx-exporter-probe-<index>
+	Topic string `yaml:"topic,omitempty"`
+	// QoS is the MQTT QoS to use when probing.
+	// Default: 0
+	QoS byte `yaml:"qos,omitempty"`
+	// KeepAlive is the keep alive period in seconds. Defaults to 30 seconds.
+	KeepAlive int64 `yaml:"keep_alive,omitempty"`
+	// TLSClientConfig is the TLS configuration to use when probing.
 	TLSClientConfig *TLSClientConfig `yaml:"tls_config,omitempty"`
 }
 
@@ -159,6 +174,9 @@ func (sc *SafeConfig) ReloadConfig(confFile string) (err error) {
 		}
 		if probe.Topic == "" {
 			probe.Topic = "emqx-exporter-probe-" + fmt.Sprintf("%d", index)
+		}
+		if probe.KeepAlive == 0 {
+			probe.KeepAlive = 30
 		}
 		c.Probes[index] = probe
 	}
