@@ -173,12 +173,12 @@ func (sc *SafeConfig) ReloadConfig(confFile string) (err error) {
 		if probe.ClientID == "" {
 			hostname, _ := os.Hostname()
 			hostname = strings.Replace(hostname, ".", "-", -1)
-			probe.ClientID = "emqx-exporter-probe-" + hostname + fmt.Sprintf("%d", index)
+			probe.ClientID = fmt.Sprintf("emqx-exporter-probe-%s-%d", hostname, index)
 		}
 		if probe.Topic == "" {
 			hostname, _ := os.Hostname()
 			hostname = strings.Replace(hostname, ".", "-", -1)
-			probe.Topic = "emqx-exporter-probe/" + hostname + "/" + fmt.Sprintf("%d", index)
+			probe.Topic = fmt.Sprintf("emqx-exporter-probe/%s/%d", hostname, index)
 		}
 		if probe.KeepAlive == 0 {
 			probe.KeepAlive = 30

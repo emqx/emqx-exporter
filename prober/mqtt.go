@@ -3,6 +3,7 @@ package prober
 import (
 	"context"
 	"emqx-exporter/config"
+	"fmt"
 	"sync"
 	"time"
 
@@ -49,6 +50,7 @@ func init() {
 }
 
 func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
+	var isReady = make(chan struct{})
 	var msgChan = make(chan mqtt.Message)
 
 	opt := mqtt.NewClientOptions().AddBroker(probe.Scheme + "://" + probe.Target)
@@ -60,7 +62,8 @@ func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
 		opt.SetTLSConfig(probe.TLSClientConfig.ToTLSConfig())
 	}
 	opt.SetOnConnectHandler(func(c mqtt.Client) {
-		level.Info(logger).Log("msg", "Connected to MQTT broker", "target", probe.Target)
+		optReader := c.OptionsReader()
+		level.Info(logger).Log("msg", "Connected to MQTT broker", "target", probe.Target, "client_id", optReader.ClientID())
 		token := c.Subscribe(probe.Topic, probe.QoS, func(c mqtt.Client, m mqtt.Message) {
 			msgChan <- m
 		})
@@ -69,6 +72,7 @@ func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
 			level.Error(logger).Log("msg", "Failed to subscribe to MQTT topic", "target", probe.Target, "topic", probe.Topic, "qos", probe.QoS, "err", token.Error())
 			return
 		}
+		isReady <- struct{}{}
 		level.Info(logger).Log("msg", "Subscribed to MQTT topic", "target", probe.Target, "topic", probe.Topic, "qos", probe.QoS)
 	})
 	opt.SetConnectionLostHandler(func(c mqtt.Client, err error) {
@@ -78,6 +82,12 @@ func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
 	if token := c.Connect(); token.Wait() && token.Error() != nil {
 		level.Error(logger).Log("msg", "Failed to connect to MQTT broker", "target", probe.Target, "err", token.Error())
 		return nil, token.Error()
+	}
+
+	select {
+	case <-isReady:
+	case <-time.After(60 * time.Second):
+		return nil, fmt.Errorf("MQTT probe connect timeout")
 	}
 
 	return &MQTTProbe{
@@ -102,6 +112,7 @@ func ProbeMQTT(probe config.Probe, logger log.Logger) bool {
 		return false
 	}
 
+	level.Info(logger).Log("msg", "Publishing MQTT message", "target", probe.Target, "topic", probe.Topic, "qos", probe.QoS)
 	if token := mqttProbe.Client.Publish(probe.Topic, probe.QoS, false, "hello world"); token.Wait() && token.Error() != nil {
 		return false
 	}
