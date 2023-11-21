@@ -36,10 +36,6 @@ func init() {
 					delete(manager.probes, target)
 					continue
 				}
-				if !probe.Client.IsConnected() {
-					delete(manager.probes, target)
-					continue
-				}
 			}
 			manager.Unlock()
 
@@ -53,6 +49,8 @@ func init() {
 }
 
 func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
+	var msgChan = make(chan mqtt.Message)
+
 	opt := mqtt.NewClientOptions().AddBroker(probe.Scheme + "://" + probe.Target)
 	opt.SetClientID(probe.ClientID)
 	opt.SetUsername(probe.Username)
@@ -63,6 +61,15 @@ func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
 	}
 	opt.SetOnConnectHandler(func(c mqtt.Client) {
 		level.Info(logger).Log("msg", "Connected to MQTT broker", "target", probe.Target)
+		token := c.Subscribe(probe.Topic, probe.QoS, func(c mqtt.Client, m mqtt.Message) {
+			msgChan <- m
+		})
+		token.Wait()
+		if token.Error() != nil {
+			level.Error(logger).Log("msg", "Failed to subscribe to MQTT topic", "target", probe.Target, "topic", probe.Topic, "qos", probe.QoS, "err", token.Error())
+			return
+		}
+		level.Info(logger).Log("msg", "Subscribed to MQTT topic", "target", probe.Target, "topic", probe.Topic, "qos", probe.QoS)
 	})
 	opt.SetConnectionLostHandler(func(c mqtt.Client, err error) {
 		level.Error(logger).Log("msg", "Lost connection to MQTT broker", "target", probe.Target, "err", err)
@@ -70,14 +77,6 @@ func initMQTTProbe(probe config.Probe, logger log.Logger) (*MQTTProbe, error) {
 	c := mqtt.NewClient(opt)
 	if token := c.Connect(); token.Wait() && token.Error() != nil {
 		level.Error(logger).Log("msg", "Failed to connect to MQTT broker", "target", probe.Target, "err", token.Error())
-		return nil, token.Error()
-	}
-
-	var msgChan = make(chan mqtt.Message)
-	if token := c.Subscribe(probe.Topic, probe.QoS, func(c mqtt.Client, m mqtt.Message) {
-		msgChan <- m
-	}); token.Wait() && token.Error() != nil {
-		level.Error(logger).Log("msg", "Failed to subscribe to MQTT topic", "err", token.Error())
 		return nil, token.Error()
 	}
 
@@ -113,6 +112,7 @@ func ProbeMQTT(probe config.Probe, logger log.Logger) bool {
 			return false
 		}
 	case <-time.After(time.Duration(probe.KeepAlive) * time.Second):
+		level.Info(logger).Log("msg", "MQTT probe receive message timeout", "target", probe.Target)
 		return false
 	}
 
