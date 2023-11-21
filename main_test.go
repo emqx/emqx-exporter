@@ -460,6 +460,7 @@ dashboard {
 		}
 	}
 }
+log.console.level = debug
 listeners {
 	tcp.fake{
 		bind = 11883
@@ -590,7 +591,7 @@ rule_engine {
 
 	mqttxSubResp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: mqttxContainer.image,
-		Cmd:   []string{"mqttx", "bench", "sub", "-t", "test", "-h", emqxInfo.NetworkSettings.IPAddress},
+		Cmd:   []string{"mqttx", "sub", "-t", "test", "-h", emqxInfo.NetworkSettings.IPAddress},
 	}, nil, nil, nil, "mqttx-sub")
 	if err != nil {
 		panic(err)
@@ -602,7 +603,7 @@ rule_engine {
 
 	mqttxPubResp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: mqttxContainer.image,
-		Cmd:   []string{"mqttx", "bench", "pub", "-c", "1", "-t", "test", "-h", emqxInfo.NetworkSettings.IPAddress},
+		Cmd:   []string{"mqttx", "pub", "-c", "1", "-t", "test", "-h", emqxInfo.NetworkSettings.IPAddress},
 	}, nil, nil, nil, "mqttx-pub")
 	if err != nil {
 		panic(err)
