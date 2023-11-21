@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -170,10 +171,14 @@ func (sc *SafeConfig) ReloadConfig(confFile string) (err error) {
 			probe.Scheme = "tcp"
 		}
 		if probe.ClientID == "" {
-			probe.ClientID = "emqx_exporter_probe_" + fmt.Sprintf("%d", index)
+			hostname, _ := os.Hostname()
+			hostname = strings.Replace(hostname, ".", "-", -1)
+			probe.ClientID = "emqx-exporter-probe-" + hostname + fmt.Sprintf("%d", index)
 		}
 		if probe.Topic == "" {
-			probe.Topic = "emqx-exporter-probe-" + fmt.Sprintf("%d", index)
+			hostname, _ := os.Hostname()
+			hostname = strings.Replace(hostname, ".", "-", -1)
+			probe.Topic = "emqx-exporter-probe/" + hostname + "/" + fmt.Sprintf("%d", index)
 		}
 		if probe.KeepAlive == 0 {
 			probe.KeepAlive = 30
