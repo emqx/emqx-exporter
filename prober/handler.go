@@ -57,13 +57,13 @@ func Handler(w http.ResponseWriter, r *http.Request, probes []config.Probe, logg
 	registry.MustRegister(probeDurationGauge)
 
 	start := time.Now()
-	if ProbeMQTT(probe, logger) {
+	mp := newMQTTProbe(probe, logger)
+	if mp != nil && mp.Probe(probe, logger) {
 		probeSuccessGauge.Set(1)
 	} else {
 		probeSuccessGauge.Set(0)
 	}
-	probeDurationGauge.Set(time.Since(start).Seconds())
 
-	h := promhttp.HandlerFor(registry, promhttp.HandlerOpts{})
-	h.ServeHTTP(w, r)
+	probeDurationGauge.Set(time.Since(start).Seconds())
+	promhttp.HandlerFor(registry, promhttp.HandlerOpts{}).ServeHTTP(w, r)
 }
