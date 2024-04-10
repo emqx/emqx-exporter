@@ -163,7 +163,7 @@ def create_template_list():
         G.Template(
             name="cluster",
             type="query",
-            dataSource="$datasource",
+            dataSource="${datasource}",
             query="label_values(up, cluster)",
             includeAll=False,
             multi=False,
@@ -192,7 +192,7 @@ def create_nodes_template_list():
         G.Template(
             dataSource={
                 "type": "prometheus",
-                "uid": "$datasource"
+                "uid": "${datasource}"
             },
             hide=0,
             includeAll=False,
@@ -211,7 +211,7 @@ def create_nodes_template_list():
         G.Template(
             dataSource={
                 "type": "prometheus",
-                "uid": "$datasource"
+                "uid": "${datasource}"
             },
             hide=0,
             includeAll=True,
@@ -247,7 +247,7 @@ def create_auth_template_list():
         G.Template(
             dataSource={
                 "type": "prometheus",
-                "uid": "$datasource"
+                "uid": "${datasource}"
             },
             hide=0,
             includeAll=False,
@@ -266,7 +266,7 @@ def create_auth_template_list():
         G.Template(
             dataSource={
                 "type": "prometheus",
-                "uid": "$datasource"
+                "uid": "${datasource}"
             },
             hide=0,
             includeAll=True,
@@ -285,7 +285,7 @@ def create_auth_template_list():
         G.Template(
             dataSource={
                 "type": "prometheus",
-                "uid": "$datasource"
+                "uid": "${datasource}"
             },
             hide=0,
             includeAll=True,
@@ -321,7 +321,7 @@ def create_rule_engine_template_list():
         G.Template(
             dataSource={
                 "type": "prometheus",
-                "uid": "$datasource"
+                "uid": "${datasource}"
             },
             hide=0,
             includeAll=False,
@@ -340,7 +340,7 @@ def create_rule_engine_template_list():
         G.Template(
             dataSource={
                 "type": "prometheus",
-                "uid": "$datasource"
+                "uid": "${datasource}"
             },
             hide=0,
             includeAll=True,
@@ -359,7 +359,7 @@ def create_rule_engine_template_list():
         G.Template(
             dataSource={
                 "type": "prometheus",
-                "uid": "$datasource"
+                "uid": "${datasource}"
             },
             hide=0,
             includeAll=True,
@@ -417,7 +417,7 @@ def create_gridpos(pos):
 
 def create_timeseries(**kwargs):
     default_kwargs = {
-        "dataSource": "prometheus",
+        "dataSource": "${datasource}",
         "gridPos": create_gridpos({"h": 8, "w": 6, "x": 0, "y": 14}),
         "span": 2,
         "scaleDistributionType": "linear",
@@ -436,7 +436,7 @@ def create_timeseries(**kwargs):
 
 def create_stat(**kwargs):
     default_kwargs = {
-        "dataSource": "prometheus",
+        "dataSource": "${datasource}",
         "gridPos": create_gridpos({"h": 3, "w": 6, "x": 0, "y": 1}),
         "span": "2",
         "mappings": [
@@ -477,7 +477,7 @@ def create_stat(**kwargs):
 
 def create_gauge(**kwargs):
     default_kwargs = {
-        "dataSource": "prometheus",
+        "dataSource": "${datasource}",
         "gridPos": create_gridpos({"h": 6, "w": 4, "x": 6, "y": 1}),
         "span": 2,
         "max": None,
@@ -491,7 +491,7 @@ def create_gauge(**kwargs):
 
 def create_table(**kwargs):
     default_kwargs = {
-        "dataSource": "prometheus",
+        "dataSource": "${datasource}",
         "gridPos": create_gridpos({"h": 6, "w": 10, "x": 0, "y": 42}),
         "span": 2,
         "thresholds": thresholds_2_steps,
