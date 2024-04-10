@@ -24,7 +24,7 @@
             "mode": "thresholds"
           },
           "columns": [],
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -236,7 +236,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -333,7 +333,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -483,7 +483,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "$datasource"
+          "uid": "${datasource}"
         },
         "hide": 0,
         "includeAll": false,
@@ -516,7 +516,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "$datasource"
+          "uid": "${datasource}"
         },
         "hide": 0,
         "includeAll": true,
@@ -549,7 +549,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "$datasource"
+          "uid": "${datasource}"
         },
         "hide": 0,
         "includeAll": true,

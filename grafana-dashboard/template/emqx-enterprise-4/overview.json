@@ -20,7 +20,7 @@
       "panels": [
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -120,7 +120,7 @@
             "mode": "thresholds"
           },
           "columns": [],
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -307,7 +307,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -390,7 +390,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -511,7 +511,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -663,7 +663,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -769,7 +769,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -909,7 +909,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -1021,7 +1021,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -1133,7 +1133,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -1236,7 +1236,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -1357,7 +1357,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -1478,7 +1478,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -1581,7 +1581,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -1693,7 +1693,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -1805,7 +1805,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -1917,7 +1917,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -2039,7 +2039,7 @@
       "panels": [
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -2177,7 +2177,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -2315,7 +2315,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -2448,7 +2448,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -2576,7 +2576,7 @@
       "panels": [
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -2764,7 +2764,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -2922,7 +2922,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -3140,7 +3140,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -3398,7 +3398,7 @@
       "panels": [
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -3593,7 +3593,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -3729,7 +3729,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -3861,7 +3861,7 @@
             "mode": "thresholds"
           },
           "columns": [],
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -4059,7 +4059,7 @@
             "mode": "thresholds"
           },
           "columns": [],
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -4438,7 +4438,7 @@
       "panels": [
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -4544,7 +4544,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -4650,7 +4650,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "${datasource}",
           "description": null,
           "editable": true,
           "error": false,
@@ -4807,7 +4807,7 @@
           "text": null,
           "value": null
         },
-        "datasource": "$datasource",
+        "datasource": "${datasource}",
         "hide": 0,
         "includeAll": false,
         "label": null,

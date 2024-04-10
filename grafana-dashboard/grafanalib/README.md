@@ -33,19 +33,19 @@ make
 - Generate EMQX 5.x Community Edition Dashboard
 
 ```shell
-make E_ARG=ce V_ARG=5
+make EDITION_ARG=ce VERSION_ARG=5
 ```
 
 - Generate EMQX 4.x Enterprise Dashboard
 
 ```shell
-make E_ARG=ee V_ARG=4
+make EDITION_ARG=ee VERSION_ARG=4
 ```
 
 - Generate EMQX 4.x Community Edition Dashboard
 
 ```shell
-make E_ARG=ce V_ARG=4
+make EDITION_ARG=ce VERSION_ARG=4
 ```
 
 ## Remove Dashboard JSON
