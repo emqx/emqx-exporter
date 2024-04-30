@@ -1,20 +1,33 @@
 # Makefile to run Python scripts with customizable arguments
-
-# Default values for arguments
-# EDITION_ARG can be ee or ce
-EDITION_ARG ?= ee
-# VERSION_ARG can be 4 or 5
-VERSION_ARG ?= 5
 PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
-JSON_DIR = $(PROJECT_DIR)/json
 
 # Phony target to handle all tasks
-.PHONY: all clean
-ifeq ($(VERSION_ARG),4)
-all: $(JSON_DIR) overview.json client-events.json messages.json rule-engine-rate.json rule-engine-count.json
-else
-all: $(JSON_DIR) overview.json authentication.json authorization.json client-events.json messages.json rule-engine-rate.json rule-engine-count.json
-endif
+.PHONY: all
+all: emqx_4 emqx_ee_4 emqx_5 emqx_ee_5
+
+.PHONY: emqx_4
+emqx_4: EDITION_ARG=ce
+emqx_4: VERSION_ARG=4
+emqx_4: JSON_DIR = $(PROJECT_DIR)/../template/emqx-4
+emqx_4: $(JSON_DIR) overview.json client-events.json messages.json rule-engine-rate.json rule-engine-count.json
+
+.PHONY: emqx_ee_4
+emqx_ee_4: EDITION_ARG=ee
+emqx_ee_4: VERSION_ARG=4
+emqx_ee_4: JSON_DIR = $(PROJECT_DIR)/../template/emqx-enterprise-4
+emqx_ee_4: $(JSON_DIR) overview.json client-events.json messages.json rule-engine-rate.json rule-engine-count.json
+
+.PHONY: emqx_5
+emqx_5: EDITION_ARG=ce
+emqx_5: VERSION_ARG=5
+emqx_5: JSON_DIR = $(PROJECT_DIR)/../template/emqx-5
+emqx_5: $(JSON_DIR) overview.json authentication.json authorization.json client-events.json messages.json rule-engine-rate.json rule-engine-count.json
+
+.PHONY: emqx_ee_5
+emqx_ee_5: EDITION_ARG=ee
+emqx_ee_5: VERSION_ARG=5
+emqx_ee_5: JSON_DIR = $(PROJECT_DIR)/../template/emqx-enterprise-5
+emqx_ee_5: $(JSON_DIR) overview.json authentication.json authorization.json client-events.json messages.json rule-engine-rate.json rule-engine-count.json
 
 # Create json directory if it doesn't exist
 $(JSON_DIR):
@@ -41,8 +54,3 @@ rule-engine-rate.json:
 
 rule-engine-count.json:
 	./rule-engine-count.py > $(JSON_DIR)/rule-engine-count.json
-
-# Clean up by removing the json directory
-clean:
-	rm -rf $(JSON_DIR)
-
