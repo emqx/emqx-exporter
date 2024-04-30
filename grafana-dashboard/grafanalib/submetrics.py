@@ -317,7 +317,7 @@ subchart_metrics = {
                     },
                     {
                         "legendFormat": "Exec Exception last 15m",
-                        "expr": "sum by(node, rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[15m]))",
+                        "expr": "sum by(node, rule) (irate(emqx_rule_exec_exception_count{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[15m]))",
                         "thresholds": {
                             "mode": "absolute",
                             "steps": [
@@ -388,11 +388,11 @@ subchart_metrics = {
                 "format": "timeseries"
             },
             "subchart_rule_engine_exec_failure": {
-                "title": "Rule Engine Exec Failure",
+                "title": "Rule Engine Exec Exception",
                 "targets": [
                     {
                         "legendFormat": "{{ node }}:{{ rule }}",
-                        "expr": "sum by(rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[$__rate_interval]))",
+                        "expr": "sum by(rule) (irate(emqx_rule_exec_exception_count{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[$__rate_interval]))",
 
                     }
                 ],

@@ -33,9 +33,9 @@ const (
 
 	ruleTopicHitCount      = "topic_hit_count"
 	ruleExecPassCount      = "exec_pass_count"
-	ruleExecFailureCount   = "exec_failure_count"
-	ruleNoResultCount      = "exec_no_result_count"
-	ruleExecExceptionCount = "exec_exception_count"
+	ruleExecFailureCount   = "exec_failure_count"   // failure count = no result count + exec exception count, it's didn't show in EMQX dashboard
+	ruleNoResultCount      = "exec_no_result_count" // show in EMQX dashboard
+	ruleExecExceptionCount = "exec_exception_count" // show in EMQX dashboard
 	ruleExecRate           = "exec_rate"
 	ruleExecLast5mRate     = "exec_last5m_rate"
 	ruleExecMaxRate        = "exec_max_rate"

@@ -1486,7 +1486,7 @@
             {
               "targetBlank": true,
               "title": "Show Rule Engine Exec Failure Node Detail",
-              "url": "/d/rule-engine-count/Rule Engine Exec Failure?orgId=1&refresh=10s&var-node=All&viewPanel=3"
+              "url": "/d/rule-engine-count/Rule Engine Exec Exception?orgId=1&refresh=10s&var-node=All&viewPanel=3"
             }
           ],
           "maxDataPoints": 100,
@@ -1508,7 +1508,7 @@
           "targets": [
             {
               "datasource": null,
-              "expr": "sum by(rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
+              "expr": "sum by(rule) (irate(emqx_rule_exec_exception_count{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
               "format": "timeseries",
               "hide": false,
               "instant": false,
@@ -1516,7 +1516,7 @@
               "intervalFactor": 1,
               "legendFormat": "{{rule}}",
               "metric": "",
-              "query": "sum by(rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
+              "query": "sum by(rule) (irate(emqx_rule_exec_exception_count{cluster=\"$cluster\", node=~\".*\"}[$__rate_interval]))",
               "refId": "{{rule}}",
               "step": 10,
               "target": ""
@@ -1524,7 +1524,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Rule Engine Exec Failure",
+          "title": "Rule Engine Exec Exception",
           "transformations": [],
           "transparent": false,
           "type": "timeseries"

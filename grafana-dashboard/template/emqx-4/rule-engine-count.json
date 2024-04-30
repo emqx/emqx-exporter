@@ -287,7 +287,7 @@
             },
             {
               "datasource": null,
-              "expr": "sum by(node, rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[15m]))",
+              "expr": "sum by(node, rule) (irate(emqx_rule_exec_exception_count{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[15m]))",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -295,7 +295,7 @@
               "intervalFactor": 1,
               "legendFormat": "Exec Exception last 15m",
               "metric": "",
-              "query": "sum by(node, rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[15m]))",
+              "query": "sum by(node, rule) (irate(emqx_rule_exec_exception_count{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[15m]))",
               "refId": "exec_exception_last_15m",
               "step": 10,
               "target": ""
@@ -583,7 +583,7 @@
           "targets": [
             {
               "datasource": null,
-              "expr": "sum by(rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[$__rate_interval]))",
+              "expr": "sum by(rule) (irate(emqx_rule_exec_exception_count{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[$__rate_interval]))",
               "format": "timeseries",
               "hide": false,
               "instant": false,
@@ -591,7 +591,7 @@
               "intervalFactor": 1,
               "legendFormat": "{{ node }}:{{ rule }}",
               "metric": "",
-              "query": "sum by(rule) (irate(emqx_rule_exec_failure_count{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[$__rate_interval]))",
+              "query": "sum by(rule) (irate(emqx_rule_exec_exception_count{cluster=\"$cluster\", node=~\"$node\", rule=~\"$rule\"}[$__rate_interval]))",
               "refId": "{{_node_}}:{{_rule_}}",
               "step": 10,
               "target": ""
@@ -599,7 +599,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Rule Engine Exec Failure",
+          "title": "Rule Engine Exec Exception",
           "transformations": [],
           "transparent": false,
           "type": "timeseries"
