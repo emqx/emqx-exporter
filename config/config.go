@@ -49,6 +49,10 @@ type Probe struct {
 	QoS byte `yaml:"qos,omitempty"`
 	// KeepAlive is the keep alive period in seconds. Defaults to 30 seconds.
 	KeepAlive int64 `yaml:"keep_alive,omitempty"`
+	// PingTimeout is the timeout in seconds for the MQTT ping request. Defaults to 10 seconds.
+	PingTimeout int64 `yaml:"ping_timeout,omitempty"`
+	// ConnectTimeout is the timeout in seconds for the MQTT connect request. Defaults to 30 seconds.
+	ConnectTimeout int64 `yaml:"connect_timeout,omitempty"`
 	// TLSClientConfig is the TLS configuration to use when probing.
 	TLSClientConfig *TLSClientConfig `yaml:"tls_config,omitempty"`
 }
@@ -183,6 +187,13 @@ func (sc *SafeConfig) ReloadConfig(confFile string) (err error) {
 		if probe.KeepAlive == 0 {
 			probe.KeepAlive = 30
 		}
+		if probe.PingTimeout == 0 {
+			probe.PingTimeout = 10
+		}
+		if probe.ConnectTimeout == 0 {
+			probe.ConnectTimeout = 30
+		}
+
 		c.Probes[index] = probe
 	}
 
