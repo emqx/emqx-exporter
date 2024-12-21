@@ -24,6 +24,8 @@ func newMQTTProbe(probe config.Probe, logger log.Logger) *MQTTProbe {
 	opt.SetUsername(probe.Username)
 	opt.SetPassword(probe.Password)
 	opt.SetKeepAlive(time.Duration(probe.KeepAlive) * time.Second)
+	opt.SetPingTimeout(time.Duration(probe.PingTimeout) * time.Second)
+	opt.SetConnectTimeout(time.Duration(probe.ConnectTimeout) * time.Second)
 	if probe.TLSClientConfig != nil {
 		opt.SetTLSConfig(probe.TLSClientConfig.ToTLSConfig())
 	}
