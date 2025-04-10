@@ -33,6 +33,7 @@ func newRequester(metrics *config.Metrics) *requester {
 			WriteTimeout:        5 * time.Second,
 			MaxConnWaitTimeout:  5 * time.Second,
 			TLSConfig:           metrics.TLSClientConfig.ToTLSConfig(),
+			DialDualStack:       true,
 		},
 	}
 }
