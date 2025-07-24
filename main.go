@@ -48,6 +48,7 @@ func run(app *kingpin.Application, args []string, srv *http.Server) (exitCode in
 		maxProcs               = app.Flag("runtime.gomaxprocs", "The target number of CPUs Go will run on (GOMAXPROCS)").Envar("GOMAXPROCS").Default("4").Int()
 		maxRequests            = app.Flag("web.max-requests", "Maximum number of parallel scrape requests. Use 0 to disable.").Default("40").Int()
 		disableExporterMetrics = app.Flag("web.disable-exporter-metrics", "Exclude metrics about the exporter itself (promhttp_*, process_*, go_*).").Bool()
+		exposeConfig           = app.Flag("web.expose-config", "Expose /config endpoint.").Bool()
 		toolkitFlags           = kingpinflag.AddFlags(app, ":8085")
 	)
 	app.Version(version.Print("emqx-exporter"))
@@ -83,18 +84,20 @@ func run(app *kingpin.Application, args []string, srv *http.Server) (exitCode in
 		prober.Handler(w, r, probes, logger, nil)
 	})
 
-	mux.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
-		sc.RLock()
-		c, err := yaml.Marshal(sc.C)
-		sc.RUnlock()
-		if err != nil {
-			level.Warn(logger).Log("msg", "Error marshalling configuration", "err", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "text/plain")
-		w.Write(c)
-	})
+	if *exposeConfig {
+		mux.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
+			sc.RLock()
+			c, err := yaml.Marshal(sc.C)
+			sc.RUnlock()
+			if err != nil {
+				level.Warn(logger).Log("msg", "Error marshalling configuration", "err", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "text/plain")
+			w.Write(c)
+		})
+	}
 
 	landingConfig := web.LandingConfig{
 		Name:        "EMQX Exporter",
@@ -109,11 +112,14 @@ func run(app *kingpin.Application, args []string, srv *http.Server) (exitCode in
 				Address: "/probe",
 				Text:    "Probe",
 			},
-			{
-				Address: "/config",
-				Text:    "Config",
-			},
 		},
+	}
+
+	if *exposeConfig {
+		landingConfig.Links = append(landingConfig.Links, web.LandingLinks{
+			Address: "/config",
+			Text:    "Config",
+		})
 	}
 	landingPage, err := web.NewLandingPage(landingConfig)
 	if err != nil {
